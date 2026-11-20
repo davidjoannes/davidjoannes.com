@@ -369,7 +369,7 @@ def page(path, title, body, desc='', image='', home=False, redirect=''):
 <div class="fcols">
 <div class="fabout"><a class="brand" href="{B}/">David Joannes</a><p>Missiologist, author, podcaster, and Founder of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.</p></div>
 {fcol('Explore', [('About', '/about/'), ('Books', '/books/'), ('Missions Pulse', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/')])}
-{fcol('Connect', [('Book a meeting', '/meet/'), ('Podcast guest inquiries', '/contact/'), ('Contact', '/contact/')])}
+{fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Podcast guest inquiries', '/contact/'), ('Contact', '/contact/')])}
 {fcol('Give', [('Support David and Lorna', '/donate/'), ('Within Reach Global', WRG), ('Give to WRG', WRG + '/donate')])}
 </div>
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}</span></div>
@@ -449,7 +449,7 @@ bio = re.search(r'\[vc_column_text\](.*?)\[/vc_column_text\]', ab.raw, re.S).gro
 bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S).replace('For the last 25 years', 'For the last 30 years')
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
-<div class="btns"><a class="btn" href="{B}/meet/">Book a meeting</a><a class="btn ghost" href="{WRG}/founders">Meet the founders ↗</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
+<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{WRG}/founders">Meet the founders ↗</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF, 'soft') + CTA,
      desc=plain(bio), image=portrait)
@@ -555,7 +555,7 @@ page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on
 page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', lede='Questions about missions, books, speaking, or Within Reach Global? Send a note and David will get back to you.')
      + sec(f"""<div class="split" style="align-items:flex-start"><div style="flex:3 1 460px"><div class="hsform"><script charset="utf-8" src="https://js-na2.hsforms.net/forms/embed/v2.js"></script>
 <script>hbspt.forms.create({{portalId: "245175322", formId: "5e54533c-c6ae-4e40-88c4-c3753a88e001", region: "na2"}});</script></div></div>
-<div class="why" style="flex:2 1 300px"><div><b>Book a meeting</b><span>Pick a time on David's calendar for a call.</span><a class="more" href="{B}/meet/">Open the calendar →</a></div>
+<div class="why" style="flex:2 1 300px"><div><b>Book a meeting</b><span>Pick a time on David's calendar for a call.</span><a class="more" href="{B}/meet/#personal">Open the calendar →</a></div>
 <div><b>Podcast guest inquiries</b><span>Missions Pulse guests are by invitation. Use this form to tell David your story.</span></div>
 <div><b>Follow along</b><span>Life and ministry on Instagram.</span><a class="more" href="https://instagram.com/davidjoannes">@davidjoannes ↗</a></div></div></div>""") + CTA,
      desc='Contact David Joannes about missions, books, speaking, or Within Reach Global.')

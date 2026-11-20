@@ -240,3 +240,4 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .ftr .bar{align-items:center}
 .hsform{background:#fff;border:1px solid var(--line);border-radius:8px;padding:clamp(16px,3vw,28px);min-height:420px}
 .why .more{margin-top:6px}
+[id]{scroll-margin-top:84px}
