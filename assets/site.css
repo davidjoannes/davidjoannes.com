@@ -176,3 +176,6 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;letter-spacing:-.02em;line-
 .book .lk a{text-decoration:none;padding:6px 0;border-bottom:1px solid var(--line)}
 .book .lk a:hover{color:var(--accent)}
 .grid.books.big{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.strip{display:grid;grid-template-columns:repeat(3,1fr)}
+.strip img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+@media(max-width:600px){.strip{grid-template-columns:1fr}}

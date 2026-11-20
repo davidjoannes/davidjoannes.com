@@ -380,8 +380,9 @@ EXTRA = {}
 def extra(url, name):
     EXTRA[url] = 'assets/' + name; return f'{B}/assets/{name}'
 H = 'https://withinreachglobal.org/hubfs/'
-fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
-for _n in ('photo-41', 'photo61', 'photo-21', 'photo-31'): extra(H + _n + '.jpg', 'donate/' + _n + '.jpg')
+og_fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
+fam = extra(H + 'photo-41.jpg', 'donate/photo-41.jpg')
+strip = ''.join(f'<img src="{extra(H + n + ".jpg", "donate/" + n + ".jpg")}" alt="{a}" loading="lazy">' for n, a in (('photo-21', 'David preaching with a Thai interpreter'), ('photo-31', 'David with a child in a village'), ('photo61', 'Lorna with a grandmother and child')))
 venmo = extra(H + 'venmo_qrcode-joannes.jpg', 'donate/venmo-qr.jpg')
 zelle = extra(H + 'zelle_qrcode-joannes.jpg', 'donate/zelle-qr.jpg')
 bank = extra(H + 'union-bank-transfer.jpg', 'donate/union-bank-qr.jpg')
@@ -395,6 +396,7 @@ donate = f"""
 </div>
 <div class="pic"><img src="{fam}" alt="David and Lorna Joannes with their two daughters"></div>
 </div></section>
+<div class="strip">{strip}</div>
 
 <section class="pad sec"><div class="wrap split">
 <div><p class="eyebrow">The impact</p><h2 class="d2">Why partner with David and Lorna.</h2></div>
@@ -426,7 +428,7 @@ donate = f"""
 </div></section>
 <section class="red pad sec"><div class="wrap split" style="align-items:flex-end"><div class="stack"><p class="eyebrow" style="margin:0">Within Reach Global</p><h2 class="d2">Send someone to the unreached.</h2></div><div class="stack"><p class="lede" style="margin:0">Local Thai and Asian missionaries reach the spiritually poorest communities. A monthly gift of $650 fully supports one missionary.</p><div class="btns"><a class="btn white" href="{WRG}/donate">Give through Within Reach Global ↗</a></div></div></div></section>
 """
-page('/donate/', 'Partner with the Joannes family', donate, desc='Become a monthly partner with David and Lorna Joannes, founders of Within Reach Global and missionaries in Chiang Mai, Thailand.')
+page('/donate/', 'Partner with the Joannes family', donate, desc='Become a monthly partner with David and Lorna Joannes, founders of Within Reach Global and missionaries in Chiang Mai, Thailand.', image=og_fam)
 MEET = 'https://meetings-na2.hubspot.com/david-joannes'
 meet = phead('Book a meeting', 'Get time on David’s calendar.') + f"""
 <section class="pad sec" style="padding-top:40px"><div class="wrap">
