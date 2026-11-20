@@ -184,8 +184,8 @@ def clean_inline(t):
     return t
 def rewrite_urls(t):
     t = re.sub(r'https?://(?:www\.)?davidjoannes\.com/wp-content/uploads/[^\s"\'<>)\]]+', lambda m: local(m.group(0)), t)
-    t = re.sub(r'(href=")https?://(?:www\.)?davidjoannes\.com/?(?=["#/])', lambda m: m.group(1) + B + ('/' if True else ''), t)
-    t = t.replace(B + '//', B + '/')
+    t = re.sub(r'(href=")https?://(?:www\.)?davidjoannes\.com/?(?=["#/])', lambda m: m.group(1) + B + '/', t)
+    t = re.sub(r'(href="' + re.escape(B) + r')//+', r'\1/', t)
     t = re.sub(r'(<iframe[^>]+src=")http://', r'\1https://', t)
     t = re.sub(r'(<iframe[^>]+src=")//', r'\1https://', t)
     return t
@@ -409,6 +409,11 @@ for p in POSTS:
     hero = att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
     fi = f'<img class="featimg" src="{hero}" alt="">' if hero and not has_media_top else ''
+    vm = p.meta.get('grve_post_video_embed') or p.meta.get('cb_video_embed_code_post') or ''
+    vsrc = re.search(r'https?://[^\s"\'<>]+', vm)
+    if vsrc and (yt_id(vsrc.group(0)) or 'vimeo.com' in vsrc.group(0)):
+        vid = yt_id(vsrc.group(0))
+        if not (vid and vid in body): fi = video(vsrc.group(0)).strip().replace('class="embed"', 'class="embed top"')
     more = [q for q in by_cat[p.cat[2]] if q is not p][:3]
     rel = sec(shead(f'More from {esc(p.cat[1])}', 'Keep reading', f'<a class="more" href="{B}{p.cat[2]}">See all →</a>') + f'<div class="grid">{"".join(post_card(q) for q in more)}</div>', 'soft') if more else ''
     page(p.path, p.title,
@@ -441,11 +446,14 @@ DESC = {'book-the-mind-of-a-missionary': 'A practical and inspiring guide to dev
  'book-a-mente-de-um-mission%C3%A1rio': 'Um guia prático e inspirador para desenvolver a mentalidade, a perseverança e a paixão necessárias para prosperar na missão de Deus.',
  'book-la-mente-de-un-misionero': 'Una guía práctica e inspiradora para desarrollar la mentalidad, la perseverancia y la pasión necesarias para prosperar en la misión de Dios.'}
 def bookcard(t, yr, img, buy, slug):
-    return (f'<a class="bframe" href="{WRG}/{slug}"><span class="bf"><img src="{cover(img)}" alt="{esc(t)} cover" loading="lazy"></span><b>{esc(t)}</b></a>')
+    more = 'Color it online' if 'coloring' in slug else ('Saiba mais' if 'mente-de-um' in slug else ('Más información' if 'misionero' in slug else 'Learn more'))
+    return (f'<div class="bcard"><a class="bcard-cover" href="{WRG}/{slug}"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a><div class="bcard-body"><h3>{esc(t)}</h3>'
+            f'<div class="bcard-year">{yr.split(" · ")[-1]} <span aria-label="Five stars">★★★★★</span></div><p>{DESC[slug]}</p>'
+            f'<div class="bcard-btns"><a class="btn ink" href="{buy}">Get the book</a><a class="btn outline" href="{WRG}/{slug}">{more} →</a></div></div></div>')
 books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and host of the Missions Pulse podcast. He has a love for language, culture, and creative writing, and for the last 30 years he has witnessed God’s kingdom established in forgotten parts of the globe.'
 page('/books/', 'Books by David Joannes',
      phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the church, particularly for the remaining unreached people groups of the 10/40 Window.')
-     + sec('<div class="bframes">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
+     + sec(shead('Resources', 'Browse the books', lede='Books to help you discover your God-given calling and find your role in the Great Commission.') + '<div class="bgrid">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
      + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + tiles(CRS)) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
@@ -515,12 +523,12 @@ donate = f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p cla
 page('/donate/', 'Partner with the Joannes family', donate, desc='Become a monthly partner with David and Lorna Joannes, founders of Within Reach Global and missionaries in Chiang Mai, Thailand.', image=og_fam)
 MEET = 'https://meetings-na2.hubspot.com/david-joannes'
 def cal(id, eyebrow, h, text, url):
-    return sec(f'<p class="eyebrow">{eyebrow}</p><h2>{h}</h2><p class="soft-t">{text}</p><div class="meetings-iframe-container" data-src="{url}?embed=true"></div><p class="fine">Calendar not loading? <a href="{url}">Open the booking page ↗</a></p>', '', id)
+    return sec(f'<p class="eyebrow">{eyebrow}</p><h2>{h}</h2><p class="soft-t">{text}</p><iframe class="cal" src="{url}?embed=true" title="{h}" loading="lazy"></iframe><p class="fine">Calendar not loading? <a href="{url}">Open the booking page ↗</a></p>', '', id)
 page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on David’s calendar', lede='Choose a Missions Pulse podcast interview or a personal meeting.')
      + f'<div class="wrap"><nav class="chips" aria-label="Meeting types" style="margin-top:32px"><a href="#missions-pulse">Podcast interview</a><a href="#personal">Personal meeting</a></nav></div>'
      + cal('missions-pulse', 'Missions Pulse', 'Schedule a podcast interview', 'For Missions Pulse guests: pick a time to record your episode with David.', MEET + '/missions-pulse')
      + cal('personal', 'Personal', 'Book a meeting with David', 'For partners, pastors, and anyone who wants to talk about missions, books, or serving with Within Reach Global.', MEET)
-     + '<script src="https://static.hsappsstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"></script>' + CTA,
+     + CTA,
      desc='Schedule a Missions Pulse podcast interview or a personal meeting with David Joannes.')
 
 # ---------- resources
