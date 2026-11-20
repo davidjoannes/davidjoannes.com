@@ -441,15 +441,11 @@ DESC = {'book-the-mind-of-a-missionary': 'A practical and inspiring guide to dev
  'book-a-mente-de-um-mission%C3%A1rio': 'Um guia prático e inspirador para desenvolver a mentalidade, a perseverança e a paixão necessárias para prosperar na missão de Deus.',
  'book-la-mente-de-un-misionero': 'Una guía práctica e inspiradora para desarrollar la mentalidad, la perseverancia y la pasión necesarias para prosperar en la misión de Dios.'}
 def bookcard(t, yr, img, buy, slug):
-    more = 'Color it online' if 'coloring' in slug else ('Saiba mais' if 'mente-de-um' in slug else ('Más información' if 'misionero' in slug else 'Learn more'))
-    kind = 'Books' if yr[0].isdigit() else yr.split(' · ')[0]
-    return (f'<article class="bookcard"><a class="bc-img" href="{WRG}/{slug}"><img src="{cover(img)}" alt="{esc(t)} cover" loading="lazy"></a>'
-            f'<div class="bc-txt"><p class="eyebrow">{kind} · {yr.split(" · ")[-1]}</p><h3>{esc(t)}</h3><p>{DESC[slug]}</p>'
-            f'<div class="btns"><a class="btn" href="{WRG}/{slug}">{more} →</a><a class="btn-s" href="{buy}">Get the book ↗</a></div></div></article>')
+    return (f'<a class="bframe" href="{WRG}/{slug}"><span class="bf"><img src="{cover(img)}" alt="{esc(t)} cover" loading="lazy"></span><b>{esc(t)}</b></a>')
 books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and host of the Missions Pulse podcast. He has a love for language, culture, and creative writing, and for the last 30 years he has witnessed God’s kingdom established in forgotten parts of the globe.'
 page('/books/', 'Books by David Joannes',
      phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the church, particularly for the remaining unreached people groups of the 10/40 Window.')
-     + sec('<div class="bookcards">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
+     + sec('<div class="bframes">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
      + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + tiles(CRS)) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')

@@ -199,3 +199,10 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .authorrow{display:grid;grid-template-columns:minmax(200px,320px) 1fr;gap:clamp(24px,5vw,64px);align-items:center}
 .authorrow img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block}
 @media(max-width:700px){.authorrow{grid-template-columns:1fr}.authorrow img{max-width:260px}}
+.bframes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:40px 28px}
+.bframe{display:block;text-decoration:none}
+.bf{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;background:var(--soft);border-radius:8px;padding:18px;overflow:hidden;transition:background .2s ease}
+.bf img{height:100%;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(11,22,34,.2));transition:transform .25s ease}
+.bframe:hover .bf img{transform:scale(1.05)}
+.bframe b{display:block;margin-top:14px;font-family:var(--head);font-weight:600;font-size:18px;letter-spacing:-.01em;color:var(--ink);line-height:1.3}
+.bframe:hover b{color:var(--accent)}
