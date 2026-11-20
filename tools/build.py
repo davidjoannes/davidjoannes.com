@@ -180,7 +180,14 @@ def fix_style(m):
 def clean_inline(t):
     t = re.sub(r'<!--\s*/?wp:.*?-->', '', t, flags=re.S)
     t = re.sub(r'<(\w+)((?:\s[^<>]*)?)>', fix_style, t)
-    t = re.sub(r'</?font[^>]*>', '', t)
+    t = re.sub(r'</?(?:font|span)\b[^>]*>', '', t)
+    def cls(m):
+        keep = [c for c in m.group(1).split() if c in ('alignleft', 'alignright', 'aligncenter', 'pull', 'notes')]
+        return f' class="{" ".join(keep)}"' if keep else ''
+    t = re.sub(r'\sclass="([^"]*)"', cls, t)
+    t = re.sub(r'\s(?:id="(?:attachment_|fb-root|more-)[^"]*"|data-(?!a=)[\w-]+="[^"]*")', '', t)
+    t = re.sub(r'<(/?)h1\b', r'<\1h2', t)
+    t = re.sub(r'(?:&nbsp;|\xa0)+', ' ', t)
     return t
 def rewrite_urls(t):
     t = re.sub(r'https?://(?:www\.)?davidjoannes\.com/wp-content/uploads/[^\s"\'<>)\]]+', lambda m: local(m.group(0)), t)
@@ -300,6 +307,11 @@ def convert(p):
     t = re.sub(r'<p>(?:\s|&nbsp;|<br\s*/?>)*</p>', '', t)
     t = re.sub(r'<p[^>]*>\s*(<div class="embed">.*?</div>)\s*</p>', r'\1', t, flags=re.S)
     t = strip_broken(t)
+    for _ in range(3):
+        t = re.sub(r'<(p|h[1-6]|div|strong|em|b|i|u|a|li|blockquote|center)\b[^>]*>(?:\s|<br\s*/?>)*</\1>', '', t)
+    t = re.sub(r'(?:<br\s*/?>\s*){2,}', '<br>\n', t)
+    t = re.sub(r'(<(?:p|h[1-6])\b[^>]*>)\s*(?:<br\s*/?>\s*)+', r'\1', t)
+    t = re.sub(r'(?:\s*<br\s*/?>)+\s*(</(?:p|h[1-6])>)', r'\1', t)
     if notes:
         t += '<ol class="notes">' + ''.join(f'<li id="fn{n}">{rewrite_urls(clean_inline(x))} <a href="#fnr{n}" aria-label="Back to text">↩</a></li>' for n, x in enumerate(notes, 1)) + '</ol>'
     return t
@@ -311,6 +323,7 @@ def plain(t, n=155):
 NAV = [('About', '/about/'), ('Books', '/books/'), ('Podcast', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/'), ('Give', '/donate/')]
 SOCIAL = [('Instagram', 'https://instagram.com/davidjoannes'), ('Facebook', 'https://www.facebook.com/davidjoannesofficial/'), ('YouTube', 'https://www.youtube.com/channel/UCP6KeC0GSoA2JJZwxIg3c3Q'), ('X', 'https://twitter.com/davidjoannes'), ('LinkedIn', 'https://www.linkedin.com/in/davidjoannes')]
 WRITTEN = []
+VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{B}{u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
@@ -333,7 +346,7 @@ def page(path, title, body, desc='', image='', home=False, redirect=''):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{B}/assets/site.css">
+<link rel="stylesheet" href="{B}/assets/site.css?v={VER}">
 </head>
 <body>
 <header class="hdr"><div class="wrap">
