@@ -267,7 +267,7 @@ def convert(p):
         return test_html(TEST.get(c, []), 3 if 'slider' in c else None)
     t = re.sub(r'\[testimonial_stars[^\]]*\]', stars, t)
     t = re.sub(r'\[grve_testimonial[^\]]*\]', lambda m: test_html(TEST.get('_testimonial', [])), t)
-    t = re.sub(r'\[(?:contact-form-7|mc4wp_form|wpforms|ninja_form)[^\]]*\]', f'\n\n<p>To get in touch with David, reach out through <a href="{WRG}">Within Reach Global</a> or message him on <a href="https://instagram.com/davidjoannes">Instagram</a> or <a href="https://www.facebook.com/davidjoannesofficial/">Facebook</a>.</p>\n\n', t)
+    t = re.sub(r'\[(?:contact-form-7|mc4wp_form|wpforms|ninja_form)[^\]]*\]', f'\n\n<p><a class="btn" href="{B}/meet/">Book a meeting with David</a></p>\n\n<p>To get in touch with David, reach out through <a href="{WRG}">Within Reach Global</a> or message him on <a href="https://instagram.com/davidjoannes">Instagram</a> or <a href="https://www.facebook.com/davidjoannesofficial/">Facebook</a>.</p>\n\n', t)
     # anything left that is a known shortcode: drop the tag, keep inner text
     t = re.sub(r'\[/?' + KNOWN + r'(?:\s[^\]]*)?\]', '\n\n', t)
     t = clean_inline(t)
@@ -328,6 +328,7 @@ def page(path, title, body, desc='', image='', home=False):
 <p class="lede" style="margin:0;max-width:26em">Pray, give, and go with Within Reach Global, the ministry David and Lorna founded in 1997.</p>
 <a class="btn" href="{WRG}">Visit withinreachglobal.org ↗</a>
 </div>
+<div class="btns" style="margin-top:28px"><a class="btn ghost" href="{B}/donate/">Support David and Lorna</a><a class="btn ghost" href="{B}/meet/">Book a meeting</a></div>
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><div>{''.join(f'<a href="{u}">{n}</a>' for n, u in SOCIAL)}</div></div>
 </div>
 </footer>
@@ -367,11 +368,83 @@ for path in KEEP:
     if not p: print('missing page', path); continue
     body = convert(p)
     title = TITLES.get(path) or html.unescape(p.title) or 'David Joannes'
+    if path == '/missionspulse/': body = re.sub(r'href="[^"]*/missionspulse/#guest"', f'href="{B}/meet/#missions-pulse"', body)
     if path == '/books/': body = re.sub(r'<section class="vrow[^"]*">(?:(?!</section>).)*BOOKS BY DAVID JOANNES(?:(?!</section>).)*</section>', '', body, count=1, flags=re.S)
     built = '<section class="vrow' in body
     inner = f'<div class="builder prose">{body}</div>' if built else f'<div class="pad"><article class="article prose">{body}</article></div>'
     eyebrow = 'Books' if path.startswith('/books/') else ('The podcast' if 'missions' in path else 'David Joannes')
     page(path, title, phead(eyebrow, title) + inner + ('' if path in ('/thanks/', '/thank-you/') else CTA), desc=plain(p.raw))
+
+# ---------- donate + meeting pages (new)
+EXTRA = {}
+def extra(url, name):
+    EXTRA[url] = 'assets/' + name; return f'{B}/assets/{name}'
+H = 'https://withinreachglobal.org/hubfs/'
+fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
+venmo = extra(H + 'venmo_qrcode-joannes.jpg', 'donate/venmo-qr.jpg')
+zelle = extra(H + 'zelle_qrcode-joannes.jpg', 'donate/zelle-qr.jpg')
+bank = extra(H + 'union-bank-transfer.jpg', 'donate/union-bank-qr.jpg')
+donate = f"""
+<section class="hero dark pad"><div class="wrap">
+<div class="txt">
+<p class="eyebrow" style="margin:0">Partner with the Joannes family</p>
+<h1 class="d1" style="font-size:clamp(46px,6.4vw,96px)">A family on mission, serving the unreached for 30 years.</h1>
+<p class="lede" style="margin:0;max-width:32em">David and Lorna are the founders of Within Reach Global and full-time missionaries in Chiang Mai, Thailand, with their two daughters. For three decades they have planted churches, discipled leaders, and built a movement that keeps multiplying.</p>
+<div class="btns"><a class="btn" href="#give">Become a monthly partner</a><a class="btn ghost" href="#other">Other ways to give</a></div>
+</div>
+<div class="pic"><img src="{fam}" alt="David and Lorna Joannes with their two daughters"></div>
+</div></section>
+
+<section class="pad sec"><div class="wrap split">
+<div><p class="eyebrow">The impact</p><h2 class="d2">Why partner with David and Lorna.</h2></div>
+<div class="rows why">
+<div><b>Lead and shepherd</b><span>Frees them to lead a growing team across Thailand and Southeast Asia.</span></div>
+<div><b>Stay on the ground</b><span>Sustains the relationships, language, and trust that 30 years on the field have built.</span></div>
+<div><b>Cast vision</b><span>Fuels new outreach, including new church plants and emerging leaders.</span></div>
+<div><b>Strengthen the foundation</b><span>Supports the ministry base, including the Chiang Mai House of Prayer and the Access Campaign.</span></div>
+<div><b>Mentor the next generation</b><span>Invests in indigenous missionaries who will carry the work forward.</span></div>
+</div>
+</div></section>
+
+<section class="soft pad sec" id="give"><div class="wrap split" style="align-items:flex-start">
+<div class="stack"><p class="eyebrow" style="margin:0">Give</p><h2 class="d2">Become a monthly financial partner.</h2>
+<p class="lede" style="margin:0;max-width:26em">Your monthly gift keeps David and Lorna on the field among the unreached.</p>
+<p class="dim" style="margin:0;max-width:30em;font-size:16px">Gifts made through this form go to Within Reach Global, Inc., a 501(c)(3) nonprofit (EIN 26-3499455), and are tax-deductible in the United States.</p></div>
+<div class="dbox"><script src="https://donorbox.org/widget.js" paypalExpress="false"></script>
+<iframe src="https://donorbox.org/embed/missionaries-joannes" name="donorbox" title="Donate to the Joannes family" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="900px" width="100%" style="max-width:500px;min-width:250px;max-height:none!important" allow="payment"></iframe></div>
+</div></section>
+
+<section class="pad sec" id="other"><div class="wrap">
+<p class="eyebrow">Other ways to give</p><h2 class="d2" style="margin-bottom:12px">Prefer another method?</h2>
+<p class="dim" style="margin:0 0 clamp(32px,4vw,48px)">Gifts made by Venmo, Zelle, or bank transfer are not tax-deductible.</p>
+<div class="tiles ways">
+<div class="tile"><div><h3>Venmo</h3><p>@davidjoannes</p></div><img src="{venmo}" alt="Venmo QR code for @davidjoannes" loading="lazy"></div>
+<div class="tile"><div><h3>Zelle</h3><p>david@withinreachglobal.org</p></div><img src="{zelle}" alt="Zelle QR code for david@withinreachglobal.org" loading="lazy"></div>
+<div class="tile"><div><h3>Philippines bank transfer</h3><p>For partners in the Philippines.<br>Union Bank<br>Lorna Macadangdang Joannes<br>1025 1004 8465</p></div><img src="{bank}" alt="Union Bank transfer QR code" loading="lazy"></div>
+</div>
+</div></section>
+<section class="red pad sec"><div class="wrap split" style="align-items:flex-end"><div class="stack"><p class="eyebrow" style="margin:0">Within Reach Global</p><h2 class="d2">Send someone to the unreached.</h2></div><div class="stack"><p class="lede" style="margin:0">Local Thai and Asian missionaries reach the spiritually poorest communities. A monthly gift of $650 fully supports one missionary.</p><div class="btns"><a class="btn white" href="{WRG}/donate">Give through Within Reach Global ↗</a></div></div></div></section>
+"""
+page('/donate/', 'Partner with the Joannes family', donate, desc='Become a monthly partner with David and Lorna Joannes, founders of Within Reach Global and missionaries in Chiang Mai, Thailand.')
+MEET = 'https://meetings-na2.hubspot.com/david-joannes'
+meet = phead('Book a meeting', 'Get time on David’s calendar.') + f"""
+<section class="pad sec" style="padding-top:40px"><div class="wrap">
+<nav class="chips" aria-label="Meeting types"><a href="#missions-pulse">Missions Pulse podcast interview</a><a href="#personal">Personal meeting</a></nav>
+<div id="missions-pulse" style="padding-top:clamp(40px,5vw,64px)">
+<p class="eyebrow">Missions Pulse</p><h2 class="d2">Schedule a podcast interview.</h2>
+<p class="lede dim" style="max-width:34em">For Missions Pulse guests: pick a time to record your episode with David.</p>
+<div class="meetings-iframe-container" data-src="{MEET}/missions-pulse?embed=true"></div>
+<p class="dim" style="font-size:16px">Calendar not loading? <a href="{MEET}/missions-pulse">Open the Missions Pulse booking page ↗</a></p>
+</div>
+<div id="personal" style="padding-top:clamp(56px,7vw,96px)">
+<p class="eyebrow">Personal</p><h2 class="d2">Book a meeting with David.</h2>
+<p class="lede dim" style="max-width:34em">For partners, pastors, and anyone who wants to talk about missions, books, or serving with Within Reach Global.</p>
+<div class="meetings-iframe-container" data-src="{MEET}?embed=true"></div>
+<p class="dim" style="font-size:16px">Calendar not loading? <a href="{MEET}">Open the booking page ↗</a></p>
+</div>
+</div></section>
+<script src="https://static.hsappsstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"></script>""" + CTA
+page('/meet/', 'Book a meeting with David', meet, desc='Schedule a Missions Pulse podcast interview or a personal meeting with David Joannes.')
 
 # ---------- blog listings
 def listing(path, title, posts, active):
@@ -396,7 +469,7 @@ def find_att(name):
     for k, a in ATT.items():
         if a['url'].endswith(name): return k
     return ''
-portrait = att(find_att('P1722282-4-cropped-small-square.jpg'))
+portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
 BOOKS = [('The Mind of a Missionary Devotional', '10728', '/books/the-mind-of-a-missionary/#devotional'), ('The Space Between Memories', '9456', '/books/the-space-between-memories/'),
          ('Gospel Privilege', '9190', '/books/gospel-privilege/'), ('See the City', '10257', '/books/see-the-city/'), ('Glorious Hope', '10471', '/books/see-the-city/#glorioushope'),
          ('Faith for Firebrands', '11043', 'https://faithforfirebrands.com/'), ('That Lasting Joy', '11044', 'https://thatlastingjoy.com/')]
@@ -510,4 +583,5 @@ open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSite
 open(os.path.join(OUT, '.nojekyll'), 'w').write('')
 os.makedirs(os.path.join(OUT, 'tools'), exist_ok=True)
 with open(os.path.join(OUT, 'tools', 'image-urls.txt'), 'w') as f: f.write('\n'.join(sorted(USED)) + '\n')
+with open(os.path.join(OUT, 'tools', 'extra-files.txt'), 'w') as f: f.write(''.join(f'{u} {p}\n' for u, p in sorted(EXTRA.items())))
 print('pages written', len(WRITTEN), '| posts', len(POSTS), '| upload files referenced', len(USED))

@@ -160,3 +160,13 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;letter-spacing:-.02em;line-
 .prose .grid{margin:1.5em 0}
 .prose img.aligncenter{margin-left:auto;margin-right:auto}
 .vcol h1,.vcol h2,.vcol h3,.vcol h4,.vcol h5{margin-top:.4em}
+.why>div{display:flex;flex-direction:column;gap:4px;padding:20px 0;border-top:1px solid var(--line)}
+.why>div:last-child{border-bottom:1px solid var(--line)}
+.why b{font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.15}
+.why span{color:var(--mute);font-size:17px}
+.dbox{background:#fff;padding:clamp(16px,3vw,32px);display:flex;justify-content:center;border-top:4px solid var(--accent)}
+.ways .tile{background:var(--soft);min-height:0}
+.ways .tile:hover{box-shadow:none}
+.ways .tile p{color:var(--ink2);overflow-wrap:anywhere}
+.ways .tile img{width:200px;max-width:100%;background:#fff}
+.meetings-iframe-container{margin:28px 0 12px;min-height:640px;background:var(--soft)}
