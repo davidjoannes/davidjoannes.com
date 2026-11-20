@@ -228,3 +228,15 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .article .prose h2 strong,.article .prose h3 strong,.article .prose h4 strong{font-weight:inherit}
 .article .prose>:first-child{margin-top:0}
 .article .prose center{text-align:left}
+.igband{display:flex;flex-wrap:wrap;align-items:center;gap:16px 22px;background:linear-gradient(90deg,#D12B1F,#b0206e);color:#fff;text-decoration:none;border-radius:10px;padding:22px 26px;margin-bottom:44px}
+.igband:hover{filter:brightness(1.06)}
+.igic svg{width:40px;height:40px;display:block}
+.igtxt{flex:1 1 280px;display:flex;flex-direction:column}
+.igtxt b{font-family:var(--head);font-weight:600;font-size:clamp(20px,2.4vw,26px);letter-spacing:-.02em;line-height:1.2}
+.igtxt span{font-weight:300;color:rgba(255,255,255,.9)}
+.soc{display:flex;gap:6px}
+.soc a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:rgba(255,255,255,.8)}
+.soc a:hover{background:rgba(255,255,255,.12);color:#fff}
+.ftr .bar{align-items:center}
+.hsform{background:#fff;border:1px solid var(--line);border-radius:8px;padding:clamp(16px,3vw,28px);min-height:420px}
+.why .more{margin-top:6px}

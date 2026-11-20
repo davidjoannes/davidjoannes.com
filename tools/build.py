@@ -322,6 +322,12 @@ def plain(t, n=155):
 # ---------- layout
 NAV = [('About', '/about/'), ('Books', '/books/'), ('Podcast', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/'), ('Give', '/donate/')]
 SOCIAL = [('Instagram', 'https://instagram.com/davidjoannes'), ('Facebook', 'https://www.facebook.com/davidjoannesofficial/'), ('YouTube', 'https://www.youtube.com/channel/UCP6KeC0GSoA2JJZwxIg3c3Q'), ('X', 'https://twitter.com/davidjoannes'), ('LinkedIn', 'https://www.linkedin.com/in/davidjoannes')]
+IC = {'Instagram': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+ 'Facebook': '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7V4.2C16.5 4.1 15.5 4 14.4 4 12 4 10.3 5.5 10.3 8.3v2.5H7.5V14h2.8v8z"/></svg>',
+ 'YouTube': '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z"/></svg>',
+ 'X': '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.1l-6.8 7.8L22 21h-6.3l-4.9-6.4L5.2 21H2.1l7.3-8.3L2 3h6.4l4.4 5.9zm-1.1 16.1h1.7L7.7 4.8H5.9z"/></svg>',
+ 'LinkedIn': '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3zM9.5 9.75h3.8v1.6h.1c.5-1 1.9-2 3.8-2 4.1 0 4.8 2.7 4.8 6.1V21h-4v-4.9c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6V21h-4z"/></svg>'}
+SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>' for n, u in SOCIAL)
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect=''):
@@ -358,14 +364,15 @@ def page(path, title, body, desc='', image='', home=False, redirect=''):
 </main>
 <footer class="ftr dark">
 <div class="wrap">
+<a class="igband" href="https://instagram.com/davidjoannes"><span class="igic">{IC['Instagram']}</span><span class="igtxt"><b>Follow @davidjoannes on Instagram</b><span>Stories, photos, and updates from the mission field.</span></span><span class="btn white">Follow on Instagram ↗</span></a>
 <div class="ftop"><h2>The unreached are within reach.</h2><a class="btn" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="fcols">
 <div class="fabout"><a class="brand" href="{B}/">David Joannes</a><p>Missiologist, author, podcaster, and Founder of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.</p></div>
 {fcol('Explore', [('About', '/about/'), ('Books', '/books/'), ('Missions Pulse', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/')])}
-{fcol('Connect', [('Book a meeting', '/meet/'), ('Be a podcast guest', '/meet/#missions-pulse'), ('Contact', '/contact/')] + SOCIAL[:3])}
+{fcol('Connect', [('Book a meeting', '/meet/'), ('Be a podcast guest', '/meet/#missions-pulse'), ('Contact', '/contact/')])}
 {fcol('Give', [('Support David and Lorna', '/donate/'), ('Within Reach Global', WRG), ('Give to WRG', WRG + '/donate')])}
 </div>
-<div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span>{' · '.join(f'<a href="{u}">{n}</a>' for n, u in SOCIAL)}</span></div>
+<div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}</span></div>
 </div>
 </footer>
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
@@ -503,7 +510,7 @@ page('/missionspulse/', 'Missions Pulse',
      desc=plain(mp.raw))
 
 # ---------- other carried-over pages (plain article layout)
-KEEP = ['/books/the-mind-of-a-missionary/notes/', '/books/gospel-privilege/launchteam/', '/missions-blab/', '/contact/', '/subscribe/', '/fbr/', '/instagram/',
+KEEP = ['/books/the-mind-of-a-missionary/notes/', '/books/gospel-privilege/launchteam/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
         '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/']
 TITLES = {'/thank-you/': 'Thank you', '/instagram/': 'David Joannes on Instagram', '/thanks/': 'Thanks!'}
 for path in KEEP:
@@ -543,6 +550,15 @@ page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on
      + cal('personal', 'Personal', 'Book a meeting with David', 'For partners, pastors, and anyone who wants to talk about missions, books, or serving with Within Reach Global.', MEET)
      + CTA,
      desc='Schedule a Missions Pulse podcast interview or a personal meeting with David Joannes.')
+
+# ---------- contact (HubSpot form)
+page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', lede='Questions about missions, books, speaking, or Within Reach Global? Send a note and David will get back to you.')
+     + sec(f"""<div class="split" style="align-items:flex-start"><div style="flex:3 1 460px"><div class="hsform"><script charset="utf-8" src="https://js-na2.hsforms.net/forms/embed/v2.js"></script>
+<script>hbspt.forms.create({{portalId: "245175322", formId: "5e54533c-c6ae-4e40-88c4-c3753a88e001", region: "na2"}});</script></div></div>
+<div class="why" style="flex:2 1 300px"><div><b>Book a meeting</b><span>Pick a time on David's calendar for a call.</span><a class="more" href="{B}/meet/">Open the calendar →</a></div>
+<div><b>Be a podcast guest</b><span>Schedule a Missions Pulse interview.</span><a class="more" href="{B}/meet/#missions-pulse">Schedule an interview →</a></div>
+<div><b>Follow along</b><span>Life and ministry on Instagram.</span><a class="more" href="https://instagram.com/davidjoannes">@davidjoannes ↗</a></div></div></div>""") + CTA,
+     desc='Contact David Joannes about missions, books, speaking, or Within Reach Global.')
 
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
