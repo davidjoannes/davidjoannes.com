@@ -184,3 +184,18 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .hide{display:none!important}
 .center{text-align:center}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.bookcards{display:flex;flex-direction:column}
+.bookcard{display:grid;grid-template-columns:minmax(200px,380px) 1fr;gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(32px,5vw,56px) 0;border-top:1px solid var(--line)}
+.bookcard:first-child{border-top:0;padding-top:0}
+.bookcard:nth-child(even){grid-template-columns:1fr minmax(200px,380px)}
+.bookcard:nth-child(even) .bc-img{order:2}
+.bc-img{display:block;background:var(--soft);border-radius:8px;padding:clamp(16px,3vw,36px);transition:transform .2s ease}
+.bc-img:hover{transform:translateY(-3px)}
+.bc-img img{display:block;width:100%;aspect-ratio:1/1;object-fit:contain;filter:drop-shadow(0 12px 18px rgba(11,22,34,.18))}
+.bc-txt h3{font-size:clamp(24px,2.8vw,34px)}
+.bc-txt>p:not(.eyebrow){font-size:17px;font-weight:300;line-height:1.75;color:var(--mute);margin:14px 0 0;max-width:34em}
+.bc-txt .btns{margin-top:24px}
+@media(max-width:700px){.bookcard,.bookcard:nth-child(even){grid-template-columns:1fr}.bookcard:nth-child(even) .bc-img{order:0}.bc-img{max-width:320px}}
+.authorrow{display:grid;grid-template-columns:minmax(200px,320px) 1fr;gap:clamp(24px,5vw,64px);align-items:center}
+.authorrow img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block}
+@media(max-width:700px){.authorrow{grid-template-columns:1fr}.authorrow img{max-width:260px}}

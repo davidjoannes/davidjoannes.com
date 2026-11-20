@@ -430,9 +430,27 @@ page('/about/', 'About David',
      desc=plain(bio), image=portrait)
 
 # ---------- books
+DESC = {'book-the-mind-of-a-missionary': 'A practical and inspiring guide to developing the mindset, endurance, and passion needed to thrive in God’s mission.',
+ 'book-the-space-between-memories': 'A gripping missionary memoir filled with adventure, sacrifice, and the unfolding story of God’s work among the unreached.',
+ 'book-faith-for-firebrands': 'A bold 31-day devotional inspired by C. T. Studd that calls readers to radical faith, wholehearted surrender, and passionate mission.',
+ 'book-that-lasting-joy': 'A 31-day devotional inspired by Amy Carmichael that invites readers into deeper joy, devotion to Christ, and a heart for the nations.',
+ 'book-see-the-city': "A hope-filled journey through suffering, eternity, and the promise of God’s coming city, inspired by a refugee girl's dream in Myanmar.",
+ 'glorious-hope-coloring-book': 'A meditative coloring book for adults and teens, and a companion to See the City, filled with Scripture, reflection, and creative encouragement.',
+ 'book-gospel-privilege': 'A compelling call to recognize the privilege of gospel access and live as a bold witness of Christ’s kingdom.',
+ 'book-the-mind-of-a-missionary-devotional': 'Thirty-one inspiring readings that draw from missionary heroes to strengthen faith and ignite courage for God’s calling.',
+ 'book-a-mente-de-um-mission%C3%A1rio': 'Um guia prático e inspirador para desenvolver a mentalidade, a perseverança e a paixão necessárias para prosperar na missão de Deus.',
+ 'book-la-mente-de-un-misionero': 'Una guía práctica e inspiradora para desarrollar la mentalidad, la perseverancia y la pasión necesarias para prosperar en la misión de Dios.'}
+def bookcard(t, yr, img, buy, slug):
+    more = 'Color it online' if 'coloring' in slug else ('Saiba mais' if 'mente-de-um' in slug else ('Más información' if 'misionero' in slug else 'Learn more'))
+    kind = 'Books' if yr[0].isdigit() else yr.split(' · ')[0]
+    return (f'<article class="bookcard"><a class="bc-img" href="{WRG}/{slug}"><img src="{cover(img)}" alt="{esc(t)} cover" loading="lazy"></a>'
+            f'<div class="bc-txt"><p class="eyebrow">{kind} · {yr.split(" · ")[-1]}</p><h3>{esc(t)}</h3><p>{DESC[slug]}</p>'
+            f'<div class="btns"><a class="btn" href="{WRG}/{slug}">{more} →</a><a class="btn-s" href="{buy}">Get the book ↗</a></div></div></article>')
+books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and host of the Missions Pulse podcast. He has a love for language, culture, and creative writing, and for the last 30 years he has witnessed God’s kingdom established in forgotten parts of the globe.'
 page('/books/', 'Books by David Joannes',
      phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the church, particularly for the remaining unreached people groups of the 10/40 Window.')
-     + sec(SHELF.replace('class="shelf"', 'class="shelf big"'), 'soft')
+     + sec('<div class="bookcards">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
+     + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + tiles(CRS)) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
 OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (6, 'gospelprivilege'),
