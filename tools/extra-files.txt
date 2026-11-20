@@ -3,6 +3,10 @@ https://withinreachglobal.org/hubfs/amdum-small.png assets/books/amdum-small.png
 https://withinreachglobal.org/hubfs/david-joannes-founder-2.jpg assets/david-joannes.jpg
 https://withinreachglobal.org/hubfs/joannes-default-image.jpg assets/donate/joannes-family.jpg
 https://withinreachglobal.org/hubfs/lmdum-small.png assets/books/lmdum-small.png
+https://withinreachglobal.org/hubfs/photo-21.jpg assets/donate/photo-21.jpg
+https://withinreachglobal.org/hubfs/photo-31.jpg assets/donate/photo-31.jpg
+https://withinreachglobal.org/hubfs/photo-41.jpg assets/donate/photo-41.jpg
+https://withinreachglobal.org/hubfs/photo61.jpg assets/donate/photo61.jpg
 https://withinreachglobal.org/hubfs/union-bank-transfer.jpg assets/donate/union-bank-qr.jpg
 https://withinreachglobal.org/hubfs/venmo_qrcode-joannes.jpg assets/donate/venmo-qr.jpg
 https://withinreachglobal.org/hubfs/zelle_qrcode-joannes.jpg assets/donate/zelle-qr.jpg

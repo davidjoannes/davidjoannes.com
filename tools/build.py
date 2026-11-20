@@ -381,6 +381,7 @@ def extra(url, name):
     EXTRA[url] = 'assets/' + name; return f'{B}/assets/{name}'
 H = 'https://withinreachglobal.org/hubfs/'
 fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
+for _n in ('photo-41', 'photo61', 'photo-21', 'photo-31'): extra(H + _n + '.jpg', 'donate/' + _n + '.jpg')
 venmo = extra(H + 'venmo_qrcode-joannes.jpg', 'donate/venmo-qr.jpg')
 zelle = extra(H + 'zelle_qrcode-joannes.jpg', 'donate/zelle-qr.jpg')
 bank = extra(H + 'union-bank-transfer.jpg', 'donate/union-bank-qr.jpg')
