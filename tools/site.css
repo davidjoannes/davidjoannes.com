@@ -241,3 +241,6 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .hsform{background:#fff;border:1px solid var(--line);border-radius:8px;padding:clamp(16px,3vw,28px);min-height:420px}
 .why .more{margin-top:6px}
 [id]{scroll-margin-top:84px}
+.notice{border-left:4px solid var(--accent);background:#fff;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0 4px;max-width:46em;font-size:16px}
+.notice b{color:var(--ink)}
+.notice a{color:var(--accent);font-weight:600}

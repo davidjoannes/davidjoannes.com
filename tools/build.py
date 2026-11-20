@@ -369,7 +369,7 @@ def page(path, title, body, desc='', image='', home=False, redirect=''):
 <div class="fcols">
 <div class="fabout"><a class="brand" href="{B}/">David Joannes</a><p>Missiologist, author, podcaster, and Founder of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.</p></div>
 {fcol('Explore', [('About', '/about/'), ('Books', '/books/'), ('Missions Pulse', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/')])}
-{fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Podcast guest inquiries', '/contact/'), ('Contact', '/contact/')])}
+{fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Be a podcast guest', '/contact/'), ('Contact', '/contact/')])}
 {fcol('Give', [('Support David and Lorna', '/donate/'), ('Within Reach Global', WRG), ('Give to WRG', WRG + '/donate')])}
 </div>
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}</span></div>
@@ -504,7 +504,7 @@ page('/missionspulse/', 'Missions Pulse',
      phead('The podcast', 'Missions Pulse', lede='Know God’s heart. Join His mission. An interview-style video podcast that displays God at work in the world and inspires believers toward their individual role in the Great Commission.')
      + sec(f'<div class="split"><div><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div>'
            f'<div><p class="eyebrow">Watch and listen</p><h2>Subscribe wherever you listen.</h2><div class="btns" style="margin:20px 0 32px">{"".join(f"<a class=btn-s href={u}>{n} ↗</a>" for n, u in SUBS)}</div>'
-           f'<p class="eyebrow">Be a guest</p><p class="soft-t">Have a story of God at work among the nations? Guests are by invitation, so contact David first and tell him about it.</p><a class="btn" href="{B}/contact/">Contact David</a></div></div>')
+           f'<p class="eyebrow">Be a guest</p><p class="soft-t">Have a story of God at work among the nations? Guests are by invitation, so contact David first and tell him about it. Once he confirms, schedule your interview.</p><div class="btns" style="margin-top:0"><a class="btn" href="{B}/contact/">Contact David first</a><a class="btn-s" href="{B}/meet/#missions-pulse">Interview calendar</a></div></div></div>')
      + sec(shead('Episodes', 'Recent episodes', f'<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All {len(eps_all)} episodes →</a>') + f'<div class="grid">{"".join(post_card(q) for q in eps_all[:9])}</div>', 'soft')
      + (sec(shead('Guests', 'Missions Pulse guests') + f'<div class="prose guests">{guests}</div>') if guests else '') + CTA,
      desc=plain(mp.raw))
@@ -544,19 +544,19 @@ page('/donate/', 'Partner with the Joannes family', donate, desc='Become a month
 MEET = 'https://meetings-na2.hubspot.com/david-joannes'
 def cal(id, eyebrow, h, text, url):
     return sec(f'<p class="eyebrow">{eyebrow}</p><h2>{h}</h2><p class="soft-t">{text}</p><iframe class="cal" src="{url}?embed=true" title="{h}" loading="lazy"></iframe><p class="fine">Calendar not loading? <a href="{url}">Open the booking page ↗</a></p>', '', id)
-page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on David’s calendar', lede='Book a personal meeting below. For Missions Pulse interviews, contact David first.')
-     + f'<div class="wrap"><nav class="chips" aria-label="Meeting types" style="margin-top:32px"><a href="#personal">Personal meeting</a><a href="#missions-pulse">Podcast guests</a></nav></div>'
+page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on David’s calendar', lede='Book a personal meeting, or schedule a Missions Pulse interview once you have connected with David.')
+     + f'<div class="wrap"><nav class="chips" aria-label="Meeting types" style="margin-top:32px"><a href="#personal">Personal meeting</a><a href="#missions-pulse">Podcast interview</a></nav></div>'
      + cal('personal', 'Personal', 'Book a meeting with David', 'For partners, pastors, and anyone who wants to talk about missions, books, or serving with Within Reach Global.', MEET)
-     + sec(f'<p class="eyebrow">Missions Pulse</p><h2>Want to be a podcast guest?</h2><p class="soft-t" style="max-width:40em">Missions Pulse guests are by invitation. Send David a note first with who you are and the story you would share. If it is a fit, he will reply with a link to schedule the interview.</p><a class="btn" href="{B}/contact/">Contact David about the podcast</a>', 'soft', 'missions-pulse')
+     + sec(f'<p class="eyebrow">Missions Pulse</p><h2>Schedule a podcast interview</h2><div class="notice"><b>Please connect with David first.</b> Missions Pulse guests are by invitation. <a href="{B}/contact/">Send David a note</a> about who you are and the story you would share, and schedule below once he has confirmed.</div><iframe class="cal" src="{MEET}/missions-pulse?embed=true" title="Schedule a Missions Pulse interview" loading="lazy"></iframe><p class="fine">Calendar not loading? <a href="{MEET}/missions-pulse">Open the booking page ↗</a></p>', 'soft', 'missions-pulse')
      + CTA,
-     desc='Book a personal meeting with David Joannes, or contact him about being a Missions Pulse guest.')
+     desc='Book a personal meeting with David Joannes or schedule a Missions Pulse podcast interview.')
 
 # ---------- contact (HubSpot form)
 page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', lede='Questions about missions, books, speaking, or Within Reach Global? Send a note and David will get back to you.')
      + sec(f"""<div class="split" style="align-items:flex-start"><div style="flex:3 1 460px"><div class="hsform"><script charset="utf-8" src="https://js-na2.hsforms.net/forms/embed/v2.js"></script>
 <script>hbspt.forms.create({{portalId: "245175322", formId: "5e54533c-c6ae-4e40-88c4-c3753a88e001", region: "na2"}});</script></div></div>
 <div class="why" style="flex:2 1 300px"><div><b>Book a meeting</b><span>Pick a time on David's calendar for a call.</span><a class="more" href="{B}/meet/#personal">Open the calendar →</a></div>
-<div><b>Podcast guest inquiries</b><span>Missions Pulse guests are by invitation. Use this form to tell David your story.</span></div>
+<div><b>Be a podcast guest</b><span>Please connect with David here first. Once he confirms, schedule your Missions Pulse interview.</span><a class="more" href="{B}/meet/#missions-pulse">Interview calendar →</a></div>
 <div><b>Follow along</b><span>Life and ministry on Instagram.</span><a class="more" href="https://instagram.com/davidjoannes">@davidjoannes ↗</a></div></div></div>""") + CTA,
      desc='Contact David Joannes about missions, books, speaking, or Within Reach Global.')
 
