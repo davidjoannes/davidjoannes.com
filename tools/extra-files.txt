@@ -10,3 +10,4 @@ https://withinreachglobal.org/hubfs/photo61.jpg assets/donate/photo61.jpg
 https://withinreachglobal.org/hubfs/union-bank-transfer.jpg assets/donate/union-bank-qr.jpg
 https://withinreachglobal.org/hubfs/venmo_qrcode-joannes.jpg assets/donate/venmo-qr.jpg
 https://withinreachglobal.org/hubfs/zelle_qrcode-joannes.jpg assets/donate/zelle-qr.jpg
+https://withinreachglobal.org/ tools/_wrg/home.html
