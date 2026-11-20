@@ -244,3 +244,7 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .notice{border-left:4px solid var(--accent);background:#fff;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0 4px;max-width:46em;font-size:16px}
 .notice b{color:var(--ink)}
 .notice a{color:var(--accent);font-weight:600}
+.calwrap{position:relative;margin:20px 0 8px;background:var(--soft);border-radius:6px;min-height:760px}
+.calwrap>span{position:absolute;top:120px;left:0;right:0;text-align:center;color:var(--mute);font-size:15px}
+.calwrap .cal{position:relative;margin:0;background:transparent}
+.soft .calwrap{background:#fff}

@@ -330,7 +330,7 @@ IC = {'Instagram': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" 
 SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>' for n, u in SOCIAL)
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
-def page(path, title, body, desc='', image='', home=False, redirect=''):
+def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{B}{u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
     og = f'<meta property="og:image" content="{SITE}{image[len(B):]}">' if image else ''
@@ -353,6 +353,7 @@ def page(path, title, body, desc='', image='', home=False, redirect=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{B}/assets/site.css?v={VER}">
+{head}
 </head>
 <body>
 <header class="hdr"><div class="wrap">
@@ -543,13 +544,14 @@ donate = f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p cla
 page('/donate/', 'Partner with the Joannes family', donate, desc='Become a monthly partner with David and Lorna Joannes, founders of Within Reach Global and missionaries in Chiang Mai, Thailand.', image=og_fam)
 MEET = 'https://meetings-na2.hubspot.com/david-joannes'
 def cal(id, eyebrow, h, text, url):
-    return sec(f'<p class="eyebrow">{eyebrow}</p><h2>{h}</h2><p class="soft-t">{text}</p><iframe class="cal" src="{url}?embed=true" title="{h}" loading="lazy"></iframe><p class="fine">Calendar not loading? <a href="{url}">Open the booking page ↗</a></p>', '', id)
+    return sec(f'<p class="eyebrow">{eyebrow}</p><h2>{h}</h2><p class="soft-t">{text}</p><div class="calwrap"><span>Loading calendar…</span><iframe class="cal" src="{url}?embed=true" title="{h}"></iframe></div><p class="fine">Calendar not loading? <a href="{url}">Open the booking page ↗</a></p>', '', id)
 page('/meet/', 'Book a meeting with David', phead('Book a meeting', 'Get time on David’s calendar', lede='Book a personal meeting, or schedule a Missions Pulse interview once you have connected with David.')
      + f'<div class="wrap"><nav class="chips" aria-label="Meeting types" style="margin-top:32px"><a href="#personal">Personal meeting</a><a href="#missions-pulse">Podcast interview</a></nav></div>'
      + cal('personal', 'Personal', 'Book a meeting with David', 'For partners, pastors, and anyone who wants to talk about missions, books, or serving with Within Reach Global.', MEET)
-     + sec(f'<p class="eyebrow">Missions Pulse</p><h2>Schedule a podcast interview</h2><div class="notice"><b>Please connect with David first.</b> Missions Pulse guests are by invitation. <a href="{B}/contact/">Send David a note</a> about who you are and the story you would share, and schedule below once he has confirmed.</div><iframe class="cal" src="{MEET}/missions-pulse?embed=true" title="Schedule a Missions Pulse interview" loading="lazy"></iframe><p class="fine">Calendar not loading? <a href="{MEET}/missions-pulse">Open the booking page ↗</a></p>', 'soft', 'missions-pulse')
+     + sec(f'<p class="eyebrow">Missions Pulse</p><h2>Schedule a podcast interview</h2><div class="notice"><b>Please connect with David first.</b> Missions Pulse guests are by invitation. <a href="{B}/contact/">Send David a note</a> about who you are and the story you would share, and schedule below once he has confirmed.</div><div class="calwrap"><span>Loading calendar…</span><iframe class="cal" src="{MEET}/missions-pulse?embed=true" title="Schedule a Missions Pulse interview" loading="lazy"></iframe></div><p class="fine">Calendar not loading? <a href="{MEET}/missions-pulse">Open the booking page ↗</a></p>', 'soft', 'missions-pulse')
      + CTA,
-     desc='Book a personal meeting with David Joannes or schedule a Missions Pulse podcast interview.')
+     desc='Book a personal meeting with David Joannes or schedule a Missions Pulse podcast interview.',
+     head='<link rel="preconnect" href="https://meetings-na2.hubspot.com"><link rel="preconnect" href="https://static.hsappsstatic.net" crossorigin><link rel="preconnect" href="https://api-na2.hubspot.com" crossorigin>')
 
 # ---------- contact (HubSpot form)
 page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', lede='Questions about missions, books, speaking, or Within Reach Global? Send a note and David will get back to you.')
