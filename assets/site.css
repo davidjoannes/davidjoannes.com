@@ -170,3 +170,9 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;letter-spacing:-.02em;line-
 .ways .tile p{color:var(--ink2);overflow-wrap:anywhere}
 .ways .tile img{width:200px;max-width:100%;background:#fff}
 .meetings-iframe-container{margin:28px 0 12px;min-height:640px;background:var(--soft)}
+.book .im{text-decoration:none}
+.book .yr{font-size:14px;color:var(--mute);margin-top:-8px}
+.book .lk{display:flex;flex-direction:column;gap:2px;font-size:15px;font-weight:600}
+.book .lk a{text-decoration:none;padding:6px 0;border-bottom:1px solid var(--line)}
+.book .lk a:hover{color:var(--accent)}
+.grid.books.big{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}

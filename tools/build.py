@@ -359,7 +359,7 @@ for p in POSTS:
          desc=plain(p.excerpt or p.raw), image=att(p.thumb, ['large']))
 
 # ---------- converted pages
-KEEP = ['/about/', '/books/', '/books/the-mind-of-a-missionary/', '/books/the-mind-of-a-missionary/notes/', '/books/gospel-privilege/',
+KEEP = ['/about/', '/books/the-mind-of-a-missionary/', '/books/the-mind-of-a-missionary/notes/', '/books/gospel-privilege/',
         '/books/gospel-privilege/launchteam/', '/books/the-space-between-memories/', '/books/see-the-city/', '/missionspulse/',
         '/missions-blab/', '/contact/', '/subscribe/', '/fbr/', '/instagram/', '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/']
 TITLES = {'/books/': 'Books by David Joannes', '/missionspulse/': 'Missions Pulse', '/about/': 'About David', '/thank-you/': 'Thank you', '/instagram/': 'David Joannes on Instagram'}
@@ -470,12 +470,31 @@ def find_att(name):
         if a['url'].endswith(name): return k
     return ''
 portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
-BOOKS = [('The Mind of a Missionary Devotional', '10728', '/books/the-mind-of-a-missionary/#devotional'), ('The Space Between Memories', '9456', '/books/the-space-between-memories/'),
-         ('Gospel Privilege', '9190', '/books/gospel-privilege/'), ('See the City', '10257', '/books/see-the-city/'), ('Glorious Hope', '10471', '/books/see-the-city/#glorioushope'),
-         ('Faith for Firebrands', '11043', 'https://faithforfirebrands.com/'), ('That Lasting Joy', '11044', 'https://thatlastingjoy.com/')]
-def bk(t, i, u):
-    href = u if u.startswith('http') else B + u
-    return f'<a class="book" href="{href}"><div class="im"><img src="{att(i, ["medium", "large"])}" alt="{esc(t)} cover" loading="lazy"></div><b>{esc(t)}</b></a>'
+U = SITE + '/wp-content/uploads/'
+BOOKS = [  # same list and order as withinreachglobal.org/books
+    ('The Mind of a Missionary', '2024', U + '2024/05/tmoam-001b-1024x1024.png', 'https://a.co/d/3s8SEsu', 'book-the-mind-of-a-missionary'),
+    ('The Space Between Memories', '2016/2026', H + 'TSBM-transparent-1.png', 'https://www.amazon.com/dp/1970645016', 'book-the-space-between-memories'),
+    ('Faith for Firebrands', '2025', U + '2025/11/fff-front-and-back-1024x1024.png', 'https://bit.ly/faithforfirebrands', 'book-faith-for-firebrands'),
+    ('That Lasting Joy', '2025', U + '2025/11/tlj-front-and-back-1024x1024.png', 'https://bit.ly/thatlastingjoy', 'book-that-lasting-joy'),
+    ('See the City', '2023', U + '2023/08/gp-038-6x9-Paperback-Upright-Front-Back-COVERVAULT-square-small-1024x1024.png', 'https://a.co/d/5H8AO9O', 'book-see-the-city'),
+    ('Glorious Hope', 'Coloring book · 2023', U + '2023/09/gh010.png', 'https://a.co/d/gLZpy4F', 'glorious-hope-coloring-book'),
+    ('Gospel Privilege', '2021', U + '2021/05/gp-038-6x9-Paperback-Upright-Front-Back-COVERVAULT-small-2-1001x1024.png', 'https://www.amazon.com/dp/B093FQP6LT', 'book-gospel-privilege'),
+    ('The Mind of a Missionary Devotional', '2024', U + '2024/05/tmoam-devotional-001.png', 'https://a.co/d/8TQZzVh', 'book-the-mind-of-a-missionary-devotional'),
+    ('A mente de um missionário', 'Português · 2025', H + 'amdum-small.png', 'https://www.amazon.com/mente-mission%C3%A1rio-Mind-Missionary-transculturais-ebook/dp/B0FWRMLP2S', 'book-a-mente-de-um-mission%C3%A1rio'),
+    ('La mente de un misionero', 'Español · 2025', H + 'lmdum-small.png', 'https://www.amazon.com/mente-misionero-Mind-Missionary-transculturais-ebook/dp/B0FYX6K4MZ', 'book-la-mente-de-un-misionero'),
+]
+def cover(u): return local(u) if u.startswith(SITE) else extra(u, 'books/' + u.rsplit('/', 1)[1])
+def bk(t, yr, img, buy, slug):
+    more = 'Color it online' if 'coloring' in slug else 'Learn more'
+    return (f'<div class="book"><a class="im" href="{WRG}/{slug}"><img src="{cover(img)}" alt="{esc(t)} cover" loading="lazy"></a><b>{esc(t)}</b><span class="yr">{yr}</span>'
+            f'<span class="lk"><a href="{buy}">Get the book ↗</a><a href="{WRG}/{slug}">{more} ↗</a></span></div>')
+COURSES = [('The Mind of a Missionary', '13 lessons', 'the-mind-of-a-missionary-course'), ('Gospel Privilege', '9 lessons', 'gospel-privilege-course'), ('See the City', '12 lessons', 'see-the-city-course')]
+course_rows = ''.join(f'<a href="{WRG}/{u}"><span class="t" style="font-size:28px">{t} Course</span><span class="s dim">Free course · {n} ↗</span></a>' for t, n, u in COURSES)
+books_page = phead('Books', 'Books by David Joannes') + f"""
+<section class="soft pad sec"><div class="wrap"><div class="grid books big">{''.join(bk(*x) for x in BOOKS)}</div></div></section>
+<section class="dark pad sec"><div class="wrap split" style="align-items:flex-start"><div class="stack" style="flex:1 1 300px;gap:16px"><p class="eyebrow" style="margin:0">Free online courses</p><h2 class="d2">Go deeper with David's books.</h2><p class="dim" style="margin:0">Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.</p></div><div class="rows" style="flex:2 1 420px">{course_rows}</div></div></section>
+""" + CTA
+page('/books/', 'Books by David Joannes', books_page, desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
 eps = by_cat['/blog/missions-pulse-podcast-posts/'][:4]
 def ep(p):
     m = re.match(r'#(\d+):\s*(.*)', p.title)
@@ -508,7 +527,7 @@ home = f'''
 <div class="stats">
 <div><b>30</b><span>years serving in China and Thailand</span></div>
 <div><b>85</b><span>churches planted through Within Reach Global</span></div>
-<div><b>8</b><span>books on missions and the unreached</span></div>
+<div><b>10</b><span>titles in English, Portuguese, and Spanish</span></div>
 <div><b>110+</b><span>Missions Pulse podcast episodes</span></div>
 </div>
 </div></section>
@@ -529,12 +548,12 @@ home = f'''
 <div><p class="eyebrow">Books</p><h2 class="d2" style="max-width:14em">Books to stir the church toward the unreached.</h2></div>
 <a class="more" href="{B}/books/">See all books →</a></div>
 <div class="feature dark">
-<div class="cover"><img src="{att('10663', ['large'])}" alt="The Mind of a Missionary cover"></div>
+<div class="cover"><img src="{cover(BOOKS[0][2])}" alt="The Mind of a Missionary cover"></div>
 <div class="body stack"><p class="eyebrow" style="margin:0">Featured</p><h3 class="d3">The Mind of a Missionary</h3>
 <p class="dim" style="margin:0;max-width:32em">In the 2nd edition of <em>The Mind of a Missionary</em>, author David Joannes draws upon history, psychology, life experience, and powerful storytelling to reshape your perception of God’s global work.</p>
-<div class="btns"><a class="btn" href="{B}/books/the-mind-of-a-missionary/">About the book</a><a class="btn ghost" href="{B}/books/the-mind-of-a-missionary/#freechapter">Read a free chapter</a></div></div>
+<div class="btns"><a class="btn" href="{BOOKS[0][3]}">Get the book ↗</a><a class="btn ghost" href="{WRG}/{BOOKS[0][4]}">Learn more ↗</a></div></div>
 </div>
-<div class="grid books" style="margin-top:clamp(40px,5vw,64px)">{''.join(bk(*b) for b in BOOKS)}</div>
+<div class="grid books" style="margin-top:clamp(40px,5vw,64px)">{''.join(bk(*x) for x in BOOKS[1:])}</div>
 </div></section>
 {quote}
 <section class="dark pad sec" id="podcast"><div class="wrap">
@@ -549,17 +568,15 @@ home = f'''
 <section class="soft pad sec" id="resources"><div class="wrap">
 <p class="eyebrow">Free resources</p><h2 class="d2" style="max-width:14em;margin-bottom:clamp(32px,4vw,56px)">Tools to find your part in the Great Commission.</h2>
 <div class="tiles">
-<a class="tile" href="{WRG}"><div><h3>Spiritual Gifts Test</h3><p>Discover how God has wired you to serve.</p></div><span class="go">Take the test ↗</span></a>
-<a class="tile" href="{WRG}"><div><h3>Gospel Access Score</h3><p>See how much access to the gospel you have had, and who has none.</p></div><span class="go">Get your score ↗</span></a>
+<a class="tile" href="{WRG}/spiritual-gifts-test"><div><h3>Spiritual Gifts Test</h3><p>Discover how God has wired you to serve.</p></div><span class="go">Take the test ↗</span></a>
+<a class="tile" href="{WRG}/gospel-access-score"><div><h3>Gospel Access Score</h3><p>See how much access to the gospel you have had, and who has none.</p></div><span class="go">Get your score ↗</span></a>
 <a class="tile" href="https://prayforthailand.com"><div><h3>Pray for Thailand</h3><p>An interactive prayer map of all 77 provinces.</p></div><span class="go">Open the map ↗</span></a>
 <a class="tile" href="{B}/books/the-mind-of-a-missionary/#freechapter"><div><h3>Free book chapters</h3><p>Start reading The Mind of a Missionary and Gospel Privilege.</p></div><span class="go">Read a chapter →</span></a>
 </div>
 <div class="feature dark" style="margin-top:20px;align-items:flex-start">
 <div class="stack" style="flex:1 1 300px;gap:16px"><p class="eyebrow" style="margin:0">Free online courses</p><h3 class="d3">Go deeper with David's books.</h3><p class="dim" style="margin:0">Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.</p></div>
 <div class="rows" style="flex:2 1 420px">
-<a href="https://themindofamissionary.com"><span class="t" style="font-size:28px">The Mind of a Missionary Course</span><span class="s dim">Adult, youth, and kids editions ↗</span></a>
-<a href="{WRG}/gospel-privilege-course"><span class="t" style="font-size:28px">Gospel Privilege Course</span><span class="s dim">Start the course ↗</span></a>
-<a href="{WRG}/see-the-city-course"><span class="t" style="font-size:28px">See the City Course</span><span class="s dim">Start the course ↗</span></a>
+{course_rows}
 </div></div>
 </div></section>
 
