@@ -377,7 +377,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}</span></div>
 </div>
 </footer>
-<script>(function(){{var b=document.querySelector('.burger'),n=document.getElementById('mainnav');if(!b||!n)return;b.addEventListener('click',function(){{var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}});n.addEventListener('click',function(e){{if(e.target.tagName==='A'){{n.classList.remove('open');b.classList.remove('open');b.setAttribute('aria-expanded','false')}}}})}})();</script>
+<script>(function(){{var b=document.querySelector('.burger'),n=document.getElementById('mainnav');if(!b||!n)return;b.addEventListener('click',function(){{var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}});function c(){{n.classList.remove('open');b.classList.remove('open');b.setAttribute('aria-expanded','false')}}n.addEventListener('click',function(e){{if(e.target.closest('a'))c()}});document.addEventListener('click',function(e){{if(n.classList.contains('open')&&!e.target.closest('.hdr'))c()}});document.addEventListener('keydown',function(e){{if(e.key==='Escape')c()}})}})();</script>
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
 </body>
 </html>'''
