@@ -1,0 +1,131 @@
+<div class="tn-band" id="notes-and-references">
+  <div class="tn-band-in">
+    <div class="tn-eyebrow">{{ module.eyebrow }}</div>
+    <h2 class="tn-h">{{ module.heading }}</h2>
+    <p class="tn-p">{{ module.text }}</p>
+    <a class="tn-btn" href="#notes" data-tn-open>{{ module.button_text }}</a>
+  </div>
+</div>
+<div class="tn-ov" id="tn-ov" role="dialog" aria-modal="true" aria-label="{{ module.heading }}" data-src="{{ module.data_url }}" hidden>
+  <div class="tn-top">
+    <div class="tn-top-in">
+      <div class="tn-title"><span>{{ module.book_title }}</span><b>{{ module.heading }}</b></div>
+      <button type="button" class="tn-x" data-tn-close aria-label="Close">Close <span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="tn-tools">
+      <input type="search" id="tn-q" placeholder="Search a name, a title, or a word" autocomplete="off" aria-label="Search notes and references">
+      <div class="tn-chips" id="tn-chips"></div>
+    </div>
+  </div>
+  <div class="tn-body" id="tn-body"><p class="tn-load">Loading notes…</p></div>
+</div>
+{% raw %}
+<style>
+.tn-band{text-align:center;padding:8px 20px}
+.tn-band-in{max-width:640px;margin:0 auto}
+.tn-eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#bd954a;margin-bottom:10px}
+.tn-h{margin:0 0 10px;font-size:clamp(26px,3.4vw,36px);line-height:1.15}
+.tn-p{margin:0 auto 22px;font-size:17px;line-height:1.6;opacity:.85}
+.tn-btn{display:inline-block;background:#bd954a;color:#fff !important;text-decoration:none !important;font-weight:700;font-size:16px;padding:14px 26px;border-radius:999px;transition:background .15s}
+.tn-btn:hover{background:#a17b3a}
+.tn-ov{position:fixed;inset:0;z-index:2147483000;background:#fff;color:#1c1c1c;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:left}
+.tn-ov[hidden]{display:none}
+.tn-top{position:sticky;top:0;z-index:2;background:#F4F0E7;border-bottom:1px solid #e2dccd}
+.tn-top-in,.tn-tools,.tn-body{max-width:900px;margin:0 auto;padding-left:20px;padding-right:20px;box-sizing:border-box}
+.tn-top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:14px}
+.tn-title span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#bd954a}
+.tn-title b{font-size:20px;line-height:1.2}
+.tn-x{background:#1c1c1c;color:#fff;border:0;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.tn-x span{font-size:17px;line-height:1;margin-left:4px}
+.tn-tools{padding-top:12px;padding-bottom:12px}
+#tn-q{width:100%;box-sizing:border-box;border:1px solid #cfc8b6;border-radius:8px;padding:11px 14px;font-size:16px;background:#fff;color:#1c1c1c;margin:0 0 10px}
+.tn-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tn-chips::-webkit-scrollbar{display:none}
+.tn-chips a{flex:none;background:#fff;border:1px solid #d9d2c0;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:700;color:#1c1c1c !important;text-decoration:none !important}
+.tn-chips a:hover{border-color:#bd954a;color:#a17b3a !important}
+.tn-body{padding-top:26px;padding-bottom:80px}
+.tn-count{font-size:14px;opacity:.7;margin:0 0 6px}
+.tn-sec h3{font-size:22px;line-height:1.25;margin:34px 0 4px;padding-bottom:10px;border-bottom:2px solid #1c1c1c}
+.tn-sec h4{font-size:16px;margin:26px 0 6px;color:#a17b3a;text-transform:uppercase;letter-spacing:.08em}
+.tn-sec ol,.tn-sec ul{list-style:none;margin:0;padding:0}
+.tn-sec li{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid #ece7da;font-size:16px;line-height:1.55;overflow-wrap:anywhere}
+.tn-sec li i{flex:none;width:30px;text-align:right;font-style:normal;font-weight:700;color:#bd954a;font-size:14px;padding-top:2px}
+.tn-sec li a{color:#a17b3a;text-decoration:underline;text-underline-offset:2px}
+.tn-sec ul li{display:block;padding-left:22px;text-indent:-22px}
+.tn-none{padding:30px 0;opacity:.7}
+html.tn-lock,html.tn-lock body{overflow:hidden !important}
+@media(max-width:600px){.tn-title b{font-size:17px}.tn-sec li{font-size:15px;gap:10px}.tn-sec li i{width:24px}.tn-sec h3{font-size:19px}}
+</style>
+<script>
+(function(){
+  var ov=document.getElementById('tn-ov'); if(!ov) return;
+  document.body.appendChild(ov);
+  var body=document.getElementById('tn-body'), chips=document.getElementById('tn-chips'), q=document.getElementById('tn-q');
+  var loaded=false, loading=null;
+  function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+  function cid(t){var m=t.match(/^Chapter (\d+)/);return m?'ch'+m[1]:(/^Intro/.test(t)?'intro':'conclusion');}
+  function chip(t){var m=t.match(/^Chapter (\d+)/);return m?m[1]:(/^Intro/.test(t)?'Intro':'End');}
+  function ext(h){return h.replace(/<a href=/g,'<a target="_blank" rel="noopener" href=');}
+  function render(d){
+    var h='<p class="tn-count" id="tn-count"></p>', c='';
+    d.notes.forEach(function(s){
+      var id=cid(s.title);
+      c+='<a href="#notes-'+id+'">'+chip(s.title)+'</a>';
+      h+='<section class="tn-sec" id="notes-'+id+'"><h3>'+s.title+'</h3><ol>';
+      s.notes.forEach(function(n){h+='<li><i>'+n[0]+'</i><span>'+ext(n[1])+'</span></li>';});
+      h+='</ol></section>';
+    });
+    c+='<a href="#notes-references">References</a>';
+    h+='<section class="tn-sec" id="notes-references"><h3>References</h3>';
+    d.refs.forEach(function(s){
+      h+='<div class="tn-grp" id="notes-ref-'+slug(s.title)+'"><h4>'+s.title+'</h4><ul>';
+      s.items.forEach(function(t){h+='<li>'+ext(t)+'</li>';});
+      h+='</ul></div>';
+    });
+    h+='</section><p class="tn-none" id="tn-none" hidden>No matches. Try a different word.</p>';
+    body.innerHTML=h; chips.innerHTML=c; loaded=true;
+  }
+  function load(){
+    if(loaded) return Promise.resolve();
+    if(!loading) loading=fetch(ov.getAttribute('data-src')).then(function(r){return r.json();}).then(render).catch(function(){loading=null;body.innerHTML='<p class="tn-load">The notes could not load. Please refresh the page and try again.</p>';});
+    return loading;
+  }
+  function go(hash){
+    var el=hash&&hash!=='#notes'?document.getElementById(hash.slice(1)):null;
+    if(el){ov.scrollTop=el.offsetTop-ov.querySelector('.tn-top').offsetHeight-8;} else {ov.scrollTop=0;}
+  }
+  function open(hash){
+    ov.hidden=false; document.documentElement.classList.add('tn-lock');
+    load().then(function(){go(hash);});
+  }
+  function close(){
+    ov.hidden=true; document.documentElement.classList.remove('tn-lock');
+    if(/^#notes/.test(location.hash)) history.replaceState(null,'',location.pathname+location.search);
+  }
+  function route(){ if(/^#notes(-|$)/.test(location.hash)) open(location.hash); else if(!ov.hidden) close(); }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]');
+    if(e.target.closest&&e.target.closest('[data-tn-close]')){e.preventDefault();close();return;}
+    if(!a) return;
+    var m=(a.getAttribute('href')||'').match(/#notes(-[a-z0-9-]+)?$/);
+    if(m && (a.hash===m[0]) && a.pathname===location.pathname){
+      e.preventDefault(); history.replaceState(null,'',m[0]); open(m[0]);
+    }
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!ov.hidden) close(); });
+  window.addEventListener('hashchange',route);
+  var t; q.addEventListener('input',function(){ clearTimeout(t); t=setTimeout(filter,120); });
+  function filter(){
+    if(!loaded) return;
+    var v=q.value.trim().toLowerCase(), n=0;
+    body.querySelectorAll('.tn-sec li').forEach(function(li){var ok=!v||li.textContent.toLowerCase().indexOf(v)>-1; li.hidden=!ok; if(ok) n++;});
+    body.querySelectorAll('.tn-grp').forEach(function(g){g.hidden=!g.querySelector('li:not([hidden])');});
+    body.querySelectorAll('.tn-sec').forEach(function(s){s.hidden=!s.querySelector('li:not([hidden])');});
+    document.getElementById('tn-count').textContent=v?(n+(n===1?' match':' matches')):'';
+    document.getElementById('tn-none').hidden=n>0;
+    if(v) ov.scrollTop=0;
+  }
+  route();
+})();
+</script>
+{% endraw %}

@@ -944,7 +944,7 @@ for path, (bi, tcat) in OLDBOOKS.items():
     about = re.sub(r'<img\b[^>]*>', '', about); about = re.sub(r'<p[^>]*>\s*(?:<[^>]+>\s*)*ABOUT THE BOOK(?:\s*<[^>]+>)*\s*</p>', '', about)
     about = re.sub(r'<p[^>]*>\s*</p>', '', about)
     ends = ''.join(f'<div class="tq">{autop(clean_inline(d["body"]))}<cite>{esc(titlecase_name(d["name"]))}' + (f'<span>{esc(titlecase_name(d["who"]))}</span>' if d['who'] else '') + '</cite></div>' for d in TEST.get(tcat, []))
-    extra_links = f'<a class="btn ghost" href="{B}/books/the-mind-of-a-missionary/notes/">Notes and references</a>' if bi == 0 else ''
+    extra_links = f'<a class="btn ghost" href="{WRG}/book-the-mind-of-a-missionary#notes" target="_blank" rel="noopener">Notes and references</a>' if bi == 0 else ''
     body = (f'<section class="phead dark"><div class="wrap bookhead"><img src="{cover(img)}" alt="{esc(t)} cover"><div><p class="eyebrow">Books · {yr}</p><h1>{esc(t)}</h1>'
             f'<div class="btns"><a class="btn" href="{buy}">Get the book ↗</a><a class="btn ghost" href="{WRG}/{slug}">Learn more at Within Reach Global ↗</a>{extra_links}</div></div></div></section>'
             + (f'<div class="wrap"><article class="article"><p class="eyebrow">About the book</p><div class="prose plain">{about}</div></article></div>' if about else '')
@@ -1018,7 +1018,8 @@ window.addEventListener('scroll',spy,{passive:true});spy();t.addEventListener('c
             f'<p class="fine" style="margin-top:32px">Notes and references are from the second edition of <em>The Mind of a Missionary</em> by David Joannes.</p>{SHARE}<button id="qtop" type="button" aria-label="Back to top">↑</button></div></div>{js}')
     page('/books/the-mind-of-a-missionary/notes/', 'The Mind of a Missionary: Notes and References', phead('The Mind of a Missionary', 'Notes and References') + body + CTA,
          desc='Every note, citation, and reference from The Mind of a Missionary by David Joannes, chapter by chapter.')
-notes_page()
+# notes now live on the WRG book page; the old address forwards there
+page('/books/the-mind-of-a-missionary/notes/', 'The Mind of a Missionary: Notes and References', phead('The Mind of a Missionary', 'Notes and References') + f'<div class="wrap"><p class="lead" style="padding:48px 0">The notes and references have moved. <a href="{WRG}/book-the-mind-of-a-missionary#notes">Open them on the Within Reach Global book page</a>.</p></div>', desc='Notes and references for The Mind of a Missionary.', redirect=WRG + '/book-the-mind-of-a-missionary#notes')
 
 # ---------- donate + meeting
 og_fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
