@@ -669,7 +669,7 @@ donate = f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p cla
 <p class="lede">David and Lorna are the founders of Within Reach Global and full-time missionaries in Chiang Mai, Thailand, with their two daughters. For three decades they have planted churches, discipled leaders, and built a movement that keeps multiplying.</p>
 <div class="btns"><a class="btn" href="#give">Become a monthly partner</a><a class="btn ghost" href="#other">Other ways to give</a></div></div><img src="{fam}" alt="David and Lorna Joannes with their two daughters"></div></section>
 <div class="strip">{strip}</div>
-''' + sec(f'<div class="split"><div><p class="eyebrow">The impact</p><h2>Why partner with David and Lorna.</h2></div><div class="why">{"".join(f"<div><b>{a}</b><span>{b}</span></div>" for a, b in WHY)}</div></div>') + sec(f'''<div class="split" style="align-items:flex-start"><div><p class="eyebrow">Give</p><h2>Become a monthly financial partner.</h2>
+''' + sec(f'<p class="eyebrow">The impact</p><h2>Why partner with David and Lorna.</h2><div class="whygrid">{"".join(f"<div><i>{n:02d}</i><b>{a}</b><span>{b}</span></div>" for n, (a, b) in enumerate(WHY, 1))}</div>') + sec(f'''<div class="split" style="align-items:flex-start"><div><p class="eyebrow">Give</p><h2>Become a monthly financial partner.</h2>
 <p class="soft-t">Your monthly gift keeps David and Lorna on the field among the unreached.</p>
 <p class="fine">Gifts made through this form go to Within Reach Global, Inc., a 501(c)(3) nonprofit (EIN 26-3499455), and are tax-deductible in the United States.</p></div>
 <div class="dbox"><script src="https://donorbox.org/widget.js" paypalExpress="false"></script>
