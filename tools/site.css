@@ -71,7 +71,7 @@ h2.big{font-size:clamp(34px,4.4vw,54px)}
 .shelf.big{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:44px 32px}
 .cover{display:block;transition:transform .2s ease}
 .cover:hover{transform:translateY(-4px)}
-.cover img{display:block;width:100%;aspect-ratio:1/1;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(11,22,34,.16))}
+.cover img{display:block;width:100%;height:auto;border-radius:3px;box-shadow:0 10px 22px rgba(11,22,34,.22)}
 /* cards */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:36px 26px}
 .card{display:flex;flex-direction:column;gap:10px;text-decoration:none}
@@ -211,7 +211,7 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 @media(max-width:600px){.bgrid{grid-template-columns:1fr}}
 .bcard{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .bcard-cover{background:var(--soft);padding:22px;display:flex;align-items:center;justify-content:center}
-.bcard-cover img{width:100%;height:auto;max-height:240px;object-fit:contain}
+.bcard-cover img{width:auto;max-width:100%;height:240px;object-fit:contain;border-radius:3px;box-shadow:0 8px 18px rgba(11,22,34,.2)}
 .bcard-body{padding:22px 24px 26px;display:flex;flex-direction:column;flex:1}
 .bcard h3{font-size:19px;margin-bottom:4px}
 .bcard-year{font-size:13px;color:var(--mute);margin-bottom:12px}
@@ -262,3 +262,9 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .nav a[aria-current]{box-shadow:none;color:#fff;font-weight:600}
 .nav a.cta{margin-top:12px;border-top:0;padding:14px 16px;text-align:center;font-size:16px}
 }
+
+.soc{flex-wrap:wrap}
+.soc .amz{width:auto;height:auto;display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0B1622;font-family:Sora,sans-serif;font-weight:600;font-size:15px;padding:11px 20px;border-radius:999px;text-decoration:none;margin-right:10px;opacity:1}
+.soc .amz b{color:#D12B1F}
+.soc .amz:hover{background:#D12B1F;color:#fff}
+.soc .amz:hover b{color:#fff}
