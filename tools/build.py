@@ -626,6 +626,7 @@ HIST = {}
 HIST_CREDIT = '<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>.</p>'
 def hist_home():
     tabs = ''.join(f'<button type="button" data-m="{m.lower()}">{m[:3]}</button>' for m in MONTHS)
+    cards = ''.join(f'<a class="h-card" href="#{m.lower()}" data-m="{m.lower()}"><span class="h-num">{i + 1:02d}</span><h3>{m}</h3><p>{len(HIST[m])} days of missions history</p><span class="more">Open {m} →</span></a>' for i, m in enumerate(MONTHS))
     secs = ''
     for i, month in enumerate(MONTHS):
         ents = HIST[month]; ml = month.lower()
@@ -639,9 +640,10 @@ def hist_home():
                  f'<div class="h-days"><span>Jump to a day</span>{days}</div><ol class="h-list">{rows}</ol>'
                  f'<div class="h-pn"><a href="#{prev.lower()}">← {prev}</a><a href="#{nxt.lower()}">{nxt} →</a></div></section>')
     js = """<script>(function(){var M=%s,S=[].slice.call(document.querySelectorAll('.h-month')),T=[].slice.call(document.querySelectorAll('.h-months button')),n=new Date(),tm=M[n.getMonth()].toLowerCase(),td=n.getDate();
-function show(m,scroll){S.forEach(function(s){s.hidden=s.id!=m});T.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')==m)});if(scroll){var e=document.getElementById(scroll);if(e)e.scrollIntoView({block:scroll==m?'start':'center'})}}
+var C=[].slice.call(document.querySelectorAll('.h-card'));
+function show(m,scroll){S.forEach(function(s){s.hidden=s.id!=m});T.concat(C).forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')==m)});if(scroll){var e=scroll==m?document.getElementById('h-bar'):document.getElementById(scroll);if(e)e.scrollIntoView({block:scroll==m?'start':'center'})}}
 function route(first){var h=decodeURIComponent(location.hash.slice(1)).toLowerCase(),m=h.split('-')[0];if(M.map(function(x){return x.toLowerCase()}).indexOf(m)>-1)show(m,h);else if(first)show(tm)}
-T.forEach(function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');history.replaceState(null,'','#'+m);show(m);document.getElementById('h-pick').scrollIntoView({block:'start'})})});
+T.concat(C).forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();var m=b.getAttribute('data-m');history.replaceState(null,'','#'+m);show(m,m)})});
 window.addEventListener('hashchange',function(){route(false)});
 var r=document.getElementById(tm+'-'+td),d=td;for(var k=1;k<4&&!r;k++){r=document.getElementById(tm+'-'+(td-k));if(r)d=td-k}
 if(r){r.classList.add('today');var x=document.getElementById('h-otd'),y=r.querySelector('.h-body i');x.querySelector('.h-otd-date').textContent=M[n.getMonth()]+' '+d+(y?', '+y.textContent:'');x.querySelector('.h-otd-text').textContent=r.querySelector('.h-body p').textContent;x.querySelector('a').href='#'+tm+'-'+d;x.hidden=false}
@@ -649,7 +651,7 @@ route(true)})();</script>""" % json.dumps(MONTHS)
     return ('<div class="h-page"><div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
             '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em></p></div>'
             '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See it in the month →</a></div>'
-            f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-months">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
+            f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-grid">{cards}</div><div class="h-months" id="h-bar">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
 SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
          """<script>(function(){var u=encodeURIComponent(location.href.split('#')[0].split('?')[0]),t=encodeURIComponent(document.title.replace(/ \\| David Joannes$/,'')),L={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,'in':'https://www.linkedin.com/sharing/share-offsite/?url='+u,em:'mailto:?subject='+t+'&body='+u};
 [].forEach.call(document.querySelectorAll('.share [data-s]'),function(a){var k=a.getAttribute('data-s');if(L[k]){a.href=L[k];if(k!='em'){a.target='_blank';a.rel='noopener'}}else a.addEventListener('click',function(){var v=decodeURIComponent(u);(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){a.textContent='Link copied';setTimeout(function(){a.textContent='Copy link'},1800)},function(){prompt('Copy this link',v)})})})})();</script>""")
