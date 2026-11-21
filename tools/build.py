@@ -738,7 +738,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <div class="pic"><img src="{portrait}" alt="David Joannes"></div>
 </div></section>
 ''' + sec(shead('Books', 'Books to stir the church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
-<section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2></div>
+<section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2><figure class="smug"><img src="{B}/assets/david-bible-smuggler.jpg" alt="A young David Joannes with stacks of Bibles bound for China" loading="lazy" width="744" height="418"><figcaption>David with Bibles bound for China.</figcaption></figure></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
 <p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the church see the unreached.</p>
 <a class="more" href="{B}/about/">Read David's story →</a></div></div>{STATS}</div></section>

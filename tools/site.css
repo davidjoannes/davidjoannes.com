@@ -358,3 +358,4 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .subhead{font-size:22px;margin:48px 0 20px}
 .cpanel.ricon .rcovers img{height:74%}.rcovers{gap:12px}
 .shelf.six{grid-template-columns:repeat(6,1fr)}@media(max-width:900px){.shelf.six{grid-template-columns:repeat(3,1fr)}}@media(max-width:480px){.shelf.six{grid-template-columns:repeat(2,1fr)}}
+.smug{margin:22px 0 0}.smug img{display:block;width:100%;height:auto;border-radius:10px}.smug figcaption{font-size:13px;color:var(--mute);margin-top:8px}
