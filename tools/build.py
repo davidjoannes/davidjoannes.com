@@ -358,7 +358,8 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <body>
 <header class="hdr"><div class="wrap">
 <a class="brand" href="{B}/">David Joannes</a>
-<nav class="nav" aria-label="Main">{nav}<a class="cta" href="{WRG}">Within Reach Global ↗</a></nav>
+<button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button>
+<nav class="nav" id="mainnav" aria-label="Main">{nav}<a class="cta" href="{WRG}">Within Reach Global ↗</a></nav>
 </div></header>
 <main>
 {body}
@@ -376,6 +377,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}</span></div>
 </div>
 </footer>
+<script>(function(){{var b=document.querySelector('.burger'),n=document.getElementById('mainnav');if(!b||!n)return;b.addEventListener('click',function(){{var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}});n.addEventListener('click',function(e){{if(e.target.tagName==='A'){{n.classList.remove('open');b.classList.remove('open');b.setAttribute('aria-expanded','false')}}}})}})();</script>
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
 </body>
 </html>'''
@@ -600,7 +602,6 @@ home = f'''<section class="hero dark"><div class="wrap">
 <div class="btns"><a class="btn" href="{WRG}">Explore Within Reach Global ↗</a><a class="btn ghost" href="{B}/books/">Read David's books</a></div></div>
 <div class="pic"><img src="{portrait}" alt="David Joannes"></div>
 </div></section>
-<div class="endorsed dark"><div class="wrap"><span class="lbl">Endorsed by</span><span>Heidi Baker</span><span>Nik Ripken</span><span>Ron Luce</span><span>Matthew Ellison</span><span>Craig Greenfield</span><span>Mark Buchanan</span></div></div>
 ''' + sec(shead('Books', 'Books to stir the church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF, 'soft', 'books') + f'''
 <section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
