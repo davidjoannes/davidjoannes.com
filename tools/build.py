@@ -500,6 +500,20 @@ RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Tak
        ('Gospel Access Score', 'See how much access to the gospel you have had, and who has none.', 'Get your score ↗', WRG + '/gospel-access-score'),
        ('Pray for Thailand', 'An interactive prayer map of all 77 provinces.', 'Open the map ↗', 'https://prayforthailand.com')]
 CRS = [(f'{t} Course', f'Free course · {n}', 'Start free ↗', f'{WRG}/{u}') for t, n, u in COURSES]
+RICON = {
+ 'gift': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11" rx="1.5"/><path d="M3.5 13h17M12 9v11"/><path d="M12 9c-1.500-3.500-5.500-4-5.500-1.800C6.500 9 9.500 9 12 9zM12 9c1.500-3.500 5.500-4 5.500-1.800C17.500 9 14.500 9 12 9z"/></svg>', 'gauge': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.2"/></svg>', 'pin': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.500-6.200-6.500-11a6.500 6.500 0 0 1 13 0c0 4.800-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.300"/></svg>', 'mic': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21M9 21h6"/></svg>', 'book': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.500C10.200 5.200 7.600 4.800 4 5v13c3.600-.2 6.200.2 8 1.500 1.800-1.300 4.400-1.700 8-1.500V5c-3.600-.2-6.200.2-8 1.500zM12 6.500v13"/></svg>', 'map': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.500 6.500l5.500-2 6 2 5.500-2v13l-5.500 2-6-2-5.500 2zM9 4.500v13M15 6.500v13"/></svg>'}
+RCARDS = [  # same modules as the Resources menu on withinreachglobal.org
+    ('Spiritual Gifts Test', 'Free test', 'Discover how God has gifted you and where you fit in His mission.', 'Take the test ↗', WRG + '/spiritual-gifts-test', 'gift', 'c-teal'),
+    ('Gospel Access Score', '18 questions', 'Eighteen quick questions. See how your access to the gospel compares worldwide.', 'Get your score ↗', WRG + '/gospel-access-score', 'gauge', 'c-dusk'),
+    ('Field Stories', 'Stories', 'Real stories of the gospel reaching the unreached.', 'Read the stories ↗', WRG + '/field-stories', 'pin', 'c-navy'),
+    ('Missions Pulse Podcast', 'Podcast', 'Conversations from the front lines of missions, hosted by David Joannes.', 'Watch and listen ↗', WRG + '/missions-pulse', 'mic', 'c-red'),
+    ('Books', 'Books', 'David Joannes on missions, discipleship, and the unreached.', 'Browse the books ↗', WRG + '/books', 'book', 'c-gold'),
+    ('Pray for Thailand', 'Prayer map', 'An interactive prayer map of all 77 provinces.', 'Open the map ↗', 'https://prayforthailand.com', 'map', 'c-sun'),
+]
+RES_CARDS = '<div class="cgrid">' + ''.join(
+    f'<a class="ccard" href="{u}"><span class="cpanel ricon {k}"><span class="cbadge">{bd}</span>{RICON[i]}</span>'
+    f'<span class="cbody"><h3>{t}</h3><p>{d}</p><span class="btn">{g}</span></span></a>'
+    for t, bd, d, g, u, i, k in RCARDS) + '</div>'
 def _cv(t): return cover(next(b[2] for b in BOOKS if b[0] == t))
 _TM = f'{WRG}/the-mind-of-a-missionary-course'
 CCARDS = [  # (title, badge, meta, blurb, url, cover title, panel class)
@@ -660,7 +674,7 @@ page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', l
 
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
-     + sec(shead('Free tools', 'Start here') + tiles(RES)) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft')
+     + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft')
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF) + CTA,
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
