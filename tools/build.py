@@ -262,6 +262,7 @@ def clean_inline(t):
     t = re.sub(r'(?:&nbsp;|\xa0)+', ' ', t)
     return t
 def rewrite_urls(t):
+    t = re.sub(r'https?://(?:www\.)?withinreachglobal\.org/1040-window/?', WRG + '/why-the-unreached', t)
     t = re.sub(r'https?://(?:www\.)?davidjoannes\.com/wp-content/uploads/[^\s"\'<>)\]]+', lambda m: local(m.group(0)), t)
     t = re.sub(r'(href=")https?://(?:www\.)?davidjoannes\.com/?(?=["#/])', lambda m: m.group(1) + B + '/', t)
     t = re.sub(r'(href="' + re.escape(B) + r')//+', r'\1/', t)
@@ -929,7 +930,7 @@ def bookcard(t, yr, img, buy, slug):
             f'<div class="bcard-btns"><a class="btn ink" href="{buy}">Get the book</a><a class="btn outline" href="{WRG}/{slug}">{more} →</a></div></div></div>')
 books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and host of the Missions Pulse podcast. He has a love for language, culture, and creative writing, and for the last 30 years he has witnessed God’s kingdom established in forgotten parts of the globe.'
 page('/books/', 'Books by David Joannes',
-     phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the church, particularly for the remaining unreached people groups of the 10/40 Window.')
+     phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the Church, particularly for the remaining unreached people groups of the 10/40 Window.')
      + sec(shead('Resources', 'Browse the books', lede='Books to help you discover your God-given calling and find your role in the Great Commission.') + '<div class="bgrid">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
      + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + COURSE_CARDS) + CTA,
@@ -1101,7 +1102,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <div class="btns"><a class="btn" href="{WRG}">Explore Within Reach Global ↗</a><a class="btn ghost" href="{B}/books/">Read David's books</a></div></div>
 <div class="pic"><img src="{portrait}" alt="David Joannes"></div>
 </div></section>
-''' + sec(shead('Books', 'Books to stir the church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
+''' + sec(shead('Books', 'Books to stir the Church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
 <section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2><figure class="smug"><img src="{B}/assets/david-bible-smuggler.jpg" alt="A young David Joannes with stacks of Bibles bound for China" loading="lazy" width="744" height="418"><figcaption>David with Bibles bound for China.</figcaption></figure></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
 <p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the church see the unreached.</p>
