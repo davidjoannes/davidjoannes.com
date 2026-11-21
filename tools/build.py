@@ -700,5 +700,5 @@ open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSite
 open(os.path.join(OUT, '.nojekyll'), 'w').write('')
 os.makedirs(os.path.join(OUT, 'tools'), exist_ok=True)
 with open(os.path.join(OUT, 'tools', 'image-urls.txt'), 'w') as f: f.write('\n'.join(sorted(USED)) + '\n')
-with open(os.path.join(OUT, 'tools', 'extra-files.txt'), 'w') as f: f.write(''.join(f'{u} {p}\n' for u, p in sorted({**EXTRA, **MJFILES}.items())))
+with open(os.path.join(OUT, 'tools', 'extra-files.txt'), 'w') as f: f.write(''.join(f'{u} {p}\n' for u, p in sorted(EXTRA.items())))
 print('pages written', len(WRITTEN), '| posts', len(POSTS), '| upload files referenced', len(USED))
