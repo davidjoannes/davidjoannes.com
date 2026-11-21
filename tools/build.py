@@ -675,9 +675,38 @@ HIST_ADD = [  # dated events drawn from The Mind of a Missionary (2nd ed.), writ
     ('December', 2, '1860', 'C. T. Studd, future missionary to China, India, and Africa, is born.'),
     ('December', 8, '1840', 'David Livingstone leaves London for Africa, carrying 500 copies of Robert Moffat’s newly printed Scripture translation for Kuruman.'),
     ('December', 15, '1910', 'C. T. Studd, in his fifties and against his doctor’s advice, sails from Liverpool for the heart of Africa.'),
+    # from The Mind of a Missionary Devotional
+    ('January', 16, '1837', 'Maria Dyer, later Maria Taylor and known as the “Mother” of the China Inland Mission, is born in Penang, Malaysia, to missionary parents.'),
+    ('January', 22, '1862', 'Louise “Lulu” Fleming is born on a plantation in Hibernia, Florida. She will become the first African American woman appointed by the Woman’s Baptist Foreign Missionary Society.'),
+    ('January', 23, '1821', 'Lott Cary sails for Sierra Leone, becoming the first black American missionary to Africa.'),
+    ('February', 7, '1822', 'Lott Cary and his children settle in Monrovia, Liberia, where he begins preaching the gospel and hopes to reach the Bassa, Vey, and Kroo peoples.'),
+    ('March', 15, '1807', 'Henry Martyn preaches his first sermon in Urdu, less than a year after arriving in India.'),
+    ('March', 20, '1957', 'Isobel Kuhn, missionary to the Lisu people of southwest China, dies.'),
+    ('April', 21, '1806', 'Henry Martyn, twenty-five, arrives in Calcutta after a voyage of nine and a half months.'),
+    ('May', 18, '1870', 'James Gilmour arrives in Peking (now Beijing) on his way to the Mongols, landing in a country in crisis.'),
+    ('May', 21, '1811', 'Henry Martyn arrives in Persia, the first Protestant missionary to live in the country. He finishes his Persian New Testament the following February.'),
+    ('May', 23, '1887', 'Lulu Fleming reaches Palabala in the Congo and makes language study her first duty.'),
+    ('June', 3, '1905', 'Hudson Taylor, founder of the China Inland Mission, dies in China.'),
+    ('June', 12, '1843', 'James Gilmour, future missionary to Mongolia, is born in Glasgow, Scotland.'),
+    ('June', 20, '1899', 'Lulu Fleming, pioneer missionary to the Congo, dies.'),
+    ('June', 27, '1886', 'The Woman’s Baptist Foreign Missionary Society asks Lulu Fleming to be its first representative to the Congo.'),
+    ('July', 5, '1856', 'Ion Keith-Falconer, future missionary to Arabia, is born into Scottish nobility in Edinburgh.'),
+    ('July', 10, '1805', 'Henry Martyn sails from England for India.'),
+    ('August', 5, '1870', 'James Gilmour sets out across the Gobi Desert for the plains of Mongolia.'),
+    ('August', 28, '1727', 'The Moravian community at Herrnhut keeps watch in prayer around the clock, with pairs taking turns through the night. The prayer watch goes on for a hundred years.'),
+    ('September', 2, '1863', 'Archibald Forder, future missionary to the Bedouin, is born in Salisbury, England.'),
+    ('September', 3, '1891', 'Archibald Forder and his wife sail for the Arabian desert. They later travel four days by camel to Kerak, Jordan.'),
+    ('September', 19, '1955', 'Jim Elliot, Nate Saint, and their teammates fly over Waorani territory in Ecuador, dropping gifts to build trust.'),
+    ('October', 6, '2023', 'Loren Cunningham, founder of Youth With A Mission, dies.'),
+    ('October', 11, '1928', 'Isobel Kuhn leaves Canada for southwest China with the China Inland Mission.'),
+    ('October', 16, '1812', 'Henry Martyn dies while traveling home from Persia. His Persian New Testament is later presented to the Shah.'),
+    ('November', 6, '1914', 'Archibald Forder, missionary to Bedouin nomads, is jailed on suspicion of being a spy. He spends four years in prison in Damascus.'),
+    ('November', 24, '1958', 'LIFE magazine reports on Elisabeth Elliot living among the Waorani under the headline “Child Among Her Father’s Killers.”'),
+    ('December', 6, '1934', 'Red Army soldiers take John and Betty Stam and their infant daughter hostage in Anhui Province, China.'),
+    ('December', 17, '1901', 'Isobel Kuhn is born in Toronto, Canada.'),
 ]
 HIST_CREDIT = ('<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>. '
-               f'Additional entries are drawn from <a href="{WRG}/book-the-mind-of-a-missionary"><em>The Mind of a Missionary</em></a> by David Joannes.</p>')
+               f'Additional entries are drawn from <a href="{WRG}/book-the-mind-of-a-missionary"><em>The Mind of a Missionary</em></a> and <a href="{WRG}/book-the-mind-of-a-missionary-devotional"><em>The Mind of a Missionary Devotional</em></a> by David Joannes.</p>')
 def hist_home():
     tabs = ''.join(f'<button type="button" data-m="{m.lower()}">{m[:3]}</button>' for m in MONTHS)
     cards = ''.join(f'<a class="h-card" href="#{m.lower()}" data-m="{m.lower()}"><span class="h-num">{i + 1:02d}</span><h3>{m}</h3><p>{len(HIST[m])} days of missions history</p><span class="more">Open {m} →</span></a>' for i, m in enumerate(MONTHS))
