@@ -785,7 +785,6 @@ for p in POSTS:
     if _m and _m.group(1).capitalize() in MONTHS:
         HIST[_m.group(1).capitalize()] = hist_entries(convert(p), _m.group(1).capitalize()); HIST_POSTS.append(p)
 POSTS = [p for p in POSTS if p not in HIST_POSTS]     # the twelve month posts are compiled into the one Missions History Today page
-for p in HIST_POSTS: page(p.path, p.title, '', redirect=B + HIST_HOME + '#' + p.path.strip('/').rsplit('-', 1)[1])
 by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
@@ -794,6 +793,8 @@ for p in POSTS:
     if QP: body = quotes_page(convert(p))
     if p.path == HIST_HOME: body, QP = hist_home(), True
     body = re.sub(r'href="' + re.escape(B) + r'/\?s=', f'href="{B}/blog/?s=', body)
+    body = re.sub(r'href="' + re.escape(B) + r'/missions-history-today-(' + '|'.join(m.lower() for m in MONTHS) + r')/?"', lambda m: f'href="{B}{HIST_HOME}#{m.group(1)}"', body)
+    body = re.sub(r'href="' + re.escape(B) + r'/blog/\?s=missions(?:\+|%20| )history(?:\+|%20| )today[^"]*"', f'href="{B}{HIST_HOME}"', body, flags=re.I)
     hero = mj_img(p.path) or att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
     fi = f'<img class="featimg" src="{hero}" alt="">' if hero and not has_media_top else ''
