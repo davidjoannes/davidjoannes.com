@@ -554,6 +554,11 @@ _OLD_PROMO = [
     re.compile(r'<p>\s*<a[^>]*>\s*(?:Buy the book on Amazon|Get the book)\s*</a>\s*</p>', re.S),
     re.compile(r'<p>\s*Buy <a[^>]*>(?:<em>)?(?:Gospel Privilege|The Mind of a Missionary|The Space Between Memories)[^<]*(?:</em>)?</a>[^<]{0,40}</p>', re.S),
     re.compile(r'<p>(?:(?!</p>).)*Shareables Package(?:(?!</p>).)*</p>', re.S),
+    re.compile(r'<p>\s*(?:<a[^>]*>\s*)?<img[^>]*(?:/amazon(?:-\d+x\d+)?\.png|David-Joannes-default|All-Books|MemorySpace-BookCover|Memories-ebook|FRONT-COVER|book001d)[^>]*>\s*(?:</a>)?\s*(?:<br\s*/?>\s*)?</p>', re.S),   # David's own book ads and Amazon buttons
+    re.compile(r'<a[^>]*>\s*<img[^>]*(?:/amazon(?:-\d+x\d+)?\.png|David-Joannes-default|All-Books|MemorySpace-BookCover|Memories-ebook|FRONT-COVER|book001d)[^>]*>\s*</a>', re.S),
+    re.compile(r'<img[^>]*(?:/amazon(?:-\d+x\d+)?\.png|David-Joannes-default|All-Books|MemorySpace-BookCover|Memories-ebook|FRONT-COVER|book001d)[^>]*>', re.S),
+    re.compile(r'<a[^>]*href="https?://(?:www\.)?(?:themindofamissionary|thespacebetweenmemories|gospelprivilege)\.com[^"]*"[^>]*>\s*<img[^>]*>\s*</a>', re.S),
+    re.compile(r'<p>\s*</p>'),
 ]
 def promote(body, p):
     fn = ''
