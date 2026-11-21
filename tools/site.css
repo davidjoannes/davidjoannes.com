@@ -463,3 +463,14 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 #h-bar{margin-top:36px;scroll-margin-top:84px}
 @media(max-width:760px){.h-card{padding:16px}.h-card h3{font-size:19px}}
 #h-bar{margin-top:0}
+#h-bar{position:sticky;top:64px;z-index:22;background:#fff;padding:10px 0;margin-top:0}
+.h-month .h-days{top:122px;z-index:21}
+.h-month .h-row{scroll-margin-top:230px}
+@media(max-width:760px){
+#h-bar{top:56px;display:flex;overflow-x:auto;gap:6px;padding:8px 0;scrollbar-width:none}#h-bar::-webkit-scrollbar{display:none}
+#h-bar button{flex:none;padding:8px 14px}
+.h-month .h-days{top:106px;flex-wrap:nowrap;overflow-x:auto;padding:8px 0;scrollbar-width:none}.h-month .h-days::-webkit-scrollbar{display:none}
+.h-month .h-days span{flex:none}.h-month .h-days a{flex:none}
+.h-month .h-row{scroll-margin-top:190px}
+}
+.h-month .h-days{top:121px}@media(max-width:760px){.h-month .h-days{top:104px}}

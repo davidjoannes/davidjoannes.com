@@ -641,7 +641,7 @@ def hist_home():
                  f'<div class="h-pn"><a href="#{prev.lower()}">← {prev}</a><a href="#{nxt.lower()}">{nxt} →</a></div></section>')
     js = """<script>(function(){var M=%s,S=[].slice.call(document.querySelectorAll('.h-month')),T=[].slice.call(document.querySelectorAll('.h-months button')),n=new Date(),tm=M[n.getMonth()].toLowerCase(),td=n.getDate();
 var C=[].slice.call(document.querySelectorAll('.h-card'));
-function show(m,scroll){S.forEach(function(s){s.hidden=s.id!=m});T.concat(C).forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')==m)});if(scroll){var e=scroll==m?document.getElementById('h-bar'):document.getElementById(scroll);if(e)e.scrollIntoView({block:scroll==m?'start':'center'})}}
+function show(m,scroll){S.forEach(function(s){s.hidden=s.id!=m});T.concat(C).forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')==m)});var ab=document.querySelector('#h-bar button.on'),hb=document.getElementById('h-bar');if(ab&&hb.scrollWidth>hb.clientWidth)hb.scrollLeft=ab.offsetLeft-hb.clientWidth/2+ab.offsetWidth/2;if(scroll){var e=scroll==m?document.getElementById('h-bar'):document.getElementById(scroll);if(e)e.scrollIntoView({block:scroll==m?'start':'center'})}}
 function route(first){var h=decodeURIComponent(location.hash.slice(1)).toLowerCase(),m=h.split('-')[0];if(M.map(function(x){return x.toLowerCase()}).indexOf(m)>-1)show(m,h);else if(first)show(tm)}
 T.concat(C).forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();var m=b.getAttribute('data-m');history.replaceState(null,'','#'+m);show(m,m)})});
 window.addEventListener('hashchange',function(){route(false)});
