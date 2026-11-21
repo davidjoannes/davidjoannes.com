@@ -531,6 +531,62 @@ _TM = f'{WRG}/the-mind-of-a-missionary-course'
 YOUTH = ['elliot', 'studd', 'zinzendorf', 'moffat', 'pullinger', 'eubank', 'ripken', 'carey', 'taylor', 'carmichael', 'richardson', 'baker']
 def _y(n): return extra(H + f'the-mind-of-a-missionary-course/youth-img/{n}.jpg', f'courses/youth/{n}.jpg')
 def _k(n): return extra(H + f'kids-course/img/L{n}/portrait.jpg', f'courses/kids/L{n}.jpg')
+import zlib
+def _sq(u, n): return extra(H + u, 'res/' + n)
+MODS = {  # inline promo bars for blog posts, modeled on the WRG field-story modules
+    'tmoam': ('Free course · 13 lessons', 'The Mind of a Missionary', 'Start free →', lambda: _TM + '?edition=original', lambda: _cv('The Mind of a Missionary'), 'cov'),
+    'gp': ('Free course · 9 lessons', 'Gospel Privilege', 'Start free →', lambda: WRG + '/gospel-privilege-course', lambda: _cv('Gospel Privilege'), 'cov'),
+    'stc': ('Free course · 12 lessons', 'See the City', 'Start free →', lambda: WRG + '/see-the-city-course', lambda: _cv('See the City'), 'cov'),
+    'gifts': ('Free test · 8 minutes', 'Spiritual Gifts Test', 'Take the test →', lambda: WRG + '/spiritual-gifts-test', lambda: _sq('wrg-spiritual-gifts-test-share.png', 'spiritual-gifts-test.jpg'), 'sq right'),
+    'gas': ('18 quick questions', 'Gospel Access Score', 'Get your score →', lambda: WRG + '/gospel-access-score', lambda: _sq('Gospel%20Access%20Score/gospel-access-score-featured.png', 'gospel-access-score.png'), 'sq right'),
+    'pray': ('Prayer map · 77 provinces', 'Pray for Thailand', 'Open the map →', lambda: 'https://prayforthailand.com', lambda: _sq('pray-for-thailand/hero2.jpg', 'pray-for-thailand.jpg'), 'sq'),
+    'youth': ('Free course · Ages 11–18', 'The Mind of a Missionary: Youth Edition', 'Start youth →', lambda: _TM + '?edition=youth', lambda: _y('pullinger'), 'sq'),
+    'kids': ('Free course · Ages 5–10', 'The Mind of a Missionary: Kids Edition', 'Start kids →', lambda: _TM + '?edition=kids', lambda: _k(1), 'sq'),
+}
+ROT = ['tmoam', 'gifts', 'gp', 'gas', 'stc', 'pray', 'youth', 'kids']
+def modbar(k):
+    eb, t, cta, url, img, cls = MODS[k]
+    return (f'<a class="inmod" href="{url()}"><img class="{cls}" src="{img()}" alt="" loading="lazy">'
+            f'<span class="im-t"><i>{eb}</i><b>{t}</b></span><span class="im-b">{cta}</span></a>')
+_OLD_PROMO = [
+    re.compile(r'<p>\s*(?:<a[^>]*>)?\s*<img[^>]*011-Spiritual-Book-Set[^>]*>.*\Z', re.S),            # three-book promo tail
+    re.compile(r'<p>\s*(?:<a[^>]*>)?\s*<img[^>]*(?:tmoam-001b|COVERVAULT|gp-phones)[^>]*>\s*(?:</a>)?\s*</p>', re.S),
+    re.compile(r'<p>\s*<a[^>]*>\s*(?:Buy the book on Amazon|Get the book)\s*</a>\s*</p>', re.S),
+    re.compile(r'<p>\s*Buy <a[^>]*>(?:<em>)?(?:Gospel Privilege|The Mind of a Missionary|The Space Between Memories)[^<]*(?:</em>)?</a>[^<]{0,40}</p>', re.S),
+    re.compile(r'<p>(?:(?!</p>).)*Shareables Package(?:(?!</p>).)*</p>', re.S),
+]
+def promote(body, p):
+    fn = ''
+    m = re.search(r'<(?:ol|div|section)[^>]*class="[^"]*\b(?:fn|footnotes|notes)\b', body)
+    if m: body, fn = body[:m.start()], body[m.start():]
+    for rx in _OLD_PROMO: body = rx.sub('', body)
+    txt = re.sub(r'<[^>]+>', '', body)
+    seed = zlib.crc32(p.path.encode())
+    first = 'gp' if re.search(r'gospel privilege', p.title + txt[:4000], re.I) else 'stc' if re.search(r'see the city', txt, re.I) else None
+    order = ROT[seed % len(ROT):] + ROT[:seed % len(ROT)]
+    if first: order = [first] + [k for k in order if k != first]
+    # candidate insert points: top-level paragraph or heading boundaries
+    cands, depth = [], 0
+    for t in re.finditer(r'<(/?)(blockquote|ul|ol|table|div|figure|p|h2|h3)\b[^>]*>', body):
+        close, tag = t.group(1), t.group(2)
+        if tag in ('p', 'h2', 'h3'):
+            if not close and depth == 0 and t.start() > 0: cands.append((t.start(), tag != 'p'))
+        else: depth += -1 if close else 1
+    n = len(body)
+    def pick(frac, taken=()):
+        ok = [(abs(pos / n - frac) - (0.06 if head else 0), pos) for pos, head in cands if 0.2 < pos / n < 0.93 and all(abs(pos - x) > 1200 for x in taken)]
+        return min(ok)[1] if ok else None
+    spots = []
+    if len(txt) > 1200:
+        a = pick(0.42)
+        if a is not None: spots.append(a)
+        if len(txt) > 6500 and spots:
+            b = pick(0.78, spots)
+            if b is not None: spots.append(b)
+    if not spots: return body + modbar(order[0]) + fn
+    for i, pos in sorted(enumerate(sorted(spots)), key=lambda x: -x[1]):
+        body = body[:pos] + modbar(order[i]) + body[pos:]
+    return body + fn
 COURSE_CARDS = (
     '<div class="edgrid">'
     # original
@@ -563,7 +619,7 @@ LIVE.update(['/about/', '/books/', '/missionspulse/', '/blog/', '/resources/', '
 by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
-    body = convert(p)
+    body = promote(convert(p), p)
     hero = mj_img(p.path) or att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
     fi = f'<img class="featimg" src="{hero}" alt="">' if hero and not has_media_top else ''
