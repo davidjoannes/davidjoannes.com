@@ -34,6 +34,29 @@ def have(u):
     if not m or not HAVE_UP: return True
     return os.path.exists(OUT + unquote(m.group(1)))
 DEAD = r'(?:googleusercontent\.com|gawkerassets\.com|withinreachglobal\.org/wp-content|feeds\.feedburner\.com|pixel\.wp\.com)'
+DEADHOST = r'(?:blab\.im|feeds\.feedburner\.com|plus\.google\.com)'
+MOVED = {'/donation': '/donate/', '/donation/': '/donate/', '/donate/donation/': '/donate/', '/live': '/missionspulse/', '/live/': '/missionspulse/'}
+def site_has(h):
+    p = h[len(B):] if B and h.startswith(B) else h
+    p = p.split('#')[0].split('?')[0]
+    if p in ('', '/'): return True
+    if p.startswith('/wp-content/'): return os.path.exists(OUT + unquote(p))
+    return p.rstrip('/') + '/' in LIVE
+def fix_links(t):
+    def one(m):
+        attrs_, inner = m.group(1), m.group(2)
+        h = re.search(r'href="([^"]*)"', attrs_); h = h.group(1) if h else ''
+        img = '<img' in inner
+        wrg = re.match(r'https?://(?:www\.)?withinreachglobal\.org/([^"]*)', h)
+        if wrg and wrg.group(1).strip('/') and not re.match(r'(?:book-|books|donate|go\b|founders|hubfs|spiritual-gifts|gospel-access|[\w-]+-course)', wrg.group(1)):
+            return '' if img else f'<a href="{WRG}">{inner}</a>'
+        if re.match(r'https?://(?:www\.)?' + DEADHOST, h): return '' if img else inner
+        if h.startswith(B + '/') or h == B:
+            p = (h[len(B):] if B else h).split('#')[0].split('?')[0]
+            if p in MOVED: return f'<a href="{B}{MOVED[p]}">{inner}</a>'
+            if not site_has(h): return '' if img else inner
+        return m.group(0)
+    return re.sub(r'<a\b([^>]*)>(.*?)</a>', one, t, flags=re.S)
 def strip_broken(t):
     def chk(m):
         s = re.search(r'src="([^"]*)"', m.group(0)); u = s.group(1) if s else ''
@@ -70,21 +93,49 @@ CATS = [  # (wp nicenames, label, listing url)
     (['missions-blogs'], 'Missions', '/blog/missions-blogs/'),
 ]
 TERM = {t.findtext('wp:term_id', namespaces=ns): t.findtext('wp:category_nicename', namespaces=ns) for t in ch.findall('wp:category', ns)}
+SMALL = {'a','an','the','and','but','or','nor','for','as','at','by','in','of','on','per','to','via','vs','vs.','with','from','into','onto'}
+def _cap(w):
+    m = re.match(r"^([\W_]*)(.*)$", w)
+    pre, core = m.group(1), m.group(2)
+    if not core: return w
+    if re.search(r'[A-Z]', core[1:]) or re.search(r'\d', core) and core.upper() == core: return w   # iPhone, WRG, 10/40
+    return pre + core[0].upper() + core[1:]
+def titlecase(t):
+    t = html.unescape(t).strip()
+    words = t.split(' ')
+    letters = [c for c in t if c.isalpha()]
+    shout = letters and sum(c.isupper() for c in letters) / len(letters) > 0.8
+    out = []
+    for i, w in enumerate(words):
+        if not w: continue
+        if shout and not re.fullmatch(r'[A-Z]{2,4}[:,.!?]?', w): w = w.lower()
+        core = re.sub(r"^[\W_]+|[\W_]+$", '', w).lower()
+        first = i == 0 or out and re.search(r'[:?!.–—-]$|^[–—-]$', out[-1]) or re.match(r'^[“"‘\'(\[]', w)
+        last = i == len(words) - 1
+        if core in SMALL and not first and not last and not re.search(r'[A-Z]{2,}', w) and not re.search(r'[,;:?!.)]$', w):
+            out.append(w.lower())
+        elif '-' in w and not w.startswith('-'):
+            out.append('-'.join(_cap(p) if (j == 0 or p.lower() not in SMALL) else p.lower() for j, p in enumerate(w.split('-'))))
+        else:
+            out.append(_cap(w))
+    return ' '.join(out)
 class P: pass
 POSTS, PAGES = [], {}
 for i in items:
     t, st = g(i, 'wp:post_type'), g(i, 'wp:status')
     if st != 'publish' or t not in ('post', 'page'): continue
-    p = P(); p.title = g(i, 'title'); p.raw = g(i, 'content:encoded'); p.id = g(i, 'wp:post_id')
+    p = P(); p.title = titlecase(g(i, 'title')) if t == 'post' else g(i, 'title'); p.raw = g(i, 'content:encoded'); p.id = g(i, 'wp:post_id')
     p.path = '/' + g(i, 'link').replace(SITE, '').strip('/') + '/'
     if p.path == '//': p.path = '/'
     p.date = g(i, 'wp:post_date'); p.meta = meta(i); p.thumb = p.meta.get('_thumbnail_id', '')
     p.cats = [c.get('nicename') for c in i.findall('category') if c.get('domain') == 'category']
     p.excerpt = g(i, 'excerpt:encoded')
+    p.is_post = (t == 'post')
     if t == 'post':
         p.cat = next((c for c in CATS if any(n in p.cats for n in c[0])), CATS[-1]); POSTS.append(p)
     else: PAGES.setdefault(p.path, p)
 POSTS.sort(key=lambda p: p.date, reverse=True)
+LIVE = set()
 def nice_date(d):
     try: return datetime.datetime.strptime(d[:10], '%Y-%m-%d').strftime('%B %-d, %Y')
     except Exception: return ''
@@ -306,6 +357,7 @@ def convert(p):
     t = autop(t)
     t = re.sub(r'<p>(?:\s|&nbsp;|<br\s*/?>)*</p>', '', t)
     t = re.sub(r'<p[^>]*>\s*(<div class="embed">.*?</div>)\s*</p>', r'\1', t, flags=re.S)
+    if getattr(p, 'is_post', False): t = fix_links(t)
     t = strip_broken(t)
     for _ in range(3):
         t = re.sub(r'<(p|h[1-6]|div|strong|em|b|i|u|a|li|blockquote|center)\b[^>]*>(?:\s|<br\s*/?>)*</\1>', '', t)
@@ -425,6 +477,10 @@ RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Tak
 CRS = [(f'{t} Course', f'Free course · {n}', 'Start free ↗', f'{WRG}/{u}') for t, n, u in COURSES]
 
 # ---------- posts
+LIVE.update(p.path for p in POSTS)
+LIVE.update(['/about/', '/books/', '/missionspulse/', '/blog/', '/resources/', '/donate/', '/meet/', '/contact/', '/books/the-mind-of-a-missionary/', '/books/the-mind-of-a-missionary/notes/',
+             '/books/gospel-privilege/', '/books/gospel-privilege/launchteam/', '/books/the-space-between-memories/', '/books/see-the-city/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
+             '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/'] + [c[2] for c in CATS])
 by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
