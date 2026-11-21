@@ -395,7 +395,7 @@ def plain(t, n=155):
     return (t[:n].rsplit(' ', 1)[0] + '…') if len(t) > n else t
 
 # ---------- layout
-NAV = [('About', '/about/'), ('Books', '/books/'), ('Podcast', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/'), ('Give', '/donate/')]
+NAV = [('About', '/about/'), ('Books', '/books/'), ('Podcast', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/'), ('Within Reach Global ↗', WRG)]
 SOCIAL = [('Instagram', 'https://instagram.com/davidjoannes'), ('Facebook', 'https://www.facebook.com/davidjoannesofficial/'), ('YouTube', 'https://www.youtube.com/channel/UCP6KeC0GSoA2JJZwxIg3c3Q'), ('X', 'https://twitter.com/davidjoannes'), ('LinkedIn', 'https://www.linkedin.com/in/davidjoannes')]
 IC = {'Instagram': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
  'Facebook': '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7V4.2C16.5 4.1 15.5 4 14.4 4 12 4 10.3 5.5 10.3 8.3v2.5H7.5V14h2.8v8z"/></svg>',
@@ -407,7 +407,7 @@ WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
-    nav = ''.join(f'<a href="{B}{u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
+    nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
     og = f'<meta property="og:image" content="{SITE}{image[len(B):]}">' if image else ''
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
     def _bk(m):
@@ -439,7 +439,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <header class="hdr"><div class="wrap">
 <a class="brand" href="{B}/">David Joannes</a>
 <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mainnav"><span></span><span></span><span></span></button>
-<nav class="nav" id="mainnav" aria-label="Main">{nav}<a class="cta" href="{WRG}">Within Reach Global ↗</a></nav>
+<nav class="nav" id="mainnav" aria-label="Main">{nav}<a class="cta" href="{B}/donate/">Give</a></nav>
 </div></header>
 <main>
 {body}
