@@ -653,6 +653,14 @@ if(e){x.querySelector('.h-otd-date').textContent=M[m]+' '+d+(e[0]?', '+e[0]:'');
 SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
          """<script>(function(){var u=encodeURIComponent(location.href.split('#')[0].split('?')[0]),t=encodeURIComponent(document.title.replace(/ \\| David Joannes$/,'')),L={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,'in':'https://www.linkedin.com/sharing/share-offsite/?url='+u,em:'mailto:?subject='+t+'&body='+u};
 [].forEach.call(document.querySelectorAll('.share [data-s]'),function(a){var k=a.getAttribute('data-s');if(L[k]){a.href=L[k];if(k!='em'){a.target='_blank';a.rel='noopener'}}else a.addEventListener('click',function(){var v=decodeURIComponent(u);(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){a.textContent='Link copied';setTimeout(function(){a.textContent='Copy link'},1800)},function(){prompt('Copy this link',v)})})})})();</script>""")
+QREFS = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'quote-refs.json')))   # references as cited in The Mind of a Missionary (2nd ed.)
+QFIX = {  # wording checked against The Mind of a Missionary (2nd ed.)
+    'he is no fool who gives': '“He is no fool who gives what he cannot keep to gain that which he cannot lose.”',
+    'god i pray thee light these idle sticks': '“God, I pray, light these idle sticks of my life, and may I burn up for Thee. Consume my life, my God, for it is Thine. I seek not a long life but a full one like Yours, Lord Jesus.”',
+    'god s work done in god s way': '“God’s work done in God’s way will never lack God’s supplies.”',
+    'some wish to live within the sound': '“Some wish to live within the sound of church or chapel bell; I want to run a rescue shop within a yard of hell.”',
+    'there are three stages in every great work': '“I have found that there are three stages in every great work of God. First, it is impossible, then it is difficult, then it is done.”',
+}
 def quotes_page(b):
     paras = re.findall(r'<p[^>]*>(.*?)</p>', b, re.S)
     intro, people, cur, seen = [], [], None, False
@@ -677,7 +685,11 @@ def quotes_page(b):
     def card(q):
         m = re.match(r'^(.*[”"’\'.!?])\s*(?:<br\s*/?>)?\s*[-–—]{1,2}\s*(.{2,400})$', q, re.S)
         text, attr = (m.group(1).strip(), m.group(2).strip()) if m else (q, '')
-        return f'<figure class="q"><blockquote>{text}</blockquote>' + (f'<figcaption>{attr}</figcaption>' if attr else '') + '<button class="q-copy" type="button">Copy</button></figure>'
+        key = re.sub(r'[^a-z0-9]+', ' ', html.unescape(re.sub(r'<[^>]+>', '', text)).lower()).strip()
+        ref = QREFS.get(key[:80]) or next((v for k, v in QREFS.items() if key.startswith(k[:60])), '')
+        text = next((v for k, v in QFIX.items() if key.startswith(k)), text)
+        return (f'<figure class="q"><blockquote>{text}</blockquote>' + (f'<figcaption>{attr}</figcaption>' if attr else '')
+                + (f'<cite class="q-ref">Source: {esc(ref)}</cite>' if ref else '') + '<button class="q-copy" type="button">Copy</button></figure>')
     letters = collections.OrderedDict()
     for name, qs in people: letters.setdefault(name[0].upper(), []).append((name, re.sub(r'[^A-Za-z0-9]', '', name), qs))
     nq = sum(len(q) for _, q in people)

@@ -453,3 +453,4 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .h-card h3{font-size:21px;margin:0}.h-card p{margin:0 0 10px;font-size:14px;color:var(--mute)}
 .h-card .more{font-size:14px}
 @media(max-width:760px){.h-months{grid-template-columns:repeat(6,1fr)}.h-grid{grid-template-columns:repeat(2,1fr)}.h-row{gap:14px}.h-date{width:48px}.h-date b{font-size:28px}.h-days{top:56px}.h-days a{width:27px;height:28px}}
+.q-ref{display:block;font-style:normal;font-size:12.5px;line-height:1.5;color:var(--mute);margin-top:8px;padding-top:8px;border-top:1px solid #e3e6ea;padding-right:64px;overflow-wrap:anywhere}
