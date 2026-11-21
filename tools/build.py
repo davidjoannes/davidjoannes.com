@@ -188,6 +188,9 @@ def img_sc(a):
     return f'\n\n<p data-a="c">{tag}</p>\n\n'
 def post_card(p, k=None):
     im = att(p.thumb, ['medium_large', 'large'])
+    if not im:
+        y = yt_id(p.meta.get('grve_post_video_embed', '') or p.meta.get('cb_video_embed_code_post', '')) or yt_id(p.raw)
+        if y: im = f'https://i.ytimg.com/vi/{y}/hqdefault.jpg'
     pic = f'<img src="{im}" alt="" loading="lazy">' if im else ''
     return (f'<a class="card" href="{B}{p.path}" data-t="{esc(p.title.lower())}"><div class="im">{pic}</div>'
             f'<div class="k">{esc(k or p.cat[1])} · {nice_date(p.date)}</div><h3>{esc(p.title)}</h3></a>')
