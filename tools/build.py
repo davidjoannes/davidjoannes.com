@@ -558,13 +558,36 @@ _OLD_PROMO = [
     re.compile(r'<a[^>]*>\s*<img[^>]*(?:/amazon(?:-\d+x\d+)?\.png|David-Joannes-default|All-Books|MemorySpace-BookCover|Memories-ebook|FRONT-COVER|book001d)[^>]*>\s*</a>', re.S),
     re.compile(r'<img[^>]*(?:/amazon(?:-\d+x\d+)?\.png|David-Joannes-default|All-Books|MemorySpace-BookCover|Memories-ebook|FRONT-COVER|book001d)[^>]*>', re.S),
     re.compile(r'<a[^>]*href="https?://(?:www\.)?(?:themindofamissionary|thespacebetweenmemories|gospelprivilege)\.com[^"]*"[^>]*>\s*<img[^>]*>\s*</a>', re.S),
+    re.compile(r'<blockquote class="pull">(?:(?!</blockquote>).)*?(?:@\w|#\w|SHARE THIS|Click to)(?:(?!</blockquote>).)*?</blockquote>', re.S),   # old tweet prompts
+    re.compile(r'\s*\[?\s*<a[^>]*href="https?://(?:ctt\.ec|ctt\.ac|(?:www\.)?clicktotweet\.com)[^"]*"[^>]*>(?:(?!</a>).)*</a>\s*\]?', re.S),
+    re.compile(r'<(p|div)>\s*(?:<em>|<a[^>]*>|\s)*See this post at(?:(?!</\1>).)*</\1>', re.S | re.I),
+    re.compile(r'<strong>\s*</strong>'),
     re.compile(r'<p>\s*</p>'),
 ]
+_OWN = [(r'the\s*mind\s*of\s*a\s*missionary|tmoam', 'book-the-mind-of-a-missionary'), (r'space\s*between\s*memories', 'book-the-space-between-memories'),
+        (r'gospel\s*privilege', 'book-gospel-privilege'), (r'see[\s-]*the[\s-]*city', 'book-see-the-city')]
+_A = re.compile(r'<a\b([^>]*?)href="([^"]+)"([^>]*)>((?:(?!</a>).)*)</a>', re.S)
+def own_book_link(m):
+    pre, href, post, inner = m.groups()
+    if '<img' in inner: return m.group(0)
+    text = re.sub(r'<[^>]+>', '', inner).strip()
+    h = re.sub(r'^https?://(www\.)?', '', href).lower()
+    slug = None
+    if re.match(r'(bit\.ly/|themindofamissionary\.com|thespacebetweenmemories\.com|gospelprivilege\.com)', h) or h.startswith('/books/') and h.strip('/') != 'books':
+        slug = next((sl for rx, sl in _OWN if re.search(rx, h.replace('-', ' ').replace('/', ' '))), None)
+    if not slug and re.match(r'(a\.co|amzn\.to|amazon\.com)/', h) and re.match(r'(?i)(the mind of a missionary|the space between memories|gospel privilege|see the city)', text) and 'devotional' not in text.lower():
+        slug = next((sl for rx, sl in _OWN if re.search(rx, text.lower())), None)
+    if not slug: return m.group(0)
+    if re.fullmatch(r'(?i)(www\.)?(themindofamissionary|thespacebetweenmemories|gospelprivilege)\.com/?', text): inner = 'withinreachglobal.org'
+    elif re.fullmatch(r'(?i)purchase this book at amazon today\.?', text): inner = 'Get this book today.'
+    elif text.lower() == 'amazon': inner = 'Within Reach Global'
+    return f'<a href="{WRG}/{slug}">{inner}</a>'
 def promote(body, p):
     fn = ''
     m = re.search(r'<(?:ol|div|section)[^>]*class="[^"]*\b(?:fn|footnotes|notes)\b', body)
     if m: body, fn = body[:m.start()], body[m.start():]
     for rx in _OLD_PROMO: body = rx.sub('', body)
+    body = _A.sub(own_book_link, body)
     txt = re.sub(r'<[^>]+>', '', body)
     seed = zlib.crc32(p.path.encode())
     first = 'gp' if re.search(r'gospel privilege', p.title + txt[:4000], re.I) else 'stc' if re.search(r'see the city', txt, re.I) else None
