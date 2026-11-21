@@ -582,6 +582,37 @@ def own_book_link(m):
     elif re.fullmatch(r'(?i)purchase this book at amazon today\.?', text): inner = 'Get this book today.'
     elif text.lower() == 'amazon': inner = 'Within Reach Global'
     return f'<a href="{WRG}/{slug}">{inner}</a>'
+QUOTES_ADD = {  # added Nov 2026: widely attributed quotes from missionaries
+    'Carey, William': [('I can plod. I can persevere in any definite pursuit. To this I owe everything.', 'William Carey, 1761-1834, Missionary to India'),
+                       ('When I am gone, say nothing about Dr. Carey; speak about Dr. Carey’s Saviour.', 'William Carey, 1761-1834, Missionary to India'),
+                       ('Prayer, secret, fervent, believing prayer, lies at the root of all personal godliness.', 'William Carey, 1761-1834, Missionary to India')],
+    'Judson, Adoniram': [('The prospects are as bright as the promises of God.', 'Adoniram Judson, 1788-1850, Missionary to Burma'),
+                         ('The motto of every missionary, whether preacher, printer, or schoolmaster, ought to be “Devoted for life.”', 'Adoniram Judson, 1788-1850, Missionary to Burma'),
+                         ('I am not tired of my work, neither am I tired of the world; yet when Christ calls me home, I shall go with the gladness of a boy bounding away from his school.', 'Adoniram Judson, 1788-1850, Missionary to Burma')],
+    'Taylor, J. Hudson': [('China is not to be won for Christ by quiet, ease-loving men and women.', 'J. Hudson Taylor, 1832-1905, Missionary to China'),
+                          ('All our difficulties are only platforms for the manifestations of His grace, power, and love.', 'J. Hudson Taylor, 1832-1905, Missionary to China'),
+                          ('There are three stages in every great work of God: first it is impossible, then it is difficult, then it is done.', 'J. Hudson Taylor, 1832-1905, Missionary to China'),
+                          ('Do not have your concert first, and then tune your instrument afterwards. Begin the day with the Word of God and prayer.', 'J. Hudson Taylor, 1832-1905, Missionary to China')],
+    'Livingstone, David': [('I will place no value on anything I have or may possess, except in relation to the kingdom of Christ.', 'David Livingstone, 1813-1873, Missionary to Africa'),
+                           ('Fear God and work hard.', 'David Livingstone, 1813-1873, Missionary to Africa')],
+    'Martyn, Henry': [('Now let me burn out for God.', 'Henry Martyn, 1781-1812, Missionary to India and Persia')],
+    'Moon, Lottie': [('How many there are who imagine that because Jesus paid it all, they need pay nothing, forgetting that the prime object of their salvation was that they should follow in the footsteps of Jesus Christ in bringing back a lost world to God.', 'Lottie Moon, 1840-1912, Missionary to China'),
+                     ('If I had a thousand lives, I would give them all for the women of China.', 'Lottie Moon, 1840-1912, Missionary to China'),
+                     ('Surely there can be no deeper joy than that of saving souls.', 'Lottie Moon, 1840-1912, Missionary to China')],
+    'Studd, C.T.': [('Only one life, ’twill soon be past; only what’s done for Christ will last.', 'C.T. Studd, 1860-1931, Missionary to China, India, and Africa')],
+    'Von Zinzendorf, Nicolaus Ludwig': [('Preach the gospel, die, and be forgotten.', 'Nicolaus Ludwig von Zinzendorf, 1700-1760, Moravian missions leader')],
+    'Slessor, Mary': [('Christ sent me to preach the gospel, and He will look after the results.', 'Mary Slessor, 1848-1915, Missionary to Calabar, Nigeria'),
+                      ('Prayer is the greatest power God has put into our hands for service. Praying is harder than doing, at least I find it so, but the dynamic lies that way to advance the Kingdom.', 'Mary Slessor, 1848-1915, Missionary to Calabar, Nigeria'),
+                      ('God plus one are always a majority.', 'Mary Slessor, 1848-1915, Missionary to Calabar, Nigeria')],
+    'Chalmers, James': [('Recall the twenty-one years, give me back all its experience, give me its shipwrecks, give me its standing in the face of death, give it me surrounded with savages with spears and clubs, give it me back again with spears flying about me, with the club knocking me to the ground, give it me back, and I will still be your missionary.', 'James Chalmers, 1841-1901, Missionary to New Guinea')],
+    'Mackay, Alexander': [('Within six months you will probably hear that one of us is dead. When the news comes, do not be cast down, but send someone else immediately to take the vacant place.', 'Alexander Mackay, 1849-1890, Missionary to Uganda')],
+    'Cox, Melville': [('Let a thousand fall before Africa be given up.', 'Melville Cox, 1799-1833, Missionary to Liberia')],
+    'Lull, Raymond': [('He who loves not, lives not; he who lives by the Life cannot die.', 'Raymond Lull, c. 1232-1315, Missionary to North Africa')],
+    'Hannington, James': [('I have purchased the road to Uganda with my life.', 'James Hannington, 1847-1885, Missionary bishop in East Africa')],
+    'Eliot, John': [('Prayer and pains, through faith in Christ Jesus, will do anything.', 'John Eliot, 1604-1690, Missionary to the Algonquin peoples of New England')],
+    'Mills, Samuel J.': [('We can do it if we will.', 'Samuel J. Mills, 1783-1818, at the Haystack Prayer Meeting, 1806')],
+    'Trotter, Lilias': [('Take the very hardest thing in your life, the place of difficulty, outward or inward, and expect God to triumph gloriously in that very spot.', 'Lilias Trotter, 1853-1928, Missionary to Algeria')],
+}
 def quotes_page(b):
     paras = re.findall(r'<p[^>]*>(.*?)</p>', b, re.S)
     intro, people, cur, seen = [], [], None, False
@@ -596,6 +627,13 @@ def quotes_page(b):
         if m and len(t) < 60 and t[0] not in '"“':
             cur = (re.sub(r'<[^>]+>', '', m.group(1)).strip(), []); people.append(cur); continue
         if cur: cur[1].append(x.strip())
+    people = [x for x in people if x[0] not in ('Bickle, Mike', 'Anonymous')]
+    byname = {n: qs for n, qs in people}
+    for n, qs in QUOTES_ADD.items():
+        new = [f'“{t}” - {a}' for t, a in qs]
+        if n in byname: byname[n].extend(new)
+        else: people.append((n, new))
+    people.sort(key=lambda x: x[0].lower())
     def card(q):
         m = re.match(r'^(.*[”"’\'.!?])\s*(?:<br\s*/?>)?\s*[-–—]{1,2}\s*(.{2,400})$', q, re.S)
         text, attr = (m.group(1).strip(), m.group(2).strip()) if m else (q, '')
