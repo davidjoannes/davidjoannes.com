@@ -1073,9 +1073,18 @@ page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', l
 <div><b>Follow along</b><span>Life and ministry on Instagram.</span><a class="more" href="https://instagram.com/davidjoannes">@davidjoannes ↗</a></div></div></div>""") + CTA,
      desc='Contact David Joannes about missions, books, speaking, or Within Reach Global.')
 
+# ---------- the two evergreen posts, shown on the home and resources pages
+_FEAT = [('/missions-history-today-what-happened-on-every-day-of-the-year/', 'On this day', 'Missions History Today', 'What happened on every day of the year in missions history, with today’s date ready when you land.', 'See today in missions history →'),
+         ('/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/', 'Quotes', 'The Most Epic Monster List of Missionary Quotes', 'Hundreds of quotes from missionaries past and present, A to Z, easy to search and share.', 'Browse the quotes →')]
+def _feat(path, k, t, d, go):
+    fp = next(q for q in POSTS if q.path == path)
+    im = mj_img(path) or att(fp.thumb, ['large', 'medium_large'])
+    return (f'<a class="feat" href="{B}{path}"><div class="im">' + (f'<img src="{im}" alt="" loading="lazy">' if im else '') + f'</div><div class="feat-b"><p class="eyebrow">{k}</p><h3>{t}</h3><p>{d}</p><span class="more">{go}</span></div></a>')
+FEAT2 = '<div class="feat2">' + ''.join(_feat(*x) for x in _FEAT) + '</div>'
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
      + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft', 'courses')
+     + sec(shead('Reader favorites', 'Two posts worth bookmarking') + FEAT2, '', 'favorites')
      + CTA,
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
@@ -1111,7 +1120,7 @@ def ep(p):
     return f'<a href="{B}{p.path}"><span class="n">{"Episode " + m.group(1) if m else "Episode"}</span><span class="t">{esc(m.group(2) if m else p.title)}</span></a>'
 nik = next((d for d in TEST.get('_testimonial', []) if 'ripken' in d['name'].lower()), None)
 quote = f'<section class="sec"><div class="wrap quote"><blockquote>{clean_inline(nik["body"])}</blockquote><div class="by"><b>Nik Ripken</b><span>Author, The Insanity of God</span></div></div></section>' if nik else ''
-latest = [p for p in POSTS if p.cat[2] != '/blog/missions-pulse-podcast-posts/'][:3]
+latest = [p for p in POSTS if p.cat[2] != '/blog/missions-pulse-podcast-posts/' and p.path not in FEATURED_FIRST][:3]
 home = f'''<section class="hero dark"><div class="wrap">
 <div class="txt"><p class="eyebrow">Missiologist · Author · Podcaster</p>
 <h1>Every people group deserves access to the gospel.</h1>
@@ -1129,7 +1138,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <a class="btn white" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="rows"><a href="https://prayforthailand.com"><span class="t">Pray</span><span class="s">Pray for Thailand, province by province →</span></a><a href="{WRG}/project-local-missionaries"><span class="t">Give</span><span class="s">Empower indigenous missionaries →</span></a><a href="{WRG}/go"><span class="t">Go</span><span class="s">Apply to serve →</span></a></div></div></section>
 ''' + sec(shead('The podcast', 'Missions Pulse', f'<a class="more" href="{B}/missionspulse/">About the podcast →</a>', 'God at work in the world, and your role in the Great Commission.')
-          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px"><div data-pulse="ep" data-n="3" style="display:contents">{pulse_list("ep", 3)}</div><a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
+          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px"><div data-pulse="ep" data-n="3" style="display:contents">{pulse_list("ep", 3)}</div><a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing') + sec(shead('Reader favorites', 'Two posts worth bookmarking') + FEAT2, 'soft', 'favorites')
 page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, podcaster, and the Founder and CEO of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.', image=portrait, home=True)
 
 # ---------- extras
