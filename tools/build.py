@@ -1124,14 +1124,14 @@ latest = [p for p in POSTS if p.cat[2] != '/blog/missions-pulse-podcast-posts/' 
 home = f'''<section class="hero dark"><div class="wrap">
 <div class="txt"><p class="eyebrow">Missiologist · Author · Podcaster</p>
 <h1>Every people group deserves access to the gospel.</h1>
-<p class="lede">David Joannes is the Founder and CEO of Within Reach Global. For three decades he has served in China and Thailand, writing and speaking on the church's unfinished task among the unreached.</p>
+<p class="lede">David Joannes is the Founder and CEO of Within Reach Global. For three decades he has served in China and Thailand, writing and speaking on the Church's unfinished task among the unreached.</p>
 <div class="btns"><a class="btn" href="{WRG}">Explore Within Reach Global ↗</a><a class="btn ghost" href="{B}/books/">Read David's books</a></div></div>
 <div class="pic"><img src="{portrait}" alt="David Joannes"></div>
 </div></section>
 ''' + sec(shead('Books', 'Books to stir the Church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
 <section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2><figure class="smug"><img src="{B}/assets/david-bible-smuggler.jpg" alt="A young David Joannes with stacks of Bibles bound for China" loading="lazy" width="744" height="418"><figcaption>David with Bibles bound for China.</figcaption></figure></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
-<p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the church see the unreached.</p>
+<p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the Church see the unreached.</p>
 <a class="more" href="{B}/about/">Read David's story →</a></div></div>{STATS}</div></section>
 <section class="sec red" id="mission"><div class="wrap split" style="align-items:center"><div><p class="eyebrow">David's ministry</p><h2 class="big">Within Reach Global</h2>
 <p class="lede">Since 1997, Within Reach Global has brought gospel access to unreached people groups in the 10/40 Window through compassion ministries, evangelism, discipleship, and church planting.</p>
