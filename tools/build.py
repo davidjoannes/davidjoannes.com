@@ -491,6 +491,8 @@ def cover(u):
 def bk(t, yr, img, buy, slug):
     return f'<a class="cover" href="{WRG}/{slug}" title="{esc(t)}"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a>'
 SHELF = '<div class="shelf">' + ''.join(bk(*x) for x in BOOKS) + '</div>'
+_six = [next(b for b in BOOKS if b[0] == ('Gospel Privilege' if x[0] == 'Glorious Hope' else x[0])) for x in BOOKS[:6]]
+HOME_SHELF = '<div class="shelf six">' + ''.join(bk(*x) for x in _six) + '</div>'
 COURSES = [('The Mind of a Missionary', '13 lessons', 'the-mind-of-a-missionary-course'), ('Gospel Privilege', '9 lessons', 'gospel-privilege-course'), ('See the City', '12 lessons', 'see-the-city-course')]
 portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
 STATS = '''<div class="stats"><div><b>30</b><span>years serving in China and Thailand</span></div><div><b>85</b><span>churches planted through Within Reach Global</span></div><div><b>10</b><span>titles in English, Portuguese, and Spanish</span></div><div><b>110+</b><span>Missions Pulse podcast episodes</span></div></div>'''
@@ -735,7 +737,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <div class="btns"><a class="btn" href="{WRG}">Explore Within Reach Global ↗</a><a class="btn ghost" href="{B}/books/">Read David's books</a></div></div>
 <div class="pic"><img src="{portrait}" alt="David Joannes"></div>
 </div></section>
-''' + sec(shead('Books', 'Books to stir the church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF, 'soft', 'books') + f'''
+''' + sec(shead('Books', 'Books to stir the church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
 <section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
 <p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the church see the unreached.</p>
