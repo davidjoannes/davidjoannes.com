@@ -906,7 +906,7 @@ bio = re.search(r'\[vc_column_text\](.*?)\[/vc_column_text\]', ab.raw, re.S).gro
 bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S).replace('For the last 25 years', 'For the last 30 years')
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
-<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{WRG}/founders">Meet the founders ↗</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
+<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + CTA,
      desc=plain(bio), image=portrait)
@@ -967,7 +967,7 @@ page('/missionspulse/', 'Missions Pulse',
      desc=plain(mp.raw))
 
 # ---------- other carried-over pages (plain article layout)
-KEEP = ['/books/the-mind-of-a-missionary/notes/', '/books/gospel-privilege/launchteam/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
+KEEP = ['/books/gospel-privilege/launchteam/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
         '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/']
 TITLES = {'/thank-you/': 'Thank you', '/instagram/': 'David Joannes on Instagram', '/thanks/': 'Thanks!'}
 for path in KEEP:
@@ -975,6 +975,48 @@ for path in KEEP:
     if not p: print('missing page', path); continue
     title = TITLES.get(path) or html.unescape(p.title) or 'David Joannes'
     page(path, title, phead('David Joannes', title) + f'<div class="wrap"><article class="article"><div class="prose plain">{convert(p)}</div></article></div>' + CTA, desc=plain(p.raw))
+
+# ---------- The Mind of a Missionary: notes and references (from the second edition; see scripts/parse_notes.py)
+def notes_page():
+    d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmoam-notes.json')))
+    def link(t):
+        return re.sub(r'(https?://[^\s<]+?)([.,;)]*)(?=\s|$|<)', lambda m: f'<a href="{m.group(1)}" rel="noopener" target="_blank">{m.group(1).replace("&amp;", "&amp;")}</a>{m.group(2)}', t)
+    def cid(title):
+        m = re.match(r'Chapter (\d+)', title)
+        return f'ch{m.group(1)}' if m else ('in' if title.startswith('Intro') else 'con')
+    def chip(title):
+        m = re.match(r'Chapter (\d+)', title)
+        return m.group(1) if m else ('Intro' if title.startswith('Intro') else 'End')
+    nn = sum(len(c['notes']) for c in d['notes']); nr = sum(len(x['items']) for x in d['refs'])
+    chips = ''.join(f'<a href="#{cid(c["title"])}" title="{esc(c["title"])}">{chip(c["title"])}</a>' for c in d['notes']) + '<a href="#ref" class="wide">References</a>'
+    toc = ''.join(f'<a href="#{cid(c["title"])}"><b>{esc(c["title"])}</b><span>{len(c["notes"])} note{"s" if len(c["notes"]) != 1 else ""}</span></a>' for c in d['notes'])
+    toc += f'<a href="#ref"><b>References</b><span>{nr} sources</span></a>'
+    secs = ''
+    for c in d['notes']:
+        i = cid(c['title'])
+        secs += (f'<section class="n-ch" id="{i}"><h2>{esc(c["title"])}</h2><ol class="n-list">'
+                 + ''.join(f'<li class="n-item" id="{i}-n{n["n"]}"><span class="n-num">{n["n"]}</span><span class="n-txt">{link(n["t"])}</span></li>' for n in c['notes']) + '</ol></section>')
+    rid = lambda t: 'ref-' + re.sub(r'[^a-z]+', '-', t.lower()).strip('-')
+    rchips = ''.join(f'<a href="#{rid(x["title"])}">{esc(x["title"])} <span>{len(x["items"])}</span></a>' for x in d['refs'])
+    refs = (f'<section class="n-ch n-refs" id="ref"><h2>References</h2><p class="n-refintro">These resources are widely available wherever books are sold, on YouTube, or through online searches. Many of the older historical sources can be found in the Internet Archive.</p><div class="n-rchips">{rchips}</div>'
+            + ''.join(f'<h3 id="{rid(x["title"])}">{esc(x["title"])}</h3><ul class="n-list n-rlist">' + ''.join(f'<li class="n-item"><span class="n-txt">{link(it)}</span></li>' for it in x['items']) + '</ul>' for x in d['refs']) + '</section>')
+    js = """<script>(function(){var s=document.getElementById('nq'),o=document.getElementById('nqc'),I=[].slice.call(document.querySelectorAll('.n-item')),C=[].slice.call(document.querySelectorAll('.n-ch')),H=[].slice.call(document.querySelectorAll('.n-refs h3'));
+function r(){var w=s.value.toLowerCase().trim().split(/\\s+/).filter(Boolean),n=0;I.forEach(function(e){var t=e.textContent.toLowerCase(),ok=w.every(function(x){return t.indexOf(x)>-1});e.classList.toggle('hide',!ok);if(ok)n++});
+C.forEach(function(c){c.classList.toggle('hide',!c.querySelector('.n-item:not(.hide)'))});H.forEach(function(h){var u=h.nextElementSibling;h.classList.toggle('hide',!u.querySelector('.n-item:not(.hide)'))});
+document.body.classList.toggle('n-filtering',w.length>0);o.textContent=w.length?(n?n+(n==1?' match':' matches'):'Nothing matches. Try a shorter word.'):''}
+s.addEventListener('input',r);
+var L=[].slice.call(document.querySelectorAll('.n-bar a')),t=document.getElementById('qtop');
+function spy(){var y=window.scrollY+150,cur='';C.forEach(function(c){if(c.offsetTop<=y)cur=c.id});L.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')=='#'+cur)});t.classList.toggle('on',window.scrollY>900);var a=document.querySelector('.n-bar a.on'),b=document.querySelector('.n-bar');if(a&&b.scrollWidth>b.clientWidth)b.scrollLeft=a.offsetLeft-b.clientWidth/2+a.offsetWidth/2}
+window.addEventListener('scroll',spy,{passive:true});spy();t.addEventListener('click',function(){window.scrollTo({top:0})})})();</script>"""
+    body = (f'<div class="wrap"><div class="n-page"><div class="n-intro"><p>Every note and citation from <a href="{WRG}/book-the-mind-of-a-missionary"><em>The Mind of a Missionary</em></a>, chapter by chapter, followed by the full list of references. '
+            'There are many gems waiting in these books, archives, articles, journals, sermons, videos, and websites. Jump to a chapter, or search for a name, a title, or a word.</p>'
+            f'<p class="q-stats"><b>{nn}</b> notes<span>·</span><b>{len(d["notes"])}</b> sections<span>·</span><b>{nr}</b> references</p></div>'
+            f'<div class="n-tools"><input id="nq" class="search" type="search" placeholder="Search the notes, like Carmichael or Perspectives" aria-label="Search the notes"><nav class="n-bar" aria-label="Chapters">{chips}</nav></div>'
+            f'<p id="nqc" class="fine" aria-live="polite"></p><div class="n-toc">{toc}</div>{secs}{refs}'
+            f'<p class="fine" style="margin-top:32px">Notes and references are from the second edition of <em>The Mind of a Missionary</em> by David Joannes.</p>{SHARE}<button id="qtop" type="button" aria-label="Back to top">↑</button></div></div>{js}')
+    page('/books/the-mind-of-a-missionary/notes/', 'The Mind of a Missionary: Notes and References', phead('The Mind of a Missionary', 'Notes and References') + body + CTA,
+         desc='Every note, citation, and reference from The Mind of a Missionary by David Joannes, chapter by chapter.')
+notes_page()
 
 # ---------- donate + meeting
 og_fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
