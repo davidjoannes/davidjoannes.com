@@ -13,7 +13,7 @@ grep -v '^$' tools/image-urls.txt | xargs -P 8 -I{} bash -c 'fetch "$@"' _ {}
 while read -r url path; do
   [ -z "$url" ] && continue; [ -s "$path" ] && continue
   mkdir -p "$(dirname "$path")"
-  curl -fsSL --retry 2 --max-time 120 -A "Mozilla/5.0 (site migration)" -o "$path" "$url" || { rm -f "$path"; echo "$url" >> tools/missing.tmp; }
+  curl -fsSL --retry 2 --max-time 120 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36" -e "https://www.midjourney.com/" -o "$path" "$url" || { rm -f "$path"; echo "$url" >> tools/missing.tmp; }
 done < tools/extra-files.txt
 sort -u tools/missing.tmp > tools/missing.txt
 rm -f tools/missing.tmp

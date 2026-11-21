@@ -28,6 +28,20 @@ for i in items:
             sizes[sm.group(1)] = url.rsplit('/', 1)[0] + '/' + sm.group(2)
         ATT[g(i, 'wp:post_id')] = {'url': url, 'sizes': sizes, 'alt': m.get('_wp_attachment_image_alt', '')}
 USED = set()
+import json, glob as _glob
+MJ = {}
+for _f in sorted(_glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mj-*.json'))):
+    for _e in json.load(open(_f)): MJ['/' + _e['slug'].strip('/') + '/'] = _e
+MJFILES = {}
+def mj_img(path, small=False):
+    e = MJ.get(path)
+    if not e: return ''
+    name = path.strip('/').replace('/', '-')
+    base = f"https://cdn.midjourney.com/{e['job']}/0_{e.get('variant', 0)}"
+    MJFILES[base + '.webp'] = f'assets/featured/{name}.webp'
+    MJFILES[base + '_640_N.webp'] = f'assets/featured/{name}-640.webp'
+    rel = f'/assets/featured/{name}-640.webp' if small else f'/assets/featured/{name}.webp'
+    return (B + rel) if os.path.exists(OUT + rel) else ''
 HAVE_UP = os.path.isdir(os.path.join(OUT, 'wp-content'))
 def have(u):
     m = re.match(r'https?://(?:www\.)?davidjoannes\.com(/wp-content/uploads/.+)', u or '')
@@ -187,7 +201,7 @@ def img_sc(a):
     if link: tag = f'<a href="{esc(link)}">{tag}</a>'
     return f'\n\n<p data-a="c">{tag}</p>\n\n'
 def post_card(p, k=None):
-    im = att(p.thumb, ['medium_large', 'large'])
+    im = mj_img(p.path, True) or att(p.thumb, ['medium_large', 'large'])
     if not im:
         y = yt_id(p.meta.get('grve_post_video_embed', '') or p.meta.get('cb_video_embed_code_post', '')) or yt_id(p.raw)
         if y: im = f'https://i.ytimg.com/vi/{y}/hqdefault.jpg'
@@ -488,7 +502,7 @@ by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
     body = convert(p)
-    hero = att(p.thumb, ['large'])
+    hero = mj_img(p.path) or att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
     fi = f'<img class="featimg" src="{hero}" alt="">' if hero and not has_media_top else ''
     vm = p.meta.get('grve_post_video_embed') or p.meta.get('cb_video_embed_code_post') or ''
@@ -501,7 +515,7 @@ for p in POSTS:
     page(p.path, p.title,
          phead(f'<a href="{B}{p.cat[2]}">{esc(p.cat[1])}</a>', p.title, nice_date(p.date))
          + f'<div class="wrap"><article class="article">{fi}<div class="prose">{body}</div></article></div>' + CTA + rel,
-         desc=plain(p.excerpt or p.raw), image=att(p.thumb, ['large']))
+         desc=plain(p.excerpt or p.raw), image=mj_img(p.path) or att(p.thumb, ['large']))
 
 # ---------- about (native layout, bio text from the old page)
 def conv_raw(raw, path='/x/'):
@@ -686,5 +700,5 @@ open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSite
 open(os.path.join(OUT, '.nojekyll'), 'w').write('')
 os.makedirs(os.path.join(OUT, 'tools'), exist_ok=True)
 with open(os.path.join(OUT, 'tools', 'image-urls.txt'), 'w') as f: f.write('\n'.join(sorted(USED)) + '\n')
-with open(os.path.join(OUT, 'tools', 'extra-files.txt'), 'w') as f: f.write(''.join(f'{u} {p}\n' for u, p in sorted(EXTRA.items())))
+with open(os.path.join(OUT, 'tools', 'extra-files.txt'), 'w') as f: f.write(''.join(f'{u} {p}\n' for u, p in sorted({**EXTRA, **MJFILES}.items())))
 print('pages written', len(WRITTEN), '| posts', len(POSTS), '| upload files referenced', len(USED))
