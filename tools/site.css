@@ -344,3 +344,9 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .cb-txt{flex:1;font-size:16px;line-height:1.5}
 .cb-txt b{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8a5a12;margin-bottom:2px}
 @media(max-width:560px){.cbanner{flex-wrap:wrap}.cbanner .pill{margin-left:auto}.ed-vis{height:200px}.ring{width:88px;height:88px}}
+.cpanel.ricon{height:auto;aspect-ratio:1200/630}
+.cpanel.ricon:has(img) .cbadge{display:none}
+.yname{font-size:16px;overflow-wrap:anywhere}
+.yguide{font-size:11px;letter-spacing:.1em}
+.kfan{width:128px;height:168px}
+.ed-kids .ed-vis{height:210px;margin-bottom:6px}

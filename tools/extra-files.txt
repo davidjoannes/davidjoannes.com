@@ -32,5 +32,5 @@ https://withinreachglobal.org/hubfs/the-mind-of-a-missionary-course/youth-img/ta
 https://withinreachglobal.org/hubfs/the-mind-of-a-missionary-course/youth-img/zinzendorf.jpg assets/courses/youth/zinzendorf.jpg
 https://withinreachglobal.org/hubfs/union-bank-transfer.jpg assets/donate/union-bank-qr.jpg
 https://withinreachglobal.org/hubfs/venmo_qrcode-joannes.jpg assets/donate/venmo-qr.jpg
-https://withinreachglobal.org/hubfs/wrg-spiritual-gifts-test-share.png assets/res/spiritual-gifts-test.png
+https://withinreachglobal.org/hubfs/wrg-spiritual-gifts-test-share.png assets/res/spiritual-gifts-test.jpg
 https://withinreachglobal.org/hubfs/zelle_qrcode-joannes.jpg assets/donate/zelle-qr.jpg
