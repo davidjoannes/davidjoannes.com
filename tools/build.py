@@ -148,6 +148,10 @@ for i in items:
     if t == 'post':
         p.cat = next((c for c in CATS if any(n in p.cats for n in c[0])), CATS[-1]); POSTS.append(p)
     else: PAGES.setdefault(p.path, p)
+FEATURED_FIRST = {'/missions-history-today-what-happened-on-every-day-of-the-year/': '2026-11-21 12:00:01',   # republished as the newest posts
+                  '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/': '2026-11-21 12:00:00'}
+for p in POSTS:
+    if p.path in FEATURED_FIRST: p.date = FEATURED_FIRST[p.path]
 POSTS.sort(key=lambda p: p.date, reverse=True)
 LIVE = set()
 def nice_date(d):
@@ -623,7 +627,57 @@ def hist_entries(b, month):
         if m: out.append((int(m.group(1)), (m.group(2) or '').strip(), m.group(3).strip()))
     return out
 HIST = {}
-HIST_CREDIT = '<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>.</p>'
+HIST_ADD = [  # dated events drawn from The Mind of a Missionary (2nd ed.), written fresh for this page
+    ('January', 3, '1956', 'The five missionaries of Operation Auca set up camp on a sandbar of the Curaray River in Ecuador, hoping to make peaceful contact with the Waorani.'),
+    ('January', 13, '1817', 'Robert Moffat, twenty-two years old, arrives in Cape Town, South Africa, to begin his life’s work.'),
+    ('January', 14, '1892', 'Amy Carmichael writes to her mother that everything seems to be saying “Go,” describing her call to people who have never heard of Jesus.'),
+    ('January', 18, '1951', 'Amy Carmichael dies in Dohnavur, India, at age eighty-three, after fifty-five years of service without once returning home.'),
+    ('January', 30, '1956', 'LIFE magazine runs a ten-page article on the five missionaries killed in Ecuador, “Go Ye and Preach the Gospel: Five Do and Die.”'),
+    ('February', 5, '1885', 'The Cambridge Seven, C. T. Studd among them, leave London’s Victoria Station for China with the China Inland Mission.'),
+    ('February', 10, '1728', 'Count Zinzendorf presents plans at Herrnhut for evangelism in the West Indies, Greenland, Turkey, and Lapland. The next day, twenty-six Moravians volunteer for world missions.'),
+    ('February', 10, '1779', 'William Carey, a shoemaker’s apprentice, comes to faith in Christ.'),
+    ('March', 3, '1893', 'Amy Carmichael sails for Japan as the first missionary sent out by the Keswick Convention.'),
+    ('March', 6, '1901', 'A seven-year-old girl named Preena runs to Amy Carmichael for refuge. Her arrival marks the beginning of the rescue work that became the Dohnavur Fellowship.'),
+    ('March', 13, '1976', 'Heidi Baker comes to Christ after hearing a Navajo preacher at a revival meeting on a reservation where she was serving.'),
+    ('March', 18, '1885', 'The Cambridge Seven arrive in Shanghai and continue inland with Hudson Taylor.'),
+    ('March', 19, '1962', 'Don and Carol Richardson sail from Vancouver for New Guinea, where they will live among the Sawi people.'),
+    ('April', 18, '1874', 'David Livingstone is buried in Westminster Abbey, London. Robert Moffat, his father-in-law, is among the mourners.'),
+    ('April', 23, '1900', 'Hudson Taylor addresses the Ecumenical Missionary Conference at Carnegie Hall in New York with a message titled “The Source of Power.”'),
+    ('May', 12, '1727', 'Revival begins in the Moravian community at Herrnhut after its members enter the “Brotherly Agreement.” It reaches its height on August 13.'),
+    ('May', 12, '1792', 'William Carey publishes An Enquiry Into the Obligations of Christians to Use Means for the Conversion of the Heathens.'),
+    ('May', 24, '1980', 'Rolland and Heidi Baker marry. Two weeks later they leave for Indonesia with a one-way ticket and thirty dollars.'),
+    ('May', 26, '1700', 'Nikolaus Ludwig von Zinzendorf, future leader of the Moravian missionary movement, is born.'),
+    ('May', 26, '1866', 'Hudson and Maria Taylor, their four children, and sixteen of the China Inland Mission’s first missionaries leave London for China.'),
+    ('May', 30, '1792', 'William Carey preaches the sermon remembered for the line “Expect great things from God; attempt great things for God.”'),
+    ('June', 2, '2017', 'David Eubank of the Free Burma Rangers runs through ISIS gunfire in Mosul, Iraq, to rescue a little girl who had hidden for two days beside her dead mother.'),
+    ('June', 6, '1838', 'Robert Moffat arrives in Britain after a three-month voyage from South Africa and is met with an enthusiastic welcome.'),
+    ('June', 9, '1834', 'William Carey dies in India after forty-one years of service without a furlough.'),
+    ('June', 23, '2012', 'Don Richardson, seventy-seven, returns with his three sons to the Sawi village of Kamur, fifty years after the family first arrived.'),
+    ('June', 25, '1865', 'On the beach at Brighton, England, Hudson Taylor surrenders to God’s call to begin a mission to inland China. It becomes the China Inland Mission.'),
+    ('June', 30, '1880', 'Dr. Harold Schofield and his wife arrive in China, where he becomes the first foreign doctor in Shanxi.'),
+    ('July', 7, '1963', 'Hato becomes the first of the Sawi people to receive Christ, telling Don Richardson that he wants to receive “the Peace Child of God.”'),
+    ('July', 13, '1962', 'The Richardson family travels up the Kronkel River to make their home among the Sawi of New Guinea.'),
+    ('July', 16, '1931', 'C. T. Studd dies in Ibambi, in what is now the Democratic Republic of the Congo. Two thousand Africans gather the next day to honor him.'),
+    ('July', 23, '1870', 'Maria Taylor, wife of Hudson Taylor, dies in China just days after the death of their newborn son, Noel.'),
+    ('August', 1, '1883', 'Dr. Harold Schofield dies of typhus after three years in China. His prayers for more workers preceded the coming of the Cambridge Seven.'),
+    ('August', 9, '1883', 'Robert Moffat, pioneer missionary to southern Africa, dies.'),
+    ('August', 16, '1868', 'A mob of thousands riots against Hudson Taylor’s mission in Yangzhou, China. The unrest lasts a week.'),
+    ('August', 23, '1867', 'Grace Taylor, the young daughter of Hudson and Maria Taylor, dies near Hangzhou, China.'),
+    ('September', 19, '1853', 'Hudson Taylor, twenty-one years old, sails from England for China.'),
+    ('October', 8, '1732', 'Johann Leonhard Dober and David Nitschmann, the first Moravian missionaries, begin their voyage to the West Indies.'),
+    ('October', 8, '1958', 'Elisabeth Elliot, her three-year-old daughter Valerie, and Rachel Saint move in with the Waorani, the people who had killed Jim Elliot and Nate Saint.'),
+    ('October', 11, '1895', 'Amy Carmichael, twenty-seven, leaves England for India. She never returns.'),
+    ('October', 28, '1949', 'Jim Elliot writes in his journal, “He is no fool who gives what he cannot keep to gain that which he cannot lose.”'),
+    ('November', 11, '1793', 'William Carey and his family arrive in Calcutta, India.'),
+    ('November', 13, '1957', 'Several Waorani women come out of the jungle and invite Elisabeth Elliot to live with their tribe.'),
+    ('November', 25, '1881', 'Hudson Taylor and fellow China Inland Mission workers meet in Wuhan and agree to pray daily for seventy more workers for China.'),
+    ('November', 25, '2016', 'A three-day celebration of Jackie Pullinger’s fifty years in Hong Kong begins at Kowloon Walled City Park.'),
+    ('December', 2, '1860', 'C. T. Studd, future missionary to China, India, and Africa, is born.'),
+    ('December', 8, '1840', 'David Livingstone leaves London for Africa, carrying 500 copies of Robert Moffat’s newly printed Scripture translation for Kuruman.'),
+    ('December', 15, '1910', 'C. T. Studd, in his fifties and against his doctor’s advice, sails from Liverpool for the heart of Africa.'),
+]
+HIST_CREDIT = ('<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>. '
+               f'Additional entries are drawn from <a href="{WRG}/book-the-mind-of-a-missionary"><em>The Mind of a Missionary</em></a> by David Joannes.</p>')
 def hist_home():
     tabs = ''.join(f'<button type="button" data-m="{m.lower()}">{m[:3]}</button>' for m in MONTHS)
     cards = ''.join(f'<a class="h-card" href="#{m.lower()}" data-m="{m.lower()}"><span class="h-num">{i + 1:02d}</span><h3>{m}</h3><p>{len(HIST[m])} days of missions history</p><span class="more">Open {m} →</span></a>' for i, m in enumerate(MONTHS))
@@ -631,9 +685,10 @@ def hist_home():
     for i, month in enumerate(MONTHS):
         ents = HIST[month]; ml = month.lower()
         days = ''.join(f'<a href="#{ml}-{d}">{d}</a>' for d in sorted({e[0] for e in ents}))
-        rows = ''
+        rows = ''; _seen = set()
         for k, (d, y, t) in enumerate(ents):
-            rows += f'<li class="h-row" id="{ml}-{d}" data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
+            _id = f' id="{ml}-{d}"' if d not in _seen else ''; _seen.add(d)
+            rows += f'<li class="h-row"{_id} data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
             if k == len(ents) // 2: rows += f'<li class="h-mod">{modbar(ROT[i % len(ROT)])}</li>'
         prev, nxt = MONTHS[i - 1], MONTHS[(i + 1) % 12]
         secs += (f'<section class="h-month" id="{ml}" data-i="{i}" hidden><h2>{month}</h2>'
@@ -786,6 +841,8 @@ for p in POSTS:
     _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
     if _m and _m.group(1).capitalize() in MONTHS:
         HIST[_m.group(1).capitalize()] = hist_entries(convert(p), _m.group(1).capitalize()); HIST_POSTS.append(p)
+for _hm, _hd, _hy, _ht in HIST_ADD: HIST[_hm].append((_hd, _hy, _ht))
+for _hm in HIST: HIST[_hm].sort(key=lambda e: (e[0], int(re.sub(r'\D', '', e[1]) or 0)))
 POSTS = [p for p in POSTS if p not in HIST_POSTS]     # the twelve month posts are compiled into the one Missions History Today page
 by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
