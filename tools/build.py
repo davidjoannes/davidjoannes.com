@@ -436,7 +436,6 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <footer class="ftr dark">
 <div class="wrap">
 <a class="igband" href="https://instagram.com/davidjoannes"><span class="igic">{IC['Instagram']}</span><span class="igtxt"><b>Follow @davidjoannes on Instagram</b><span>Stories, photos, and updates from the mission field.</span></span><span class="btn white">Follow on Instagram ↗</span></a>
-<div class="ftop"><h2>The unreached are within reach.</h2><a class="btn" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="fcols">
 <div class="fabout"><a class="brand" href="{B}/">David Joannes</a><p>Missiologist, author, podcaster, and Founder of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.</p></div>
 {fcol('Explore', [('About', '/about/'), ('Books', '/books/'), ('Missions Pulse', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/')])}
@@ -502,6 +501,8 @@ RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Tak
 CRS = [(f'{t} Course', f'Free course · {n}', 'Start free ↗', f'{WRG}/{u}') for t, n, u in COURSES]
 RICON = {
  'gift': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11" rx="1.5"/><path d="M3.5 13h17M12 9v11"/><path d="M12 9c-1.500-3.500-5.500-4-5.500-1.800C6.500 9 9.500 9 12 9zM12 9c1.500-3.500 5.500-4 5.500-1.800C17.500 9 14.500 9 12 9z"/></svg>', 'gauge': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.2"/></svg>', 'pin': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.500-6.200-6.500-11a6.500 6.500 0 0 1 13 0c0 4.800-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.300"/></svg>', 'mic': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21M9 21h6"/></svg>', 'book': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.500C10.200 5.200 7.600 4.800 4 5v13c3.600-.2 6.200.2 8 1.500 1.800-1.300 4.400-1.700 8-1.500V5c-3.600-.2-6.200.2-8 1.500zM12 6.500v13"/></svg>', 'map': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.500 6.500l5.500-2 6 2 5.500-2v13l-5.500 2-6-2-5.500 2zM9 4.500v13M15 6.500v13"/></svg>'}
+RIMG = {'gift': f'<img src="{extra(H + "wrg-spiritual-gifts-test-share.png", "res/spiritual-gifts-test.png")}" alt="" loading="lazy">',
+        'gauge': f'<img src="{extra(H + "Gospel%20Access%20Score/gospel-access-score-featured.png", "res/gospel-access-score.png")}" alt="" loading="lazy">'}
 RCARDS = [  # same modules as the Resources menu on withinreachglobal.org
     ('Spiritual Gifts Test', 'Free test', 'Discover how God has gifted you and where you fit in His mission.', 'Take the test ↗', WRG + '/spiritual-gifts-test', 'gift', 'c-teal'),
     ('Gospel Access Score', '18 questions', 'Eighteen quick questions. See how your access to the gospel compares worldwide.', 'Get your score ↗', WRG + '/gospel-access-score', 'gauge', 'c-dusk'),
@@ -511,22 +512,37 @@ RCARDS = [  # same modules as the Resources menu on withinreachglobal.org
     ('Pray for Thailand', 'Prayer map', 'An interactive prayer map of all 77 provinces.', 'Open the map ↗', 'https://prayforthailand.com', 'map', 'c-sun'),
 ]
 RES_CARDS = '<div class="cgrid">' + ''.join(
-    f'<a class="ccard" href="{u}"><span class="cpanel ricon {k}"><span class="cbadge">{bd}</span>{RICON[i]}</span>'
+    f'<a class="ccard" href="{u}"><span class="cpanel ricon {k}"><span class="cbadge">{bd}</span>{RIMG.get(i) or RICON[i]}</span>'
     f'<span class="cbody"><h3>{t}</h3><p>{d}</p><span class="btn">{g}</span></span></a>'
     for t, bd, d, g, u, i, k in RCARDS) + '</div>'
 def _cv(t): return cover(next(b[2] for b in BOOKS if b[0] == t))
 _TM = f'{WRG}/the-mind-of-a-missionary-course'
-CCARDS = [  # (title, badge, meta, blurb, url, cover title, panel class)
-    ('The Mind of a Missionary Course', 'Original', 'Free course · 13 lessons', 'Thirteen short lessons with missionaries whose stories will stretch your missionary mind.', _TM + '?edition=original', 'The Mind of a Missionary', 'c-navy'),
-    ('The Mind of a Missionary Course', 'Youth edition', 'Free course · For teens', 'The same journey, shaped for students and youth groups.', _TM + '?edition=youth', 'The Mind of a Missionary', 'c-teal'),
-    ('The Mind of a Missionary Course', 'Kids edition', 'Free course · For children', 'Missionary stories and big ideas made simple for kids and families.', _TM + '?edition=kids', 'The Mind of a Missionary', 'c-sun'),
-    ('Gospel Privilege Course', 'Course', 'Free course · 9 lessons', "The unearned advantage that's meant for everyone, and what to do with it.", f'{WRG}/gospel-privilege-course', 'Gospel Privilege', 'c-gold'),
-    ('See the City Course', 'Course', 'Free course · 12 lessons', 'Hope for the bruised, battered, and broken-hearted, lesson by lesson.', f'{WRG}/see-the-city-course', 'See the City', 'c-dusk'),
-]
-COURSE_CARDS = '<div class="cgrid">' + ''.join(
-    f'<a class="ccard" href="{u}"><span class="cpanel {k}"><span class="cbadge">{bd}</span><img src="{_cv(ct)}" alt="" loading="lazy"></span>'
-    f'<span class="cbody"><h3>{t}</h3><span class="cmeta">{m}</span><p>{d}</p><span class="btn">Start free ↗</span></span></a>'
-    for t, bd, m, d, u, ct, k in CCARDS) + '</div>'
+YOUTH = ['elliot', 'studd', 'zinzendorf', 'moffat', 'pullinger', 'eubank', 'ripken', 'carey', 'taylor', 'carmichael', 'richardson', 'baker']
+def _y(n): return extra(H + f'the-mind-of-a-missionary-course/youth-img/{n}.jpg', f'courses/youth/{n}.jpg')
+def _k(n): return extra(H + f'kids-course/img/L{n}/portrait.jpg', f'courses/kids/L{n}.jpg')
+COURSE_CARDS = (
+    '<div class="edgrid">'
+    # original
+    f'<a class="ed ed-orig" href="{_TM}?edition=original"><span class="ed-vis"><img src="{_cv("The Mind of a Missionary")}" alt="" loading="lazy">'
+    '<span class="ring"><b>13</b><i>lessons</i></span></span>'
+    '<span class="ed-eyebrow">Free course · Adults &amp; groups</span><h3>The Mind of a Missionary</h3>'
+    '<p>The full course for adults, small groups, and anyone exploring a call to missions.</p><span class="pill">Start free →</span></a>'
+    # youth
+    f'<a class="ed ed-youth" href="{_TM}?edition=youth"><span class="ed-vis"><img class="yhero" src="{_y("pullinger")}" alt="" loading="lazy">'
+    '<span class="yside"><span class="yguide">Guide 05 / 12</span><span class="yname">Jackie Pullinger</span><span class="ybar"></span>'
+    '<span class="ythumbs">' + ''.join(f'<img src="{_y(n)}" alt="" loading="lazy">' for n in YOUTH) + '</span></span></span>'
+    '<span class="ed-eyebrow">[ New · Ages 11–18 ]</span><h3>Youth Edition</h3>'
+    '<p>Same twelve guides, made for teens: guide cards, hot takes, weekly challenges, and XP.</p><span class="pill">Start youth →</span></a>'
+    # kids
+    f'<a class="ed ed-kids" href="{_TM}?edition=kids"><span class="ed-vis"><span class="kfan"><img src="{_k(3)}" alt="" loading="lazy"><img src="{_k(4)}" alt="" loading="lazy"><img src="{_k(1)}" alt="" loading="lazy"></span>'
+    '<span class="kstamp"><i>Hero</i><b>1</b><i>of 12</i></span></span>'
+    '<span class="ed-eyebrow"><span>New · Ages 5–10</span></span><h3>Kids Edition</h3>'
+    '<p>Twelve missionary heroes as read-aloud stories, with passport stamps, hero cards, and coloring pages.</p><span class="pill">Start kids ▶</span></a>'
+    '</div><div class="cbanners">'
+    + ''.join(f'<a class="cbanner" href="{WRG}/{u}"><img src="{_cv(t)}" alt="" loading="lazy"><span class="cb-txt"><b>Free course</b>{t} — {d}</span><span class="pill">Start free →</span></a>'
+              for t, u, d in (('Gospel Privilege', 'gospel-privilege-course', "9 short lessons on the unearned advantage that's meant for everyone."),
+                              ('See the City', 'see-the-city-course', '12 short lessons on carrying hope to people who are hurting.')))
+    + '</div>')
 
 # ---------- posts
 LIVE.update(p.path for p in POSTS)
