@@ -516,10 +516,14 @@ RCARDS = [  # same modules as the Resources menu on withinreachglobal.org
     ('Books', 'Books', 'David Joannes on missions, discipleship, and the unreached.', 'Browse the books ↗', WRG + '/books', 'book', 'c-gold'),
     ('Pray for Thailand', 'Prayer map', 'An interactive prayer map of all 77 provinces.', 'Open the map ↗', 'https://prayforthailand.com', 'map', 'c-sun'),
 ]
-RES_CARDS = '<div class="cgrid">' + ''.join(
-    f'<a class="ccard" href="{u}"><span class="cpanel ricon {k}"><span class="cbadge">{bd}</span>{RIMG.get(i) or RICON[i]}</span>'
-    f'<span class="cbody"><h3>{t}</h3><p>{d}</p><span class="btn">{g}</span></span></a>'
-    for t, bd, d, g, u, i, k in RCARDS) + '</div>'
+def rcards(items):
+    return '<div class="cgrid">' + ''.join(
+        f'<a class="ccard" href="{u}"><span class="cpanel ricon {k}"><span class="cbadge">{bd}</span>{RIMG.get(i) or RICON[i]}</span>'
+        f'<span class="cbody"><h3>{t}</h3><p>{d}</p><span class="btn">{g}</span></span></a>'
+        for t, bd, d, g, u, i, k in items) + '</div>'
+RES_CARDS = rcards(RCARDS)
+RIMG['course'] = '<span class="rcovers">' + ''.join(f'<img src="{cover(next(b[2] for b in BOOKS if b[0] == t))}" alt="" loading="lazy">' for t in ('The Mind of a Missionary', 'Gospel Privilege', 'See the City')) + '</span>'
+HOME_CARDS = rcards(RCARDS[:2] + [('Free Online Courses', 'Courses', "Short lessons built from David's books, with editions for adults, youth, and kids.", 'See the courses →', B + '/resources/#courses', 'course', 'c-navy')])
 def _cv(t): return cover(next(b[2] for b in BOOKS if b[0] == t))
 _TM = f'{WRG}/the-mind-of-a-missionary-course'
 YOUTH = ['elliot', 'studd', 'zinzendorf', 'moffat', 'pullinger', 'eubank', 'ripken', 'carey', 'taylor', 'carmichael', 'richardson', 'baker']
@@ -695,7 +699,7 @@ page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', l
 
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
-     + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft')
+     + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft', 'courses')
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF) + CTA,
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
@@ -741,7 +745,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <a class="btn white" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="rows"><a href="{WRG}/monthly-prayer-and-financial-support-team/"><span class="t">Pray</span><span class="s">Join the prayer and support team →</span></a><a href="{WRG}/donate"><span class="t">Give</span><span class="s">Empower indigenous missionaries →</span></a><a href="{WRG}/go"><span class="t">Go</span><span class="s">Apply to serve →</span></a></div></div></section>
 ''' + sec(shead('The podcast', 'Missions Pulse', f'<a class="more" href="{B}/missionspulse/">About the podcast →</a>', 'God at work in the world, and your role in the Great Commission.')
-          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px">{"".join(ep(p) for p in eps)}<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + RES_CARDS + '<h3 class="subhead">Free online courses</h3>' + COURSE_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
+          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px">{"".join(ep(p) for p in eps)}<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
 page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, podcaster, and the Founder and CEO of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.', image=portrait, home=True)
 
 # ---------- extras
