@@ -500,6 +500,19 @@ RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Tak
        ('Gospel Access Score', 'See how much access to the gospel you have had, and who has none.', 'Get your score ↗', WRG + '/gospel-access-score'),
        ('Pray for Thailand', 'An interactive prayer map of all 77 provinces.', 'Open the map ↗', 'https://prayforthailand.com')]
 CRS = [(f'{t} Course', f'Free course · {n}', 'Start free ↗', f'{WRG}/{u}') for t, n, u in COURSES]
+def _cv(t): return cover(next(b[2] for b in BOOKS if b[0] == t))
+_TM = f'{WRG}/the-mind-of-a-missionary-course'
+CCARDS = [  # (title, badge, meta, blurb, url, cover title, panel class)
+    ('The Mind of a Missionary Course', 'Original', 'Free course · 13 lessons', 'Thirteen short lessons with missionaries whose stories will stretch your missionary mind.', _TM + '?edition=original', 'The Mind of a Missionary', 'c-navy'),
+    ('The Mind of a Missionary Course', 'Youth edition', 'Free course · For teens', 'The same journey, shaped for students and youth groups.', _TM + '?edition=youth', 'The Mind of a Missionary', 'c-teal'),
+    ('The Mind of a Missionary Course', 'Kids edition', 'Free course · For children', 'Missionary stories and big ideas made simple for kids and families.', _TM + '?edition=kids', 'The Mind of a Missionary', 'c-sun'),
+    ('Gospel Privilege Course', 'Course', 'Free course · 9 lessons', "The unearned advantage that's meant for everyone, and what to do with it.", f'{WRG}/gospel-privilege-course', 'Gospel Privilege', 'c-gold'),
+    ('See the City Course', 'Course', 'Free course · 12 lessons', 'Hope for the bruised, battered, and broken-hearted, lesson by lesson.', f'{WRG}/see-the-city-course', 'See the City', 'c-dusk'),
+]
+COURSE_CARDS = '<div class="cgrid">' + ''.join(
+    f'<a class="ccard" href="{u}"><span class="cpanel {k}"><span class="cbadge">{bd}</span><img src="{_cv(ct)}" alt="" loading="lazy"></span>'
+    f'<span class="cbody"><h3>{t}</h3><span class="cmeta">{m}</span><p>{d}</p><span class="btn">Start free ↗</span></span></a>'
+    for t, bd, m, d, u, ct, k in CCARDS) + '</div>'
 
 # ---------- posts
 LIVE.update(p.path for p in POSTS)
@@ -559,7 +572,7 @@ page('/books/', 'Books by David Joannes',
      phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the church, particularly for the remaining unreached people groups of the 10/40 Window.')
      + sec(shead('Resources', 'Browse the books', lede='Books to help you discover your God-given calling and find your role in the Great Commission.') + '<div class="bgrid">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
      + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
-     + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + tiles(CRS)) + CTA,
+     + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + COURSE_CARDS) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
 OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (6, 'gospelprivilege'),
             '/books/the-space-between-memories/': (1, 'thespacebetweenmemories'), '/books/see-the-city/': (4, 'seethecity')}
@@ -647,7 +660,7 @@ page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', l
 
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
-     + sec(shead('Free tools', 'Start here') + tiles(RES)) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + tiles(CRS), 'soft')
+     + sec(shead('Free tools', 'Start here') + tiles(RES)) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft')
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF) + CTA,
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
