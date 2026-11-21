@@ -443,7 +443,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 {fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Be a podcast guest', '/contact/'), ('Contact', '/contact/')])}
 {fcol('Give', [('Support David and Lorna', '/donate/'), ('Within Reach Global', WRG), ('Give to WRG', WRG + '/donate')])}
 </div>
-<div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc"><a class="amz" href="{AMAZON_AUTHOR}" title="David Joannes on Amazon">My books on <b>Amazon</b> ↗</a>{SOCIAL_ICONS}</span></div>
+<div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}<a href="{AMAZON_AUTHOR}" aria-label="Books on Amazon" title="Books on Amazon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.2 5.2 7.6 4.8 4 5v13c3.6-.2 6.2.2 8 1.5 1.8-1.3 4.4-1.7 8-1.5V5c-3.6-.2-6.2.2-8 1.5z"/><path d="M12 6.5v13"/></svg></a></span></div>
 </div>
 </footer>
 <script>(function(){{var b=document.querySelector('.burger'),n=document.getElementById('mainnav');if(!b||!n)return;b.addEventListener('click',function(){{var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}});function c(){{n.classList.remove('open');b.classList.remove('open');b.setAttribute('aria-expanded','false')}}n.addEventListener('click',function(e){{if(e.target.closest('a'))c()}});document.addEventListener('click',function(e){{if(n.classList.contains('open')&&!e.target.closest('.hdr'))c()}});document.addEventListener('keydown',function(e){{if(e.key==='Escape')c()}})}})();</script>
@@ -480,7 +480,7 @@ BOOKS = [  # same list and order as withinreachglobal.org/books
     ('A mente de um missionário', 'Português · 2025', H + 'amdum-small.png', 'https://www.amazon.com/mente-mission%C3%A1rio-Mind-Missionary-transculturais-ebook/dp/B0FWRMLP2S', 'book-a-mente-de-um-mission%C3%A1rio'),
     ('La mente de un misionero', 'Español · 2025', H + 'lmdum-small.png', 'https://www.amazon.com/mente-misionero-Mind-Missionary-transculturais-ebook/dp/B0FYX6K4MZ', 'book-la-mente-de-un-misionero'),
 ]
-AMAZON_AUTHOR = 'https://www.amazon.com/stores/author/B01L36WYVC'
+AMAZON_AUTHOR = 'https://www.amazon.com/stores/David-Joannes/author/B01L36WYVC'
 FLAT = {  # flat front covers from the Amazon author page (image ids)
     'The Mind of a Missionary': '71hoj0tlZ6L', 'The Space Between Memories': '81gQKb1iiVL', 'Faith for Firebrands': '61mlevNAmvL',
     'That Lasting Joy': '71jfo+ujCDL', 'See the City': '914zoen8UoL', 'Glorious Hope': '71n0mXLBNlL', 'Gospel Privilege': '71LDOmkWdDS',
