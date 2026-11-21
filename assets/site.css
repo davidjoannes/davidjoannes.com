@@ -350,3 +350,8 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .yguide{font-size:11px;letter-spacing:.1em}
 .kfan{width:128px;height:168px}
 .ed-kids .ed-vis{height:210px;margin-bottom:6px}
+.cpanel.ricon:has(.rcovers){background:#f5efe4}
+.cpanel.ricon:has(.rcovers) .cbadge{display:none}
+.rcovers{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:100%;padding:16px}
+.cpanel.ricon .rcovers img{position:static;width:auto;height:82%;object-fit:contain;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+@media(max-width:560px){.cbanner{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px 16px;padding:18px}.cbanner img{grid-row:1/3;height:110px}.cbanner .pill{margin:0;justify-self:start;grid-column:2}.cb-txt{font-size:15px}}
