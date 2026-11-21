@@ -206,7 +206,7 @@ def post_card(p, k=None):
         y = yt_id(p.meta.get('grve_post_video_embed', '') or p.meta.get('cb_video_embed_code_post', '')) or yt_id(p.raw)
         if y: im = f'https://i.ytimg.com/vi/{y}/hqdefault.jpg'
     pic = f'<img src="{im}" alt="" loading="lazy">' if im else ''
-    return (f'<a class="card" href="{B}{p.path}" data-t="{esc(p.title.lower())}"><div class="im">{pic}</div>'
+    return (f'<a class="card" href="{B}{p.path}" data-t="{esc((p.title + ' ' + p.cat[1] + ' ' + re.sub(r'<[^>]+>|\[[^\]]*\]', ' ', p.excerpt or p.raw)[:260]).lower())}"><div class="im">{pic}</div>'
             f'<div class="k">{esc(k or p.cat[1])} · {nice_date(p.date)}</div><h3>{esc(p.title)}</h3></a>')
 def blog_sc(a):
     n = int(a.get('posts_per_page') or 8)
@@ -582,6 +582,51 @@ def own_book_link(m):
     elif re.fullmatch(r'(?i)purchase this book at amazon today\.?', text): inner = 'Get this book today.'
     elif text.lower() == 'amazon': inner = 'Within Reach Global'
     return f'<a href="{WRG}/{slug}">{inner}</a>'
+def quotes_page(b):
+    paras = re.findall(r'<p[^>]*>(.*?)</p>', b, re.S)
+    intro, people, cur, seen = [], [], None, False
+    for x in paras:
+        t = re.sub(r'<[^>]+>', '', x).strip()
+        if not seen:
+            if x.count('#') > 20: seen = True
+            elif 'leave me a comment' not in x: intro.append(x)
+            continue
+        if not t or re.fullmatch(r'(?i)back to top', t): continue
+        m = re.fullmatch(r'\s*<strong>(.*?)</strong>\s*', x, re.S)
+        if m and len(t) < 60 and t[0] not in '"“':
+            cur = (re.sub(r'<[^>]+>', '', m.group(1)).strip(), []); people.append(cur); continue
+        if cur: cur[1].append(x.strip())
+    def card(q):
+        m = re.match(r'^(.*[”"’\'.!?])\s*(?:<br\s*/?>)?\s*[-–—]{1,2}\s*(.{2,400})$', q, re.S)
+        text, attr = (m.group(1).strip(), m.group(2).strip()) if m else (q, '')
+        return f'<figure class="q"><blockquote>{text}</blockquote>' + (f'<figcaption>{attr}</figcaption>' if attr else '') + '<button class="q-copy" type="button">Copy</button></figure>'
+    letters = collections.OrderedDict()
+    for name, qs in people: letters.setdefault(name[0].upper(), []).append((name, re.sub(r'[^A-Za-z0-9]', '', name), qs))
+    nq = sum(len(q) for _, q in people)
+    az = ''.join(f'<a href="#q-{L}">{L}</a>' if L in letters else f'<span>{L}</span>' for L in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    index = ''.join(f'<div><h4>{L}</h4>' + ''.join(f'<a href="#{i}">{esc(n)}</a>' for n, i, _ in ppl) + '</div>' for L, ppl in letters.items())
+    mods = {'C': 'tmoam', 'L': 'gifts', 'R': 'gas'}
+    secs = ''
+    for L, ppl in letters.items():
+        secs += (f'<section class="q-letter" id="q-{L}"><h2>{L}</h2><div class="q-cols">'
+                 + ''.join(f'<div class="q-person" id="{i}"><h3>{esc(n)}</h3>{"".join(card(q) for q in qs)}</div>' for n, i, qs in ppl) + '</div></section>')
+        if L in mods: secs += f'<div class="q-mod">{modbar(mods[L])}</div>'
+    js = """<script>
+(function(){var s=document.getElementById('qq'),o=document.getElementById('qqc'),P=[].slice.call(document.querySelectorAll('.q-person')),Ls=[].slice.call(document.querySelectorAll('.q-letter'));
+function r(){var w=s.value.toLowerCase().trim().split(/\\s+/).filter(Boolean),n=0;P.forEach(function(p){var nm=p.querySelector('h3').textContent.toLowerCase(),hit=0;[].forEach.call(p.querySelectorAll('.q'),function(q){var t=nm+' '+q.textContent.toLowerCase(),ok=w.every(function(x){return t.indexOf(x)>-1});q.classList.toggle('hide',!ok);if(ok)hit++});p.classList.toggle('hide',!hit);n+=hit});
+Ls.forEach(function(l){l.classList.toggle('hide',!l.querySelector('.q-person:not(.hide)'))});document.body.classList.toggle('q-filtering',w.length>0);o.textContent=w.length?(n?n+(n==1?' quote matches':' quotes match'):'No quotes match. Try a shorter word.'):''}
+s.addEventListener('input',r);
+document.addEventListener('click',function(e){var b=e.target.closest('.q-copy');if(!b)return;var f=b.parentNode,t=f.querySelector('blockquote').textContent.trim(),c=f.querySelector('figcaption');t+=c?' — '+c.textContent.trim():'';
+(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)},function(){b.textContent='Select and copy'})});
+var h=decodeURIComponent(location.hash.slice(1));if(h&&!document.getElementById(h)){var m=P.filter(function(p){return p.id.toLowerCase()==h.toLowerCase()})[0];if(m)m.scrollIntoView()}
+var t=document.getElementById('qtop');window.addEventListener('scroll',function(){t.classList.toggle('on',window.scrollY>900)},{passive:true});t.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
+</script>"""
+    return (f'<div class="q-page"><div class="q-intro prose">{"".join(f"<p>{x}</p>" for x in intro)}</div>'
+            f'<p class="q-stats"><b>{nq}</b> quotes<span>·</span><b>{len(people)}</b> voices<span>·</span>A to Z</p>'
+            f'<div class="q-tools"><input id="qq" class="search" type="search" placeholder="Search a name or a word, like Carey or prayer" aria-label="Search the quotes"><nav class="q-az" aria-label="Jump to a letter">{az}</nav></div>'
+            f'<p id="qqc" class="fine" aria-live="polite"></p>'
+            f'<details class="q-index"><summary>Browse all {len(people)} names</summary><div class="q-names">{index}</div></details>'
+            f'{secs}<button id="qtop" type="button" aria-label="Back to top">↑</button></div>{js}')
 def promote(body, p):
     fn = ''
     m = re.search(r'<(?:ol|div|section)[^>]*class="[^"]*\b(?:fn|footnotes|notes)\b', body)
@@ -648,6 +693,9 @@ by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
     body = promote(convert(p), p)
+    QP = p.path == '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/'
+    if QP: body = quotes_page(convert(p))
+    body = re.sub(r'href="' + re.escape(B) + r'/\?s=', f'href="{B}/blog/?s=', body)
     hero = mj_img(p.path) or att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
     fi = f'<img class="featimg" src="{hero}" alt="">' if hero and not has_media_top else ''
@@ -660,7 +708,7 @@ for p in POSTS:
     rel = sec(shead(f'More from {esc(p.cat[1])}', 'Keep reading', f'<a class="more" href="{B}{p.cat[2]}">See all →</a>') + f'<div class="grid">{"".join(post_card(q) for q in more)}</div>', 'soft') if more else ''
     page(p.path, p.title,
          phead(f'<a href="{B}{p.cat[2]}">{esc(p.cat[1])}</a>', p.title, nice_date(p.date))
-         + f'<div class="wrap"><article class="article">{fi}<div class="prose">{body}</div></article></div>' + CTA + rel,
+         + (f'<div class="wrap">{body}</div>' if QP else f'<div class="wrap"><article class="article">{fi}<div class="prose">{body}</div></article></div>') + CTA + rel,
          desc=plain(p.excerpt or p.raw), image=mj_img(p.path) or att(p.thumb, ['large']))
 
 # ---------- about (native layout, bio text from the old page)
@@ -794,11 +842,14 @@ def listing(path, title, posts, active):
     chips = f'<a href="{B}/blog/"' + (' class="on"' if active == '/blog/' else '') + '>All</a>' + ''.join(f'<a href="{B}{u}"' + (' class="on"' if active == u else '') + f'>{esc(l)}</a>' for _, l, u in CATS[::-1])
     js = '''<script>
 (function(){var c=[].slice.call(document.querySelectorAll('#posts .card')),n=24,q='',b=document.getElementById('morebtn'),s=document.getElementById('q');
-function r(){var k=0,m=0;c.forEach(function(e){var ok=!q||e.getAttribute('data-t').indexOf(q)>-1;if(ok)m++;var show=ok&&k<n;if(show)k++;e.classList.toggle('hide',!show)});b.classList.toggle('hide',k>=m)}
-b.addEventListener('click',function(){n+=24;r()});s.addEventListener('input',function(){q=s.value.toLowerCase().trim();n=24;r()});r()})();
+var o=document.getElementById('qcount');
+function r(){var k=0,m=0,w=q.split(/\\s+/).filter(Boolean);c.forEach(function(e){var t=e.getAttribute('data-t'),ok=w.every(function(x){return t.indexOf(x)>-1});if(ok)m++;var show=ok&&k<n;if(show)k++;e.classList.toggle('hide',!show)});b.classList.toggle('hide',k>=m);o.textContent=q?(m?m+(m==1?' post matches':' posts match')+' “'+s.value.trim()+'”':'No posts match “'+s.value.trim()+'”. Try a shorter word.'):''}
+b.addEventListener('click',function(){n+=24;r()});s.addEventListener('input',function(){q=s.value.toLowerCase().trim();n=24;r()});
+s.addEventListener('keydown',function(e){if(e.key=='Enter'){e.preventDefault();s.blur()}});
+var u=new URLSearchParams(location.search).get('s')||new URLSearchParams(location.search).get('q');if(u){s.value=u.replace(/:$/,'');q=s.value.toLowerCase().trim()}r()})();
 </script>'''
     body = (phead('Blog', title, f'{len(posts)} posts') + f'<section class="sec" style="padding-top:28px"><div class="wrap"><nav class="chips" aria-label="Categories">{chips}</nav>'
-            f'<p style="margin:24px 0 32px"><label for="q" class="fine" style="display:block;font-weight:600;margin-bottom:6px">Search posts</label><input id="q" class="search" type="search" placeholder="Search by title"></p>'
+            f'<p style="margin:24px 0 32px"><label for="q" class="fine" style="display:block;font-weight:600;margin-bottom:6px">Search posts</label><input id="q" class="search" type="search" placeholder="Search posts by title or topic"><span id="qcount" class="fine" style="display:block;margin-top:8px;min-height:1.4em" aria-live="polite"></span></p>'
             f'<div class="grid" id="posts">{"".join(post_card(p) for p in posts)}</div><p class="center" style="margin-top:44px"><button id="morebtn" class="btn ink" type="button">Show more posts</button></p></div></section>' + js + CTA)
     page(path, title, body, desc=f'{title} by David Joannes.')
 listing('/blog/', 'Essays, devotionals, and stories from the field', POSTS, '/blog/')
