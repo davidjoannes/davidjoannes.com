@@ -623,33 +623,33 @@ def hist_entries(b, month):
         if m: out.append((int(m.group(1)), (m.group(2) or '').strip(), m.group(3).strip()))
     return out
 HIST = {}
-def hist_nav(cur=None):
-    return ('<nav class="h-months" aria-label="Months">' + ''.join(
-        f'<a href="{B}/missions-history-today-{m.lower()}/"' + (' class="on"' if m == cur else '') + f'>{m[:3]}</a>' for m in MONTHS) + '</nav>')
 HIST_CREDIT = '<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>.</p>'
-def hist_month(month):
-    ents = HIST[month]; i = MONTHS.index(month); prev, nxt = MONTHS[i - 1], MONTHS[(i + 1) % 12]
-    days = ''.join(f'<a href="#d{d}">{d}</a>' for d in sorted({e[0] for e in ents}))
-    rows = ''
-    for k, (d, y, t) in enumerate(ents):
-        rows += f'<li class="h-row" id="d{d}" data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
-        if k == len(ents) // 2: rows += f'<li class="h-mod">{modbar(ROT[i % len(ROT)])}</li>'
-    js = """<script>(function(){var n=new Date(),m=%d;if(n.getMonth()==m){var r=document.querySelector('.h-row[data-d="'+n.getDate()+'"]');if(r){r.classList.add('today');var t=document.getElementById('h-today');t.hidden=false;t.addEventListener('click',function(){r.scrollIntoView({block:'center'})})}}})();</script>""" % i
-    return (f'<div class="h-page"><p class="h-back"><a href="{B}{HIST_HOME}">← Missions History Today: all months</a></p>{hist_nav(month)}'
-            f'<p class="h-lede">What happened in missions history on every day of {month}. Pick a day, or read the month from top to bottom.</p>'
-            f'<div class="h-days"><span>Jump to a day</span>{days}<button id="h-today" type="button" hidden>Today</button></div>'
-            f'<ol class="h-list">{rows}</ol>{HIST_CREDIT}'
-            f'<div class="h-pn"><a href="{B}/missions-history-today-{prev.lower()}/">← {prev}</a><a href="{B}/missions-history-today-{nxt.lower()}/">{nxt} →</a></div>{SHARE}</div>{js}')
 def hist_home():
-    data = json.dumps({str(i): {str(d): [y, re.sub(r'<[^>]+>', '', t)] for d, y, t in HIST[m]} for i, m in enumerate(MONTHS)}, ensure_ascii=False).replace('</', '<\\/')
-    cards = ''.join(f'<a class="h-card" href="{B}/missions-history-today-{m.lower()}/"><span class="h-num">{i + 1:02d}</span><h3>{m}</h3><p>{len(HIST[m])} days of missions history</p><span class="more">Open {m} →</span></a>' for i, m in enumerate(MONTHS))
-    js = """<script>(function(){var D=%s,M=%s,n=new Date(),m=n.getMonth(),d=n.getDate(),e=(D[m]||{})[d],x=document.getElementById('h-otd');
-if(!e){for(var k=1;k<4&&!e;k++){e=(D[m]||{})[d-k];if(e)d=d-k}}
-if(e){x.querySelector('.h-otd-date').textContent=M[m]+' '+d+(e[0]?', '+e[0]:'');x.querySelector('.h-otd-text').textContent=e[1];x.querySelector('a').href='%s/missions-history-today-'+M[m].toLowerCase()+'/#d'+d;x.hidden=false}})();</script>""" % (data, json.dumps(MONTHS), B)
+    tabs = ''.join(f'<button type="button" data-m="{m.lower()}">{m[:3]}</button>' for m in MONTHS)
+    secs = ''
+    for i, month in enumerate(MONTHS):
+        ents = HIST[month]; ml = month.lower()
+        days = ''.join(f'<a href="#{ml}-{d}">{d}</a>' for d in sorted({e[0] for e in ents}))
+        rows = ''
+        for k, (d, y, t) in enumerate(ents):
+            rows += f'<li class="h-row" id="{ml}-{d}" data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
+            if k == len(ents) // 2: rows += f'<li class="h-mod">{modbar(ROT[i % len(ROT)])}</li>'
+        prev, nxt = MONTHS[i - 1], MONTHS[(i + 1) % 12]
+        secs += (f'<section class="h-month" id="{ml}" data-i="{i}" hidden><h2>{month}</h2>'
+                 f'<div class="h-days"><span>Jump to a day</span>{days}</div><ol class="h-list">{rows}</ol>'
+                 f'<div class="h-pn"><a href="#{prev.lower()}">← {prev}</a><a href="#{nxt.lower()}">{nxt} →</a></div></section>')
+    js = """<script>(function(){var M=%s,S=[].slice.call(document.querySelectorAll('.h-month')),T=[].slice.call(document.querySelectorAll('.h-months button')),n=new Date(),tm=M[n.getMonth()].toLowerCase(),td=n.getDate();
+function show(m,scroll){S.forEach(function(s){s.hidden=s.id!=m});T.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')==m)});if(scroll){var e=document.getElementById(scroll);if(e)e.scrollIntoView({block:scroll==m?'start':'center'})}}
+function route(first){var h=decodeURIComponent(location.hash.slice(1)).toLowerCase(),m=h.split('-')[0];if(M.map(function(x){return x.toLowerCase()}).indexOf(m)>-1)show(m,h);else if(first)show(tm)}
+T.forEach(function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');history.replaceState(null,'','#'+m);show(m);document.getElementById('h-pick').scrollIntoView({block:'start'})})});
+window.addEventListener('hashchange',function(){route(false)});
+var r=document.getElementById(tm+'-'+td),d=td;for(var k=1;k<4&&!r;k++){r=document.getElementById(tm+'-'+(td-k));if(r)d=td-k}
+if(r){r.classList.add('today');var x=document.getElementById('h-otd'),y=r.querySelector('.h-body i');x.querySelector('.h-otd-date').textContent=M[n.getMonth()]+' '+d+(y?', '+y.textContent:'');x.querySelector('.h-otd-text').textContent=r.querySelector('.h-body p').textContent;x.querySelector('a').href='#'+tm+'-'+d;x.hidden=false}
+route(true)})();</script>""" % json.dumps(MONTHS)
     return ('<div class="h-page"><div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
             '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em></p></div>'
-            '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See the whole month →</a></div>'
-            f'<h2 class="h-pick">Pick a month</h2><div class="h-grid">{cards}</div>{HIST_CREDIT}{SHARE}</div>{js}')
+            '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See it in the month →</a></div>'
+            f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-months">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
 SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
          """<script>(function(){var u=encodeURIComponent(location.href.split('#')[0].split('?')[0]),t=encodeURIComponent(document.title.replace(/ \\| David Joannes$/,'')),L={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,'in':'https://www.linkedin.com/sharing/share-offsite/?url='+u,em:'mailto:?subject='+t+'&body='+u};
 [].forEach.call(document.querySelectorAll('.share [data-s]'),function(a){var k=a.getAttribute('data-s');if(L[k]){a.href=L[k];if(k!='em'){a.target='_blank';a.rel='noopener'}}else a.addEventListener('click',function(){var v=decodeURIComponent(u);(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){a.textContent='Link copied';setTimeout(function(){a.textContent='Copy link'},1800)},function(){prompt('Copy this link',v)})})})})();</script>""")
@@ -779,17 +779,19 @@ LIVE.update(p.path for p in POSTS)
 LIVE.update(['/about/', '/books/', '/missionspulse/', '/blog/', '/resources/', '/donate/', '/meet/', '/contact/', '/books/the-mind-of-a-missionary/', '/books/the-mind-of-a-missionary/notes/',
              '/books/gospel-privilege/', '/books/gospel-privilege/launchteam/', '/books/the-space-between-memories/', '/books/see-the-city/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
              '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/'] + [c[2] for c in CATS])
-by_cat = collections.defaultdict(list)
-for p in POSTS: by_cat[p.cat[2]].append(p)
+HIST_POSTS = []
 for p in POSTS:
     _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
-    if _m and _m.group(1).capitalize() in MONTHS: HIST[_m.group(1).capitalize()] = hist_entries(convert(p), _m.group(1).capitalize())
+    if _m and _m.group(1).capitalize() in MONTHS:
+        HIST[_m.group(1).capitalize()] = hist_entries(convert(p), _m.group(1).capitalize()); HIST_POSTS.append(p)
+POSTS = [p for p in POSTS if p not in HIST_POSTS]     # the twelve month posts are compiled into the one Missions History Today page
+for p in HIST_POSTS: page(p.path, p.title, '', redirect=B + HIST_HOME + '#' + p.path.strip('/').rsplit('-', 1)[1])
+by_cat = collections.defaultdict(list)
+for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
     body = promote(convert(p), p)
     QP = p.path == '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/'
     if QP: body = quotes_page(convert(p))
-    _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
-    if _m and _m.group(1).capitalize() in HIST: body, QP = hist_month(_m.group(1).capitalize()), True
     if p.path == HIST_HOME: body, QP = hist_home(), True
     body = re.sub(r'href="' + re.escape(B) + r'/\?s=', f'href="{B}/blog/?s=', body)
     hero = mj_img(p.path) or att(p.thumb, ['large'])
