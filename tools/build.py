@@ -409,6 +409,11 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
     nav = ''.join(f'<a href="{B}{u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
     og = f'<meta property="og:image" content="{SITE}{image[len(B):]}">' if image else ''
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
+    def _bk(m):
+        slug, anc = m.group(1), m.group(2) or ''
+        t = {'#devotional': 'book-the-mind-of-a-missionary-devotional', '#glorioushope': 'glorious-hope-coloring-book'}.get(anc, 'book-' + slug)
+        return f'href="{WRG}/{t}"'
+    if not redirect: body = re.sub(r'href="' + re.escape(B) + r'/books/(the-mind-of-a-missionary|gospel-privilege|the-space-between-memories|see-the-city)/(#[\w-]*)?"', _bk, body)
     doc = f'''<!doctype html>
 <html lang="en">
 <head>
@@ -451,6 +456,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 </div>
 </footer>
 <script>(function(){{var b=document.querySelector('.burger'),n=document.getElementById('mainnav');if(!b||!n)return;b.addEventListener('click',function(){{var o=n.classList.toggle('open');b.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}});function c(){{n.classList.remove('open');b.classList.remove('open');b.setAttribute('aria-expanded','false')}}n.addEventListener('click',function(e){{if(e.target.closest('a'))c()}});document.addEventListener('click',function(e){{if(n.classList.contains('open')&&!e.target.closest('.hdr'))c()}});document.addEventListener('keydown',function(e){{if(e.key==='Escape')c()}})}})();</script>
+<script src="{B}/assets/pulse.js?v={VER}" data-base="{B}" defer></script>
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
 </body>
 </html>'''
@@ -500,7 +506,19 @@ _six = [next(b for b in BOOKS if b[0] == ('Gospel Privilege' if x[0] == 'Gloriou
 HOME_SHELF = '<div class="shelf six">' + ''.join(bk(*x) for x in _six) + '</div>'
 COURSES = [('The Mind of a Missionary', '13 lessons', 'the-mind-of-a-missionary-course'), ('Gospel Privilege', '9 lessons', 'gospel-privilege-course'), ('See the City', '12 lessons', 'see-the-city-course')]
 portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
-STATS = '''<div class="stats"><div><b>30</b><span>years serving in China and Thailand</span></div><div><b>85</b><span>churches planted through Within Reach Global</span></div><div><b>10</b><span>titles in English, Portuguese, and Spanish</span></div><div><b>110+</b><span>Missions Pulse podcast episodes</span></div></div>'''
+# Missions Pulse episodes come from withinreachglobal.org (tools/sync-pulse.py keeps assets/pulse.json current; pulse.js refreshes the pages)
+PULSE = json.load(open(os.path.join(HERE, 'pulse.json')))
+PULSE_ALL = WRG + '/missions-pulse'
+def pulse_card(e):
+    pic = f'<img src="{esc(e["image"])}" alt="" loading="lazy">' if e.get('image') else ''
+    return f'<a class="card" href="{esc(e["link"])}"><div class="im">{pic}</div><div class="k">Missions Pulse · {nice_date(e["date"])}</div><h3>{esc(e["title"])}</h3></a>'
+def pulse_ep(e):
+    m = re.match(r'#(\d+):\s*(.*)', e['title'])
+    return f'<a href="{esc(e["link"])}"><span class="n">{"Episode " + m.group(1) if m else "Episode"}</span><span class="t">{esc(m.group(2) if m else e["title"])}</span></a>'
+def pulse_list(kind, n):
+    f = pulse_ep if kind == 'ep' else pulse_card
+    return ''.join(f(e) for e in PULSE['episodes'][:n])
+STATS = ('''<div class="stats"><div><b>30</b><span>years serving in China and Thailand</span></div><div><b>85</b><span>churches planted through Within Reach Global</span></div><div><b>10</b><span>titles in English, Portuguese, and Spanish</span></div><div><b data-pulse-count>PULSECOUNT</b><span>Missions Pulse podcast episodes</span></div></div>'''.replace('PULSECOUNT', str(PULSE['count'])))
 def tiles(items): return '<div class="tiles">' + ''.join(f'<a class="tile" href="{u}"><h3>{t}</h3><p>{d}</p><span class="go">{g}</span></a>' for t, d, g, u in items) + '</div>'
 RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Take the test ↗', WRG + '/spiritual-gifts-test'),
        ('Gospel Access Score', 'See how much access to the gospel you have had, and who has none.', 'Get your score ↗', WRG + '/gospel-access-score'),
@@ -937,20 +955,12 @@ page('/books/', 'Books by David Joannes',
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
 OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (6, 'gospelprivilege'),
             '/books/the-space-between-memories/': (1, 'thespacebetweenmemories'), '/books/see-the-city/': (4, 'seethecity')}
-for path, (bi, tcat) in OLDBOOKS.items():
-    p = PAGES[path]; t, yr, img, buy, slug = BOOKS[bi]
-    m = re.search(r'\[vc_row[^\]]*section_id="\w*aboutthebook"[^\]]*\](.*?)\[/vc_row\]', p.raw, re.S)
-    about = conv_raw(m.group(1)) if m else ''
-    about = re.sub(r'<img\b[^>]*>', '', about); about = re.sub(r'<p[^>]*>\s*(?:<[^>]+>\s*)*ABOUT THE BOOK(?:\s*<[^>]+>)*\s*</p>', '', about)
-    about = re.sub(r'<p[^>]*>\s*</p>', '', about)
-    ends = ''.join(f'<div class="tq">{autop(clean_inline(d["body"]))}<cite>{esc(titlecase_name(d["name"]))}' + (f'<span>{esc(titlecase_name(d["who"]))}</span>' if d['who'] else '') + '</cite></div>' for d in TEST.get(tcat, []))
-    extra_links = f'<a class="btn ghost" href="{WRG}/book-the-mind-of-a-missionary#notes" target="_blank" rel="noopener">Notes and references</a>' if bi == 0 else ''
-    body = (f'<section class="phead dark"><div class="wrap bookhead"><img src="{cover(img)}" alt="{esc(t)} cover"><div><p class="eyebrow">Books · {yr}</p><h1>{esc(t)}</h1>'
-            f'<div class="btns"><a class="btn" href="{buy}">Get the book ↗</a><a class="btn ghost" href="{WRG}/{slug}">Learn more at Within Reach Global ↗</a>{extra_links}</div></div></div></section>'
-            + (f'<div class="wrap"><article class="article"><p class="eyebrow">About the book</p><div class="prose plain">{about}</div></article></div>' if about else '')
-            + (sec(shead('Endorsements', 'What readers are saying') + f'<div class="tqs">{ends}</div>', 'soft') if ends else '')
-            + sec(shead('Books', 'More from David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF) + CTA)
-    page(path, t, body, desc=plain(about), image=cover(img))
+BOOK_FWD = {'/books/the-mind-of-a-missionary/': 'book-the-mind-of-a-missionary', '/books/gospel-privilege/': 'book-gospel-privilege',
+            '/books/the-space-between-memories/': 'book-the-space-between-memories', '/books/see-the-city/': 'book-see-the-city',
+            '/books/the-mind-of-a-missionary/notes/': 'book-the-mind-of-a-missionary#notes'}
+for path, slug in BOOK_FWD.items():  # the book pages live on withinreachglobal.org; old addresses forward there
+    page(path, 'Books by David Joannes', phead('Books', 'This book has moved') + f'<div class="wrap"><p class="lead" style="padding:48px 0">This page now lives at Within Reach Global. <a href="{WRG}/{slug}">Continue to the book page</a>.</p></div>',
+         desc='Books by David Joannes.', redirect=f'{WRG}/{slug}')
 
 # ---------- missions pulse (native layout)
 mp = PAGES['/missionspulse/']
@@ -963,7 +973,7 @@ page('/missionspulse/', 'Missions Pulse',
      + sec(f'<div class="split"><div><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div>'
            f'<div><p class="eyebrow">Watch and listen</p><h2>Subscribe wherever you listen.</h2><div class="btns" style="margin:20px 0 32px">{"".join(f"<a class=btn-s href={u}>{n} ↗</a>" for n, u in SUBS)}</div>'
            f'<p class="eyebrow">Be a guest</p><p class="soft-t">Have a story of God at work among the nations? Guests are by invitation, so contact David first and tell him about it. Once he confirms, schedule your interview.</p><div class="btns" style="margin-top:0"><a class="btn" href="{B}/contact/">Contact David first</a><a class="btn-s" href="{B}/meet/#missions-pulse">Interview calendar</a></div></div></div>')
-     + sec(shead('Episodes', 'Recent episodes', f'<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All {len(eps_all)} episodes →</a>') + f'<div class="grid">{"".join(post_card(q) for q in eps_all[:9])}</div>', 'soft')
+     + sec(shead('Episodes', 'Recent episodes', f'<a class="more" href="{PULSE_ALL}">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a>') + f'<div class="grid" data-pulse="card" data-n="9">{pulse_list("card", 9)}</div>', 'soft')
      + (sec(shead('Guests', 'Missions Pulse guests') + f'<div class="prose guests">{guests}</div>') if guests else '') + CTA,
      desc=plain(mp.raw))
 
@@ -1018,8 +1028,6 @@ window.addEventListener('scroll',spy,{passive:true});spy();t.addEventListener('c
             f'<p class="fine" style="margin-top:32px">Notes and references are from the second edition of <em>The Mind of a Missionary</em> by David Joannes.</p>{SHARE}<button id="qtop" type="button" aria-label="Back to top">↑</button></div></div>{js}')
     page('/books/the-mind-of-a-missionary/notes/', 'The Mind of a Missionary: Notes and References', phead('The Mind of a Missionary', 'Notes and References') + body + CTA,
          desc='Every note, citation, and reference from The Mind of a Missionary by David Joannes, chapter by chapter.')
-# notes now live on the WRG book page; the old address forwards there
-page('/books/the-mind-of-a-missionary/notes/', 'The Mind of a Missionary: Notes and References', phead('The Mind of a Missionary', 'Notes and References') + f'<div class="wrap"><p class="lead" style="padding:48px 0">The notes and references have moved. <a href="{WRG}/book-the-mind-of-a-missionary#notes">Open them on the Within Reach Global book page</a>.</p></div>', desc='Notes and references for The Mind of a Missionary.', redirect=WRG + '/book-the-mind-of-a-missionary#notes')
 
 # ---------- donate + meeting
 og_fam = extra(H + 'joannes-default-image.jpg', 'donate/joannes-family.jpg')
@@ -1114,12 +1122,14 @@ home = f'''<section class="hero dark"><div class="wrap">
 <a class="btn white" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="rows"><a href="https://prayforthailand.com"><span class="t">Pray</span><span class="s">Pray for Thailand, province by province →</span></a><a href="{WRG}/project-local-missionaries"><span class="t">Give</span><span class="s">Empower indigenous missionaries →</span></a><a href="{WRG}/go"><span class="t">Go</span><span class="s">Apply to serve →</span></a></div></div></section>
 ''' + sec(shead('The podcast', 'Missions Pulse', f'<a class="more" href="{B}/missionspulse/">About the podcast →</a>', 'God at work in the world, and your role in the Great Commission.')
-          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px">{"".join(ep(p) for p in eps[:3])}<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
+          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px"><div data-pulse="ep" data-n="3" style="display:contents">{pulse_list("ep", 3)}</div><a class="more" href="{PULSE_ALL}">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
 page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, podcaster, and the Founder and CEO of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.', image=portrait, home=True)
 
 # ---------- extras
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 shutil.copy(os.path.join(HERE, 'site.css'), os.path.join(OUT, 'assets', 'site.css'))
+shutil.copy(os.path.join(HERE, 'pulse.js'), os.path.join(OUT, 'assets', 'pulse.js'))
+if not os.path.exists(os.path.join(OUT, 'assets', 'pulse.json')): shutil.copy(os.path.join(HERE, 'pulse.json'), os.path.join(OUT, 'assets', 'pulse.json'))
 page('/404/', 'Page not found', phead('404', 'This page has moved or no longer exists.') + f'<div class="wrap"><div class="article prose"><p>Try the <a href="{B}/blog/">blog</a>, the <a href="{B}/books/">books</a>, or head back <a href="{B}/">home</a>.</p></div></div>')
 shutil.copy(os.path.join(OUT, '404', 'index.html'), os.path.join(OUT, '404.html'))
 WRITTEN.remove('/404/')
