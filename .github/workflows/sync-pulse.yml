@@ -1,0 +1,22 @@
+name: Sync Missions Pulse episodes from WRG
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
+  push:
+    branches: [main]
+    paths: ['tools/sync-pulse.py', '.github/workflows/sync-pulse.yml']
+permissions:
+  contents: write
+concurrency: sync-pulse
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/sync-pulse.py assets/pulse.json
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/pulse.json
+          git diff --cached --quiet || (git commit -m "New Missions Pulse episode from withinreachglobal.org" && git pull --rebase && git push)
