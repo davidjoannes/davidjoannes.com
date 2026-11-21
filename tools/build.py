@@ -589,7 +589,7 @@ page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
 <div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{WRG}/founders">Meet the founders ↗</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
-     + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF, 'soft') + CTA,
+     + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + CTA,
      desc=plain(bio), image=portrait)
 
 # ---------- books
@@ -702,7 +702,7 @@ page('/contact/', 'Contact David', phead('Contact', 'Get in touch with David', l
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
      + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft', 'courses')
-     + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + SHELF) + CTA,
+     + CTA,
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
 # ---------- blog listings
