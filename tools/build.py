@@ -677,7 +677,7 @@ def quotes_page(b):
         if m and len(t) < 60 and t[0] not in '"“':
             cur = (re.sub(r'<[^>]+>', '', m.group(1)).strip(), []); people.append(cur); continue
         if cur: cur[1].append(x.strip())
-    people = [x for x in people if x[0] not in ('Bickle, Mike', 'Anonymous')]
+    people = [x for x in people if x[0] not in ('Bickle, Mike', 'Anonymous', 'Rankin, Jerry', 'Ravenhill, Leonard')]
     byname = {n: qs for n, qs in people}
     for n, qs in QUOTES_ADD.items():
         new = [f'“{t}” - {a}' for t, a in qs]
