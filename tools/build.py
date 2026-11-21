@@ -38,8 +38,9 @@ def mj_img(path, small=False):
     if not e: return ''
     name = path.strip('/').replace('/', '-')
     base = f"https://cdn.midjourney.com/{e['job']}/0_{e.get('variant', 0)}"
-    MJFILES[base + '.webp'] = f'assets/featured/{name}.webp'
-    MJFILES[base + '_640_N.webp'] = f'assets/featured/{name}-640.webp'
+    if e['job'] != 'custom':
+        MJFILES[base + '.webp'] = f'assets/featured/{name}.webp'
+        MJFILES[base + '_640_N.webp'] = f'assets/featured/{name}-640.webp'
     rel = f'/assets/featured/{name}-640.webp' if small else f'/assets/featured/{name}.webp'
     return (B + rel) if os.path.exists(OUT + rel) else ''
 HAVE_UP = os.path.isdir(os.path.join(OUT, 'wp-content'))
@@ -509,12 +510,13 @@ portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
 # Missions Pulse episodes come from withinreachglobal.org (tools/sync-pulse.py keeps assets/pulse.json current; pulse.js refreshes the pages)
 PULSE = json.load(open(os.path.join(HERE, 'pulse.json')))
 PULSE_ALL = WRG + '/missions-pulse'
+def pulse_href(e): return (B + e['path']) if e.get('path') else esc(e['link'])
 def pulse_card(e):
     pic = f'<img src="{esc(e["image"])}" alt="" loading="lazy">' if e.get('image') else ''
-    return f'<a class="card" href="{esc(e["link"])}"><div class="im">{pic}</div><div class="k">Missions Pulse · {nice_date(e["date"])}</div><h3>{esc(e["title"])}</h3></a>'
+    return f'<a class="card" href="{pulse_href(e)}"><div class="im">{pic}</div><div class="k">Missions Pulse · {nice_date(e["date"])}</div><h3>{esc(e["title"])}</h3></a>'
 def pulse_ep(e):
     m = re.match(r'#(\d+):\s*(.*)', e['title'])
-    return f'<a href="{esc(e["link"])}"><span class="n">{"Episode " + m.group(1) if m else "Episode"}</span><span class="t">{esc(m.group(2) if m else e["title"])}</span></a>'
+    return f'<a href="{pulse_href(e)}"><span class="n">{"Episode " + m.group(1) if m else "Episode"}</span><span class="t">{esc(m.group(2) if m else e["title"])}</span></a>'
 def pulse_list(kind, n):
     f = pulse_ep if kind == 'ep' else pulse_card
     return ''.join(f(e) for e in PULSE['episodes'][:n])
@@ -751,7 +753,7 @@ window.addEventListener('hashchange',function(){route(false)});
 var r=document.getElementById(tm+'-'+td),d=td;for(var k=1;k<4&&!r;k++){r=document.getElementById(tm+'-'+(td-k));if(r)d=td-k}
 if(r){r.classList.add('today');var x=document.getElementById('h-otd'),y=r.querySelector('.h-body i');x.querySelector('.h-otd-date').textContent=M[n.getMonth()]+' '+d+(y?', '+y.textContent:'');x.querySelector('.h-otd-text').textContent=r.querySelector('.h-body p').textContent;x.querySelector('a').href='#'+tm+'-'+d;x.hidden=false}
 route(true)})();</script>""" % json.dumps(MONTHS)
-    return ('<div class="h-page"><div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
+    return ('<div class="h-page">' + SHARE.split('<script>')[0].replace('class="share"', 'class="share top"') + '<div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
             '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em> Psalm 139:16</p></div>'
             '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See it in the month →</a></div>'
             f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-months" id="h-bar">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
@@ -816,7 +818,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('.q-copy');
 var h=decodeURIComponent(location.hash.slice(1));if(h&&!document.getElementById(h)){var m=P.filter(function(p){return p.id.toLowerCase()==h.toLowerCase()})[0];if(m)m.scrollIntoView()}
 var t=document.getElementById('qtop');window.addEventListener('scroll',function(){t.classList.toggle('on',window.scrollY>900)},{passive:true});t.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();
 </script>"""
-    return (f'<div class="q-page"><div class="q-intro prose">{"".join(f"<p>{x}</p>" for x in intro)}</div>'
+    return (f'<div class="q-page">{SHARE.split('<script>')[0].replace('class="share"', 'class="share top"')}<div class="q-intro prose">{"".join(f"<p>{x}</p>" for x in intro)}</div>'
             f'<p class="q-stats"><b>{nq}</b> quotes<span>·</span><b>{len(people)}</b> voices<span>·</span>A to Z</p>'
             f'<div class="q-tools"><input id="qq" class="search" type="search" placeholder="Search a name or a word, like Carey or prayer" aria-label="Search the quotes"><nav class="q-az" aria-label="Jump to a letter">{az}</nav></div>'
             f'<p id="qqc" class="fine" aria-live="polite"></p>'
@@ -973,7 +975,7 @@ page('/missionspulse/', 'Missions Pulse',
      + sec(f'<div class="split"><div><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div>'
            f'<div><p class="eyebrow">Watch and listen</p><h2>Subscribe wherever you listen.</h2><div class="btns" style="margin:20px 0 32px">{"".join(f"<a class=btn-s href={u}>{n} ↗</a>" for n, u in SUBS)}</div>'
            f'<p class="eyebrow">Be a guest</p><p class="soft-t">Have a story of God at work among the nations? Guests are by invitation, so contact David first and tell him about it. Once he confirms, schedule your interview.</p><div class="btns" style="margin-top:0"><a class="btn" href="{B}/contact/">Contact David first</a><a class="btn-s" href="{B}/meet/#missions-pulse">Interview calendar</a></div></div></div>')
-     + sec(shead('Episodes', 'Recent episodes', f'<a class="more" href="{PULSE_ALL}">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a>') + f'<div class="grid" data-pulse="card" data-n="9">{pulse_list("card", 9)}</div>', 'soft')
+     + sec(shead('Episodes', 'Recent episodes', f'<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a>') + f'<div class="grid" data-pulse="card" data-n="9">{pulse_list("card", 9)}</div>', 'soft')
      + (sec(shead('Guests', 'Missions Pulse guests') + f'<div class="prose guests">{guests}</div>') if guests else '') + CTA,
      desc=plain(mp.raw))
 
@@ -1078,6 +1080,11 @@ page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in 
      desc='Free missions resources from David Joannes: spiritual gifts test, Gospel Access Score, Pray for Thailand, and online courses.')
 
 # ---------- blog listings
+def pulse_slot(posts, path):
+    cards = [post_card(p) for p in posts]; slot = '<!--pulse-new--><!--/pulse-new-->'
+    if path == '/blog/': k = sum(1 for p in posts[:4] if p.path in FEATURED_FIRST); return ''.join(cards[:k]) + slot + ''.join(cards[k:])
+    if path == '/blog/missions-pulse-podcast-posts/': return slot + ''.join(cards)
+    return ''.join(cards)
 def listing(path, title, posts, active):
     chips = f'<a href="{B}/blog/"' + (' class="on"' if active == '/blog/' else '') + '>All</a>' + ''.join(f'<a href="{B}{u}"' + (' class="on"' if active == u else '') + f'>{esc(l)}</a>' for _, l, u in CATS[::-1])
     js = '''<script>
@@ -1090,7 +1097,7 @@ var u=new URLSearchParams(location.search).get('s')||new URLSearchParams(locatio
 </script>'''
     body = (phead('Blog', title, f'{len(posts)} posts') + f'<section class="sec" style="padding-top:28px"><div class="wrap"><nav class="chips" aria-label="Categories">{chips}</nav>'
             f'<p style="margin:24px 0 32px"><label for="q" class="fine" style="display:block;font-weight:600;margin-bottom:6px">Search posts</label><input id="q" class="search" type="search" placeholder="Search posts by title or topic"><span id="qcount" class="fine" style="display:block;margin-top:8px;min-height:1.4em" aria-live="polite"></span></p>'
-            f'<div class="grid" id="posts">{"".join(post_card(p) for p in posts)}</div><p class="center" style="margin-top:44px"><button id="morebtn" class="btn ink" type="button">Show more posts</button></p></div></section>' + js + CTA)
+            f'<div class="grid" id="posts">{pulse_slot(posts, path)}</div><p class="center" style="margin-top:44px"><button id="morebtn" class="btn ink" type="button">Show more posts</button></p></div></section>' + js + CTA)
     page(path, title, body, desc=f'{title} by David Joannes.')
 listing('/blog/', 'Essays, devotionals, and stories from the field', POSTS, '/blog/')
 LT = {'/blog/missions-blogs/': 'Missions Blogs', '/blog/davids-books-blogs/': "Posts About David's Books", '/blog/book-reviews-by-david/': 'Book Reviews by David',
@@ -1122,7 +1129,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 <a class="btn white" href="{WRG}">Visit withinreachglobal.org ↗</a></div>
 <div class="rows"><a href="https://prayforthailand.com"><span class="t">Pray</span><span class="s">Pray for Thailand, province by province →</span></a><a href="{WRG}/project-local-missionaries"><span class="t">Give</span><span class="s">Empower indigenous missionaries →</span></a><a href="{WRG}/go"><span class="t">Go</span><span class="s">Apply to serve →</span></a></div></div></section>
 ''' + sec(shead('The podcast', 'Missions Pulse', f'<a class="more" href="{B}/missionspulse/">About the podcast →</a>', 'God at work in the world, and your role in the Great Commission.')
-          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px"><div data-pulse="ep" data-n="3" style="display:contents">{pulse_list("ep", 3)}</div><a class="more" href="{PULSE_ALL}">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
+          + f'<div class="split"><div style="flex:3 1 460px"><div class="embed" style="margin:0"><iframe src="https://www.youtube-nocookie.com/embed/zHkcSetJswM" title="Missions Pulse" loading="lazy" allowfullscreen></iframe></div></div><div class="eps" style="flex:2 1 340px"><div data-pulse="ep" data-n="3" style="display:contents">{pulse_list("ep", 3)}</div><a class="more" href="{B}/blog/missions-pulse-podcast-posts/">All <span data-pulse-count>{PULSE["count"]}</span> episodes →</a></div></div>', 'dark', 'podcast') + sec(shead('Free resources', 'Tools to find your part in the Great Commission', f'<a class="more" href="{B}/resources/">All resources →</a>') + HOME_CARDS, 'soft', 'resources') + sec(shead('Blog', 'Essays, devotionals, and stories from the field', f'<a class="more" href="{B}/blog/">Read the blog →</a>') + f'<div class="grid">{"".join(post_card(p) for p in latest)}</div>', '', 'writing')
 page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, podcaster, and the Founder and CEO of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.', image=portrait, home=True)
 
 # ---------- extras
@@ -1133,6 +1140,17 @@ if not os.path.exists(os.path.join(OUT, 'assets', 'pulse.json')): shutil.copy(os
 page('/404/', 'Page not found', phead('404', 'This page has moved or no longer exists.') + f'<div class="wrap"><div class="article prose"><p>Try the <a href="{B}/blog/">blog</a>, the <a href="{B}/books/">books</a>, or head back <a href="{B}/">home</a>.</p></div></div>')
 shutil.copy(os.path.join(OUT, '404', 'index.html'), os.path.join(OUT, '404.html'))
 WRITTEN.remove('/404/')
+_tp = '/_episode-template/'
+page(_tp, '%%TITLE%%', phead(f'<a href="{B}/blog/missions-pulse-podcast-posts/">Missions Pulse</a>', '%%TITLE%%', '%%DATE%%')
+     + f'<div class="wrap"><article class="article"><div class="prose">%%BODY%%</div>{SHARE}</article></div>' + CTA
+     + sec(shead('More from Missions Pulse', 'Keep listening', f'<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">See all →</a>') + '<div class="grid" data-pulse="card" data-n="3"></div>', 'soft'), desc='%%DESC%%')
+WRITTEN.remove(_tp)
+_t = open(os.path.join(OUT, _tp.strip('/'), 'index.html'), encoding='utf-8').read()
+_t = _t.replace(f'<link rel="canonical" href="{SITE}{_tp}">', '<link rel="canonical" href="%%CANON%%">').replace(f'<meta property="og:url" content="{SITE}{_tp}">', f'<meta property="og:url" content="{SITE}%%PATH%%">\n<meta property="og:image" content="%%OGIMG%%">')
+assert '%%CANON%%' in _t and '%%OGIMG%%' in _t
+os.makedirs(os.path.join(OUT, 'tools'), exist_ok=True)
+open(os.path.join(OUT, 'tools', 'episode-template.html'), 'w', encoding='utf-8').write(f'<!--base:{B}-->' + _t)
+shutil.rmtree(os.path.join(OUT, _tp.strip('/')))
 with open(os.path.join(OUT, 'sitemap.xml'), 'w') as f:
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{SITE}{esc(u)}</loc></url>\n' for u in WRITTEN) + '</urlset>\n')
 open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n')

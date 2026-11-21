@@ -498,3 +498,5 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 .n-rlist .n-item{padding-left:0}
 .n-filtering .n-toc,.n-filtering .n-rchips,.n-filtering .n-refintro{display:none}
 @media(max-width:760px){.n-tools{top:56px}.n-toc{grid-template-columns:1fr 1fr}.n-num{width:26px}.n-item{gap:12px;font-size:15px}.n-tools .search{flex:1 1 100%}}
+
+.share.top{margin:0 0 30px;padding:0 0 22px;border-top:0;border-bottom:1px solid var(--line)}
