@@ -414,3 +414,42 @@ a.tile:hover{border-color:var(--ink);transform:translateY(-2px)}
 #qtop.on{opacity:1;pointer-events:auto}
 @media(max-width:640px){.q-tools{top:56px}.q-az a,.q-az span{width:24px;height:26px;font-size:13px}.q-letter>h2{font-size:34px}.q blockquote{font-size:16.5px}}
 .q-tools .search{flex:0 1 270px}.q-az{flex:1 1 300px}html{scroll-behavior:auto}
+.share{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:44px;padding-top:24px;border-top:1px solid var(--line)}
+.share span{font-family:var(--head);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-right:6px}
+.share a,.share button{font:600 14px Inter,sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:8px 16px;text-decoration:none;cursor:pointer}
+.share a:hover,.share button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.h-page{padding:clamp(32px,5vw,52px) 0 clamp(56px,7vw,88px);max-width:920px;margin:0 auto}
+.h-back{margin:0 0 16px;font-size:14px}.h-back a{color:var(--mute);text-decoration:none}.h-back a:hover{color:#D12B1F}
+.h-months{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.h-months a{text-align:center;font-family:var(--head);font-weight:600;font-size:14px;padding:10px 0;border-radius:8px;background:var(--soft);color:var(--ink);text-decoration:none}
+.h-months a:hover{background:#e6e8ec}.h-months a.on{background:#D12B1F;color:#fff}
+.h-lede{font-size:18px;color:var(--mute);margin:22px 0 14px}
+.h-days{position:sticky;top:64px;z-index:20;background:#fff;display:flex;flex-wrap:wrap;gap:4px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.h-days span{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-right:8px}
+.h-days a{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;font:600 13px Inter,sans-serif;color:var(--ink);text-decoration:none}
+.h-days a:hover{background:#D12B1F;color:#fff}
+#h-today{margin-left:8px;font:600 13px Inter,sans-serif;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.h-list{list-style:none;margin:8px 0 0;padding:0}
+.h-row{display:flex;gap:22px;padding:22px 0;border-bottom:1px solid var(--line);scroll-margin-top:140px}
+.h-row.today{background:#fff6ea;border-radius:12px;padding:22px 18px;border:1px solid #f0d9b0}
+.h-date{flex:none;width:64px;text-align:center}
+.h-date b{display:block;font-family:var(--head);font-weight:600;font-size:34px;line-height:1;color:var(--ink)}
+.h-date span{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#D12B1F}
+.h-body i{display:inline-block;font-style:normal;font-family:var(--head);font-weight:600;font-size:13px;background:var(--ink);color:#fff;border-radius:999px;padding:3px 12px;margin-bottom:8px}
+.h-body p{margin:0;font-size:16.5px;line-height:1.7;color:var(--text)}
+.h-mod{padding:6px 0}.h-mod .inmod{margin:18px 0}
+.h-credit{margin-top:26px}
+.h-pn{display:flex;justify-content:space-between;margin-top:26px}
+.h-pn a{font-family:var(--head);font-weight:600;color:#D12B1F;text-decoration:none}
+.h-intro{max-width:720px;font-size:18px;line-height:1.7}
+.h-otd{background:var(--ink);color:#fff;border-radius:16px;padding:clamp(24px,4vw,40px);margin:30px 0 44px}
+.h-otd .eyebrow{color:#e0b25a}.h-otd h2{color:#fff;font-size:clamp(26px,4vw,38px);margin:6px 0 12px}
+.h-otd-text{font-size:17px;line-height:1.7;color:#d7dce4;margin:0 0 22px}
+.h-pick{font-size:24px;margin:0 0 18px}
+.h-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.h-card{display:flex;flex-direction:column;gap:4px;background:var(--soft);border-radius:12px;padding:20px;text-decoration:none;color:var(--ink);transition:transform .2s ease,background .2s ease}
+.h-card:hover{transform:translateY(-3px);background:#eceef2}
+.h-num{font-family:var(--head);font-weight:600;font-size:13px;letter-spacing:.12em;color:#D12B1F}
+.h-card h3{font-size:21px;margin:0}.h-card p{margin:0 0 10px;font-size:14px;color:var(--mute)}
+.h-card .more{font-size:14px}
+@media(max-width:760px){.h-months{grid-template-columns:repeat(6,1fr)}.h-grid{grid-template-columns:repeat(2,1fr)}.h-row{gap:14px}.h-date{width:48px}.h-date b{font-size:28px}.h-days{top:56px}.h-days a{width:27px;height:28px}}

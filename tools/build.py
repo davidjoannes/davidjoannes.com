@@ -613,6 +613,46 @@ QUOTES_ADD = {  # added Nov 2026: widely attributed quotes from missionaries
     'Mills, Samuel J.': [('We can do it if we will.', 'Samuel J. Mills, 1783-1818, at the Haystack Prayer Meeting, 1806')],
     'Trotter, Lilias': [('Take the very hardest thing in your life, the place of difficulty, outward or inward, and expect God to triumph gloriously in that very spot.', 'Lilias Trotter, 1853-1928, Missionary to Algeria')],
 }
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+HIST_HOME = '/missions-history-today-what-happened-on-every-day-of-the-year/'
+def hist_entries(b, month):
+    out = []
+    for x in re.findall(r'<p[^>]*>(.*?)</p>', re.sub(r'<a class="inmod".*?</a>', '', b, flags=re.S), re.S):
+        t = re.sub(r'\s+', ' ', x).strip()
+        m = re.match(r'(?:<[^>]+>\s*)*%s\s+(\d{1,2})\s*,?\s*((?:ca?\.\s*)?\d{3,4})?\s*(?:,|--|–|—|-)?\s*(.+)$' % month, t, re.S)
+        if m: out.append((int(m.group(1)), (m.group(2) or '').strip(), m.group(3).strip()))
+    return out
+HIST = {}
+def hist_nav(cur=None):
+    return ('<nav class="h-months" aria-label="Months">' + ''.join(
+        f'<a href="{B}/missions-history-today-{m.lower()}/"' + (' class="on"' if m == cur else '') + f'>{m[:3]}</a>' for m in MONTHS) + '</nav>')
+HIST_CREDIT = '<p class="fine h-credit">Compiled by Howard Culbertson. For more original content like this, visit <a href="http://home.snu.edu/~hculbert">home.snu.edu/~hculbert</a>.</p>'
+def hist_month(month):
+    ents = HIST[month]; i = MONTHS.index(month); prev, nxt = MONTHS[i - 1], MONTHS[(i + 1) % 12]
+    days = ''.join(f'<a href="#d{d}">{d}</a>' for d in sorted({e[0] for e in ents}))
+    rows = ''
+    for k, (d, y, t) in enumerate(ents):
+        rows += f'<li class="h-row" id="d{d}" data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
+        if k == len(ents) // 2: rows += f'<li class="h-mod">{modbar(ROT[i % len(ROT)])}</li>'
+    js = """<script>(function(){var n=new Date(),m=%d;if(n.getMonth()==m){var r=document.querySelector('.h-row[data-d="'+n.getDate()+'"]');if(r){r.classList.add('today');var t=document.getElementById('h-today');t.hidden=false;t.addEventListener('click',function(){r.scrollIntoView({block:'center'})})}}})();</script>""" % i
+    return (f'<div class="h-page"><p class="h-back"><a href="{B}{HIST_HOME}">← Missions History Today: all months</a></p>{hist_nav(month)}'
+            f'<p class="h-lede">What happened in missions history on every day of {month}. Pick a day, or read the month from top to bottom.</p>'
+            f'<div class="h-days"><span>Jump to a day</span>{days}<button id="h-today" type="button" hidden>Today</button></div>'
+            f'<ol class="h-list">{rows}</ol>{HIST_CREDIT}'
+            f'<div class="h-pn"><a href="{B}/missions-history-today-{prev.lower()}/">← {prev}</a><a href="{B}/missions-history-today-{nxt.lower()}/">{nxt} →</a></div>{SHARE}</div>{js}')
+def hist_home():
+    data = json.dumps({str(i): {str(d): [y, re.sub(r'<[^>]+>', '', t)] for d, y, t in HIST[m]} for i, m in enumerate(MONTHS)}, ensure_ascii=False).replace('</', '<\\/')
+    cards = ''.join(f'<a class="h-card" href="{B}/missions-history-today-{m.lower()}/"><span class="h-num">{i + 1:02d}</span><h3>{m}</h3><p>{len(HIST[m])} days of missions history</p><span class="more">Open {m} →</span></a>' for i, m in enumerate(MONTHS))
+    js = """<script>(function(){var D=%s,M=%s,n=new Date(),m=n.getMonth(),d=n.getDate(),e=(D[m]||{})[d],x=document.getElementById('h-otd');
+if(!e){for(var k=1;k<4&&!e;k++){e=(D[m]||{})[d-k];if(e)d=d-k}}
+if(e){x.querySelector('.h-otd-date').textContent=M[m]+' '+d+(e[0]?', '+e[0]:'');x.querySelector('.h-otd-text').textContent=e[1];x.querySelector('a').href='%s/missions-history-today-'+M[m].toLowerCase()+'/#d'+d;x.hidden=false}})();</script>""" % (data, json.dumps(MONTHS), B)
+    return ('<div class="h-page"><div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
+            '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em></p></div>'
+            '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See the whole month →</a></div>'
+            f'<h2 class="h-pick">Pick a month</h2><div class="h-grid">{cards}</div>{HIST_CREDIT}{SHARE}</div>{js}')
+SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
+         """<script>(function(){var u=encodeURIComponent(location.href.split('#')[0].split('?')[0]),t=encodeURIComponent(document.title.replace(/ \\| David Joannes$/,'')),L={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,'in':'https://www.linkedin.com/sharing/share-offsite/?url='+u,em:'mailto:?subject='+t+'&body='+u};
+[].forEach.call(document.querySelectorAll('.share [data-s]'),function(a){var k=a.getAttribute('data-s');if(L[k]){a.href=L[k];if(k!='em'){a.target='_blank';a.rel='noopener'}}else a.addEventListener('click',function(){var v=decodeURIComponent(u);(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){a.textContent='Link copied';setTimeout(function(){a.textContent='Copy link'},1800)},function(){prompt('Copy this link',v)})})})})();</script>""")
 def quotes_page(b):
     paras = re.findall(r'<p[^>]*>(.*?)</p>', b, re.S)
     intro, people, cur, seen = [], [], None, False
@@ -664,7 +704,7 @@ var t=document.getElementById('qtop');window.addEventListener('scroll',function(
             f'<div class="q-tools"><input id="qq" class="search" type="search" placeholder="Search a name or a word, like Carey or prayer" aria-label="Search the quotes"><nav class="q-az" aria-label="Jump to a letter">{az}</nav></div>'
             f'<p id="qqc" class="fine" aria-live="polite"></p>'
             f'<details class="q-index"><summary>Browse all {len(people)} names</summary><div class="q-names">{index}</div></details>'
-            f'{secs}<button id="qtop" type="button" aria-label="Back to top">↑</button></div>{js}')
+            f'{secs}{SHARE}<button id="qtop" type="button" aria-label="Back to top">↑</button></div>{js}')
 def promote(body, p):
     fn = ''
     m = re.search(r'<(?:ol|div|section)[^>]*class="[^"]*\b(?:fn|footnotes|notes)\b', body)
@@ -730,9 +770,15 @@ LIVE.update(['/about/', '/books/', '/missionspulse/', '/blog/', '/resources/', '
 by_cat = collections.defaultdict(list)
 for p in POSTS: by_cat[p.cat[2]].append(p)
 for p in POSTS:
+    _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
+    if _m and _m.group(1).capitalize() in MONTHS: HIST[_m.group(1).capitalize()] = hist_entries(convert(p), _m.group(1).capitalize())
+for p in POSTS:
     body = promote(convert(p), p)
     QP = p.path == '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/'
     if QP: body = quotes_page(convert(p))
+    _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
+    if _m and _m.group(1).capitalize() in HIST: body, QP = hist_month(_m.group(1).capitalize()), True
+    if p.path == HIST_HOME: body, QP = hist_home(), True
     body = re.sub(r'href="' + re.escape(B) + r'/\?s=', f'href="{B}/blog/?s=', body)
     hero = mj_img(p.path) or att(p.thumb, ['large'])
     has_media_top = bool(re.match(r'\s*(<p[^>]*>\s*)?(<div class="embed"|<img|<a[^>]*>\s*<img|<figure)', body))
@@ -746,7 +792,7 @@ for p in POSTS:
     rel = sec(shead(f'More from {esc(p.cat[1])}', 'Keep reading', f'<a class="more" href="{B}{p.cat[2]}">See all →</a>') + f'<div class="grid">{"".join(post_card(q) for q in more)}</div>', 'soft') if more else ''
     page(p.path, p.title,
          phead(f'<a href="{B}{p.cat[2]}">{esc(p.cat[1])}</a>', p.title, nice_date(p.date))
-         + (f'<div class="wrap">{body}</div>' if QP else f'<div class="wrap"><article class="article">{fi}<div class="prose">{body}</div></article></div>') + CTA + rel,
+         + (f'<div class="wrap">{body}</div>' if QP else f'<div class="wrap"><article class="article">{fi}<div class="prose">{body}</div>{SHARE}</article></div>') + CTA + rel,
          desc=plain(p.excerpt or p.raw), image=mj_img(p.path) or att(p.thumb, ['large']))
 
 # ---------- about (native layout, bio text from the old page)
