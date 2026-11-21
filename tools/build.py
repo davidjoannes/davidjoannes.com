@@ -649,7 +649,7 @@ var r=document.getElementById(tm+'-'+td),d=td;for(var k=1;k<4&&!r;k++){r=documen
 if(r){r.classList.add('today');var x=document.getElementById('h-otd'),y=r.querySelector('.h-body i');x.querySelector('.h-otd-date').textContent=M[n.getMonth()]+' '+d+(y?', '+y.textContent:'');x.querySelector('.h-otd-text').textContent=r.querySelector('.h-body p').textContent;x.querySelector('a').href='#'+tm+'-'+d;x.hidden=false}
 route(true)})();</script>""" % json.dumps(MONTHS)
     return ('<div class="h-page"><div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year.</p>'
-            '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em></p></div>'
+            '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em> Psalm 139:16</p></div>'
             '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See it in the month →</a></div>'
             f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-grid">{cards}</div><div class="h-months" id="h-bar">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
 SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
