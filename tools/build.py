@@ -981,6 +981,7 @@ for path in KEEP:
 def notes_page():
     d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmoam-notes.json')))
     def link(t):
+        if '<a ' in t: return t
         return re.sub(r'(https?://[^\s<]+?)([.,;)]*)(?=\s|$|<)', lambda m: f'<a href="{m.group(1)}" rel="noopener" target="_blank">{m.group(1).replace("&amp;", "&amp;")}</a>{m.group(2)}', t)
     def cid(title):
         m = re.match(r'Chapter (\d+)', title)
