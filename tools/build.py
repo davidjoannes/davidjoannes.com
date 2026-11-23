@@ -262,6 +262,8 @@ def clean_inline(t):
     t = re.sub(r'<(/?)h1\b', r'<\1h2', t)
     t = re.sub(r'(?:&nbsp;|\xa0)+', ' ', t)
     return t
+def fix_facts(t):
+    return t.replace('apprehended by over 100 child soldiers', 'apprehended by dozens of child soldiers').replace('one-hundred United Wa State Army child soldiers', 'dozens of United Wa State Army child soldiers')
 def rewrite_urls(t):
     t = re.sub(r'https?://(?:www\.)?withinreachglobal\.org/1040-window/?', WRG + '/why-the-unreached', t)
     t = re.sub(r'https?://(?:www\.)?davidjoannes\.com/wp-content/uploads/[^\s"\'<>)\]]+', lambda m: local(m.group(0)), t)
@@ -417,6 +419,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
         t = {'#devotional': 'book-the-mind-of-a-missionary-devotional', '#glorioushope': 'glorious-hope-coloring-book'}.get(anc, 'book-' + slug)
         return f'href="{WRG}/{t}"'
     if not redirect: body = re.sub(r'href="' + re.escape(B) + r'/books/(the-mind-of-a-missionary|gospel-privilege|the-space-between-memories|see-the-city)/(#[\w-]*)?"', _bk, body)
+    body = fix_facts(body)
     doc = f'''<!doctype html>
 <html lang="en">
 <head>
@@ -1109,7 +1112,9 @@ _mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking poi
         + f'<div class="mk-two"><div><h3>Within Reach Global</h3><p>{esc(MK["wrg"])}</p><a class="more" href="{WRG}" target="_blank" rel="noopener">withinreachglobal.org</a></div><div><h3>Missions Pulse</h3><p>{esc(MK["podcast"])}</p><a class="more" href="{B}/missionspulse/">About the podcast →</a></div></div>', 'soft', 'work')
   + sec(shead('What others say', 'Endorsements') + '<div class="mk-quotes">' + ''.join(f'<blockquote><p>“{esc(q)}”</p><cite><b>{esc(n)}</b> {esc(r)}</cite></blockquote>' for q, n, r in MK['quotes']) + '</div>', '', 'endorsements')
   + sec(shead('Contact', 'Book David for your show') + f'''<div class="mk-two"><div><h3>Interviews and review copies</h3><p>Email <a href="mailto:{MK["contact"]["press"]}">{MK["contact"]["press"]}</a> to book an interview or ask for a copy of one of David's books before you record.</p></div>
-<div><h3>Reach David directly</h3><p>Email <a href="mailto:{MK["contact"]["email"]}">{MK["contact"]["email"]}</a> or use the <a href="{B}/contact/">contact form</a>. David is based in Chiang Mai, Thailand (UTC+7).</p></div></div>''', 'soft', 'contact')
+<div><h3>Reach David directly</h3><p>Email <a href="mailto:{MK["contact"]["email"]}">{MK["contact"]["email"]}</a> or use the <a href="{B}/contact/">contact form</a>. David is based in Chiang Mai, Thailand (UTC+7).</p></div>
+<div><h3>David on social</h3><p>Instagram: <a href="https://instagram.com/davidjoannes" target="_blank" rel="noopener">{MK["contact"]["instagram"]}</a></p><p>{esc(MK["contact"]["collab"])}</p></div>
+<div><h3>Within Reach Global on social</h3><p>Instagram: <a href="https://instagram.com/withinreachglobal" target="_blank" rel="noopener">{MK["contact"]["wrg_instagram"]}</a></p><p>YouTube: <a href="https://www.youtube.com/@withinreachglobalinc" target="_blank" rel="noopener">{MK["contact"]["youtube"]}</a></p></div></div>''', 'soft', 'contact')
   + """<script>document.querySelectorAll('.mk-copy').forEach(function(b){b.addEventListener('click',function(){var t=b.closest('.mk-bio').querySelector('p').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)})})})</script>""")
 page('/media/', 'Media Kit', _mk, desc='Media kit for David Joannes: bios, talking points, interview questions, and photos for podcasts and interviews.')
 
@@ -1163,7 +1168,7 @@ home = f'''<section class="hero dark"><div class="wrap">
 ''' + sec(shead('Books', 'Books to stir the Church toward the unreached', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft', 'books') + f'''
 <section class="sec" id="about"><div class="wrap"><div class="split"><div><p class="eyebrow">About David</p><h2>From Bible smuggler to mission leader.</h2><figure class="smug"><img src="{B}/assets/david-bible-smuggler.jpg" alt="A young David Joannes with stacks of Bibles bound for China" loading="lazy" width="744" height="418"><figcaption>David with Bibles bound for China.</figcaption></figure></div>
 <div><p class="soft-t">David began his missionary journey by smuggling Bibles into China. After serving for 15 years in Southwest China, he now lives in Chiang Mai, Thailand, with his wife, Lorna, and their two daughters.</p>
-<p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by over 100 child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the Church see the unreached.</p>
+<p class="soft-t">He has been interrogated for his faith over 20 times and has been apprehended by dozens of child soldiers carrying AK-47s. Today he leads Within Reach Global, hosts the Missions Pulse podcast, and writes to help the Church see the unreached.</p>
 <a class="more" href="{B}/about/">Read David's story →</a></div></div>{STATS}</div></section>
 <section class="sec red" id="mission"><div class="wrap split" style="align-items:center"><div><p class="eyebrow">David's ministry</p><h2 class="big">Within Reach Global</h2>
 <p class="lede">Since 1997, Within Reach Global has brought gospel access to unreached people groups in the 10/40 Window through compassion ministries, evangelism, discipleship, and church planting.</p>

@@ -63,6 +63,9 @@ p{margin-bottom:.13in}
 .bio{border-left:.05in solid #D12B1F;padding:.02in 0 .02in .22in;margin-bottom:.4in}
 .bio p{margin:0;font-family:Serif4;font-size:14pt;line-height:1.5}
 .bio b{display:block;font-family:Inter;font-size:7.6pt;letter-spacing:.18em;text-transform:uppercase;color:#D12B1F;margin-bottom:.06in}
+.hd{display:flex;gap:.14in;align-items:baseline;padding:.07in 0;border-top:1px solid #dfe3e8;font-family:Sora;font-weight:700;font-size:11.5pt}
+.hd b{flex:none;width:.85in;font-family:Inter;font-size:7.4pt;letter-spacing:.16em;text-transform:uppercase;color:#D12B1F}
+.note{font-size:9.6pt;line-height:1.45;color:#3a4654;margin:.08in 0 0;padding-top:.08in;border-top:1px solid #dfe3e8}
 /* work */
 .shelf{display:grid;grid-template-columns:repeat(6,1fr);gap:.14in;margin:.2in 0 .3in}
 .shelf img{width:100%;display:block;border-radius:3px;box-shadow:0 6px 14px rgba(11,22,34,.25)}
@@ -108,7 +111,7 @@ def foot(n): return f'<div class="ft"><span>David Joannes · Media Kit</span><sp
 toc = ['A Letter from David', 'About David', 'Introducing David', 'Books, Ministry, and Podcast', 'Talking Points', 'Questions for Podcasters and Interviews', 'Images and Media', 'What Others Say', 'Contact Information']
 ct = C['contact']
 pages = []
-pages.append(f'''<section class="pg cover"><div class="grid"></div><div class="glow"></div><div class="top">Media Kit</div><div class="ph"></div>
+pages.append(f'''<section class="pg cover"><div class="grid"></div><div class="top">Media Kit</div><div class="ph"></div>
 <div class="tx"><div class="eye">Missiologist · Author · Podcaster</div><h1>David<br><span>Joannes</span></h1><div class="mk">Media Kit</div>
 <div class="tag">Bios, talking points, interview questions, and photos for podcasts and interviews.</div></div>
 <div class="bot"><span>{e(ct["site"])}</span><span>Within Reach Global</span></div></section>''')
@@ -125,8 +128,10 @@ pages.append(f'''<section class="pg soft"><div class="rail"></div><div class="in
 <div class="bio"><b>Short introduction · about 20 seconds</b><p>{e(C["intro"])}</p></div>
 <div class="bio"><b>Standard bio · about 40 seconds</b><p>{e(C["short"])}</p></div>
 <div class="eye" style="margin-top:.34in">Good to know</div>
-<div class="cols"><div><h3>Name and titles</h3><p style="font-size:11.2pt">David Joannes. Founder and CEO of Within Reach Global. Author of The Mind of a Missionary. Host of the Missions Pulse podcast.</p></div>
-<div><h3>Where to send listeners</h3><p style="font-size:11.2pt">{e(ct["site"])} for David's books, podcast, and free resources, and {e(ct["wrg"])} for the ministry.</p></div></div></div>{foot(4)}</section>''')
+<div class="cols"><div><h3>David Joannes</h3><p style="font-size:11pt">Founder and CEO of Within Reach Global. Author of The Mind of a Missionary. Host of the Missions Pulse podcast.</p>
+<div class="hd"><b>Website</b>{e(ct["site"])}</div><div class="hd"><b>Instagram</b>{e(ct["instagram"])}</div><p class="note">{e(ct["collab"])}</p></div>
+<div><h3>Within Reach Global</h3><p style="font-size:11pt">Send listeners here to learn about the ministry and to pray, give, or go.</p>
+<div class="hd"><b>Website</b>{e(ct["wrg"])}</div><div class="hd"><b>Instagram</b>{e(ct["wrg_instagram"])}</div><div class="hd"><b>YouTube</b>{e(ct["youtube"])}</div></div></div></div>{foot(4)}</section>''')
 pages.append(f'''<section class="pg"><div class="rail r"></div><div class="in"><div class="eye">The work</div><h2>Books, ministry, and <span>podcast</span></h2>
 <div class="shelf">{"".join(f'<img src="file://{COVERS}/{b[2]}.jpg">' for b in C["books"])}</div>
 <ul class="bl">{"".join(f"<li><b>{e(b[0])}</b> <i>· {e(b[1])}</i></li>" for b in C["books"])}</ul>
@@ -147,7 +152,7 @@ pages.append(f'''<section class="pg end"><div class="grid"></div><div class="glo
 <p class="lede">To book David for a podcast or interview, or to ask for a review copy of one of his books, reach out by email. David is based in Chiang Mai, Thailand (UTC+7).</p>
 <div class="ct"><div><b>Interviews and review copies</b><span>{e(ct["press"])}</span></div><div><b>David directly</b><span>{e(ct["email"])}</span></div>
 <div><b>Website and media downloads</b><span>{e(ct["media"])}</span><small>Bios to copy and photos to download</small></div><div><b>The ministry</b><span>{e(ct["wrg"])}</span><small>Within Reach Global</small></div>
-<div><b>Instagram</b><span>{e(ct["instagram"])}</span></div><div><b>Books</b><span>{e(ct["site"])}/books</span></div></div></div>
+<div><b>Instagram</b><span>{e(ct["instagram"])}</span><small>Within Reach Global: {e(ct["wrg_instagram"])}. David accepts most collaboration requests.</small></div><div><b>YouTube</b><span>{e(ct["youtube"])}</span><small>Within Reach Global</small></div></div></div>
 <div class="bot"><span>David Joannes</span><span>{e(ct["site"])}</span></div></section>''')
 doc = f'<!doctype html><meta charset="utf-8"><title>David Joannes Media Kit</title><style>{css}</style>' + ''.join(pages)
 open(os.path.join(HERE, 'kit.html'), 'w', encoding='utf-8').write(doc)
