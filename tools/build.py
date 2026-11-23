@@ -432,6 +432,10 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="icon" href="{B}/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{B}/assets/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="{B}/assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="{B}/assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="{B}/assets/site.css?v={VER}">
 {head}
 </head>
@@ -1146,6 +1150,9 @@ os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 shutil.copy(os.path.join(HERE, 'site.css'), os.path.join(OUT, 'assets', 'site.css'))
 shutil.copy(os.path.join(HERE, 'pulse.js'), os.path.join(OUT, 'assets', 'pulse.js'))
 shutil.copy(os.path.join(HERE, 'share.jpg'), os.path.join(OUT, 'assets', 'share.jpg'))
+os.makedirs(os.path.join(OUT, 'assets', 'icons'), exist_ok=True)
+for _f in os.listdir(os.path.join(HERE, 'icons')): shutil.copy(os.path.join(HERE, 'icons', _f), os.path.join(OUT, 'assets', 'icons', _f))
+shutil.copy(os.path.join(HERE, 'icons', 'favicon.ico'), os.path.join(OUT, 'favicon.ico'))
 if not os.path.exists(os.path.join(OUT, 'assets', 'pulse.json')): shutil.copy(os.path.join(HERE, 'pulse.json'), os.path.join(OUT, 'assets', 'pulse.json'))
 page('/404/', 'Page not found', phead('404', 'This page has moved or no longer exists.') + f'<div class="wrap"><div class="article prose"><p>Try the <a href="{B}/blog/">blog</a>, the <a href="{B}/books/">books</a>, or head back <a href="{B}/">home</a>.</p></div></div>')
 shutil.copy(os.path.join(OUT, '404', 'index.html'), os.path.join(OUT, '404.html'))
