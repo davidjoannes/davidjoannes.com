@@ -408,7 +408,7 @@ VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
-    og = f'<meta property="og:image" content="{SITE}{image[len(B):] if image else "/assets/share.jpg"}">\n<meta name="twitter:card" content="summary_large_image">'
+    og = f'<meta property="og:image" content="{SITE}{image[len(B):] if image and not home and path != "/about/" else "/assets/share.jpg"}">\n<meta name="twitter:card" content="summary_large_image">'
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
     def _bk(m):
         slug, anc = m.group(1), m.group(2) or ''
@@ -1156,7 +1156,7 @@ page(_tp, '%%TITLE%%', phead(f'<a href="{B}/blog/missions-pulse-podcast-posts/">
      + sec(shead('More from Missions Pulse', 'Keep listening', f'<a class="more" href="{B}/blog/missions-pulse-podcast-posts/">See all →</a>') + '<div class="grid" data-pulse="card" data-n="3"></div>', 'soft'), desc='%%DESC%%')
 WRITTEN.remove(_tp)
 _t = open(os.path.join(OUT, _tp.strip('/'), 'index.html'), encoding='utf-8').read()
-_t = _t.replace(f'<link rel="canonical" href="{SITE}{_tp}">', '<link rel="canonical" href="%%CANON%%">').replace(f'<meta property="og:url" content="{SITE}{_tp}">', f'<meta property="og:url" content="{SITE}%%PATH%%">\n<meta property="og:image" content="%%OGIMG%%">')
+_t = _t.replace(f'<link rel="canonical" href="{SITE}{_tp}">', '<link rel="canonical" href="%%CANON%%">').replace(f'<meta property="og:url" content="{SITE}{_tp}">', f'<meta property="og:url" content="{SITE}%%PATH%%">').replace(f'<meta property="og:image" content="{SITE}/assets/share.jpg">', '<meta property="og:image" content="%%OGIMG%%">')
 assert '%%CANON%%' in _t and '%%OGIMG%%' in _t
 os.makedirs(os.path.join(OUT, 'tools'), exist_ok=True)
 open(os.path.join(OUT, 'tools', 'episode-template.html'), 'w', encoding='utf-8').write(f'<!--base:{B}-->' + _t)
