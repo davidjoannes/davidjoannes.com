@@ -407,7 +407,7 @@ WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
-    nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
+    nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
     og = f'<meta property="og:image" content="{SITE}{image[len(B):]}">' if image else ''
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
     def _bk(m):
