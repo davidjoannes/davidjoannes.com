@@ -408,7 +408,7 @@ VER = datetime.datetime.now().strftime('%m%d%H%M')
 def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
-    og = f'<meta property="og:image" content="{SITE}{image[len(B):]}">' if image else ''
+    og = f'<meta property="og:image" content="{SITE}{image[len(B):] if image else "/assets/share.jpg"}">\n<meta name="twitter:card" content="summary_large_image">'
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
     def _bk(m):
         slug, anc = m.group(1), m.group(2) or ''
@@ -1145,6 +1145,7 @@ page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, 
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 shutil.copy(os.path.join(HERE, 'site.css'), os.path.join(OUT, 'assets', 'site.css'))
 shutil.copy(os.path.join(HERE, 'pulse.js'), os.path.join(OUT, 'assets', 'pulse.js'))
+shutil.copy(os.path.join(HERE, 'share.jpg'), os.path.join(OUT, 'assets', 'share.jpg'))
 if not os.path.exists(os.path.join(OUT, 'assets', 'pulse.json')): shutil.copy(os.path.join(HERE, 'pulse.json'), os.path.join(OUT, 'assets', 'pulse.json'))
 page('/404/', 'Page not found', phead('404', 'This page has moved or no longer exists.') + f'<div class="wrap"><div class="article prose"><p>Try the <a href="{B}/blog/">blog</a>, the <a href="{B}/books/">books</a>, or head back <a href="{B}/">home</a>.</p></div></div>')
 shutil.copy(os.path.join(OUT, '404', 'index.html'), os.path.join(OUT, '404.html'))
