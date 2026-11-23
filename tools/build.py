@@ -432,9 +432,9 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-<link rel="icon" href="{B}/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="{B}/assets/icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="{B}/assets/icons/icon-192.png">
+<link rel="icon" href="{B}/favicon.ico?v={VER}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{B}/assets/icons/favicon-32.png?v={VER}">
+<link rel="icon" type="image/png" sizes="192x192" href="{B}/assets/icons/icon-192.png?v={VER}">
 <link rel="apple-touch-icon" href="{B}/assets/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="{B}/assets/site.css?v={VER}">
 {head}
