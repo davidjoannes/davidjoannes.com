@@ -405,10 +405,12 @@ IC = {'Instagram': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" 
 SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>' for n, u in SOCIAL)
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
+SHARE_IMG = [('/about/', 'about'), ('/books/', 'books'), ('/missionspulse/', 'podcast'), ('/blog/', 'blog'), ('/resources/', 'resources'), ('/donate/', 'give')]
 def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
-    og = f'<meta property="og:image" content="{SITE}{image[len(B):] if image and not home and path != "/about/" else "/assets/share.jpg"}">\n<meta name="twitter:card" content="summary_large_image">'
+    _sh = next((f'/assets/share/{n}.jpg' for u, n in SHARE_IMG if path.startswith(u)), '')
+    og = f'<meta property="og:image" content="{SITE}{_sh or (image[len(B):] if image and not home else "/assets/share.jpg")}">\n<meta name="twitter:card" content="summary_large_image">'
     fcol = lambda h, links: f'<div><h4>{h}</h4>' + ''.join(f'<a href="{u if u.startswith("http") else B + u}">{n}</a>' for n, u in links) + '</div>'
     def _bk(m):
         slug, anc = m.group(1), m.group(2) or ''
@@ -1151,6 +1153,8 @@ shutil.copy(os.path.join(HERE, 'site.css'), os.path.join(OUT, 'assets', 'site.cs
 shutil.copy(os.path.join(HERE, 'pulse.js'), os.path.join(OUT, 'assets', 'pulse.js'))
 shutil.copy(os.path.join(HERE, 'share.jpg'), os.path.join(OUT, 'assets', 'share.jpg'))
 os.makedirs(os.path.join(OUT, 'assets', 'icons'), exist_ok=True)
+os.makedirs(os.path.join(OUT, 'assets', 'share'), exist_ok=True)
+for _f in os.listdir(os.path.join(HERE, 'share')): shutil.copy(os.path.join(HERE, 'share', _f), os.path.join(OUT, 'assets', 'share', _f))
 for _f in os.listdir(os.path.join(HERE, 'icons')): shutil.copy(os.path.join(HERE, 'icons', _f), os.path.join(OUT, 'assets', 'icons', _f))
 shutil.copy(os.path.join(HERE, 'icons', 'favicon.ico'), os.path.join(OUT, 'favicon.ico'))
 if not os.path.exists(os.path.join(OUT, 'assets', 'pulse.json')): shutil.copy(os.path.join(HERE, 'pulse.json'), os.path.join(OUT, 'assets', 'pulse.json'))
