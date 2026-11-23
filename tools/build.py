@@ -456,7 +456,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <div class="fcols">
 <div class="fabout"><a class="brand" href="{B}/">David Joannes</a><p>Missiologist, author, podcaster, and Founder of Within Reach Global, giving gospel access to unreached people groups in the 10/40 Window.</p></div>
 {fcol('Explore', [('About', '/about/'), ('Books', '/books/'), ('Missions Pulse', '/missionspulse/'), ('Blog', '/blog/'), ('Resources', '/resources/')])}
-{fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Be a podcast guest', '/contact/'), ('Contact', '/contact/')])}
+{fcol('Connect', [('Book a meeting', '/meet/#personal'), ('Be a podcast guest', '/contact/'), ('Media kit', '/media/'), ('Contact', '/contact/')])}
 {fcol('Give', [('Support David and Lorna', '/donate/'), ('Within Reach Global', WRG), ('Give to WRG', WRG + '/donate')])}
 </div>
 <div class="bar"><span>© {datetime.date.today().year} David Joannes</span><span class="soc">{SOCIAL_ICONS}<a href="{AMAZON_AUTHOR}" aria-label="Books on Amazon" title="Books on Amazon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.2 5.2 7.6 4.8 4 5v13c3.6-.2 6.2.2 8 1.5 1.8-1.3 4.4-1.7 8-1.5V5c-3.6-.2-6.2.2-8 1.5z"/><path d="M12 6.5v13"/></svg></a></span></div>
@@ -933,7 +933,7 @@ bio = re.search(r'\[vc_column_text\](.*?)\[/vc_column_text\]', ab.raw, re.S).gro
 bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S).replace('For the last 25 years', 'For the last 30 years')
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
-<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
+<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{B}/media/">Media kit</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + CTA,
      desc=plain(bio), image=portrait)
@@ -1087,6 +1087,32 @@ def _feat(path, k, t, d, go):
     im = mj_img(path) or att(fp.thumb, ['large', 'medium_large'])
     return (f'<a class="feat" href="{B}{path}"><div class="im">' + (f'<img src="{im}" alt="" loading="lazy">' if im else '') + f'</div><div class="feat-b"><p class="eyebrow">{k}</p><h3>{t}</h3><p>{d}</p><span class="more">{go}</span></div></a>')
 FEAT2 = '<div class="feat2">' + ''.join(_feat(*x) for x in _FEAT) + '</div>'
+# ---------- media kit (content shared with scripts/mediakit/make_pdf.py)
+MK = json.load(open(os.path.join(HERE, 'mediakit', 'content.json')))
+os.makedirs(os.path.join(OUT, 'assets', 'media'), exist_ok=True)
+for _f in os.listdir(os.path.join(HERE, 'mediakit', 'photos')): shutil.copy(os.path.join(HERE, 'mediakit', 'photos', _f), os.path.join(OUT, 'assets', 'media', _f))
+shutil.copy(os.path.join(HERE, 'mediakit', 'david-joannes-media-kit.pdf'), os.path.join(OUT, 'assets', 'media', 'David-Joannes-Media-Kit.pdf'))
+_mk_pdf = f'{B}/assets/media/David-Joannes-Media-Kit.pdf'
+def _mk_bio(label, text): return f'<div class="mk-bio"><div class="mk-bh"><b>{label}</b><button type="button" class="mk-copy">Copy</button></div><p>{esc(text)}</p></div>'
+_mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking points, interview questions, and photos of David Joannes, ready to use.')
+  + sec(f'''<div class="mk-top"><div><p class="lead">Thank you for having David on your show. Everything a host needs is on this page, and the same material is in a PDF you can save or pass to your team.</p>
+<div class="btns"><a class="btn" href="{_mk_pdf}" download>Download the media kit (PDF)</a><a class="more" href="#photos" style="align-self:center">Get photos →</a></div></div>
+<div class="mk-facts">{"".join(f"<div><b>{esc(k)}</b><span>{esc(v)}</span></div>" for k, v in MK["facts"])}</div></div>''')
+  + sec(shead('Bios', 'Introducing David', lede='Use any of these as written on air or in your show notes.')
+        + _mk_bio('Short introduction · about 20 seconds', MK['intro']) + _mk_bio('Standard bio · about 40 seconds', MK['short']) + _mk_bio('Full bio', ' '.join(MK['long'])), 'soft', 'bios')
+  + sec(shead('Talking points', 'What David loves to talk about') + '<div class="mk-topics">' + ''.join(f'<div><i>{i + 1}</i><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></div>' for i, (t, d) in enumerate(MK['topics'])) + '</div>', '', 'topics')
+  + sec(shead('Suggested questions', 'Questions for podcasters and interviews', lede='Choose seven to ten questions from this list, and feel free to ask your own as well.')
+        + '<ul class="mk-qs">' + ''.join(f'<li>{esc(q)}</li>' for q in MK['questions']) + '</ul>', 'soft', 'questions')
+  + sec(shead('Images and media', 'Photos to download', lede='Free to use for episode artwork, show notes, and social posts about your interview with David.')
+        + '<div class="mk-photos">' + ''.join(f'<figure><img src="{B}/assets/media/{f}" alt="David Joannes: {esc(c)}" loading="lazy"><figcaption><span>{esc(c)}</span><a href="{B}/assets/media/{f}" download>Download</a></figcaption></figure>' for f, c in MK['photos']) + '</div>', '', 'photos')
+  + sec(shead('Books and podcast', 'The work behind the conversation', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF
+        + f'<div class="mk-two"><div><h3>Within Reach Global</h3><p>{esc(MK["wrg"])}</p><a class="more" href="{WRG}" target="_blank" rel="noopener">withinreachglobal.org</a></div><div><h3>Missions Pulse</h3><p>{esc(MK["podcast"])}</p><a class="more" href="{B}/missionspulse/">About the podcast →</a></div></div>', 'soft', 'work')
+  + sec(shead('What others say', 'Endorsements') + '<div class="mk-quotes">' + ''.join(f'<blockquote><p>“{esc(q)}”</p><cite><b>{esc(n)}</b> {esc(r)}</cite></blockquote>' for q, n, r in MK['quotes']) + '</div>', '', 'endorsements')
+  + sec(shead('Contact', 'Book David for your show') + f'''<div class="mk-two"><div><h3>Interviews and review copies</h3><p>Email <a href="mailto:{MK["contact"]["press"]}">{MK["contact"]["press"]}</a> to book an interview or ask for a copy of one of David's books before you record.</p></div>
+<div><h3>Reach David directly</h3><p>Email <a href="mailto:{MK["contact"]["email"]}">{MK["contact"]["email"]}</a> or use the <a href="{B}/contact/">contact form</a>. David is based in Chiang Mai, Thailand (UTC+7).</p></div></div>''', 'soft', 'contact')
+  + """<script>document.querySelectorAll('.mk-copy').forEach(function(b){b.addEventListener('click',function(){var t=b.closest('.mk-bio').querySelector('p').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)})})})</script>""")
+page('/media/', 'Media Kit', _mk, desc='Media kit for David Joannes: bios, talking points, interview questions, and photos for podcasts and interviews.')
+
 # ---------- resources
 page('/resources/', 'Resources', phead('Resources', 'Tools to find your part in the Great Commission', lede='Free tests, maps, and courses from David and Within Reach Global.')
      + sec(shead('Free tools and stories', 'Start here') + RES_CARDS) + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion.') + COURSE_CARDS, 'soft', 'courses')
