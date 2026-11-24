@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build David Joannes's media kit PDF from content.json (letter size, site colors and fonts)."""
 import json, os, sys, html
+TOP3 = ["Thom S. Rainer", "Nik Ripken", "Ron Luce"]  # endorsers shown in the PDF, in this order
 HERE = os.path.dirname(os.path.abspath(__file__))
 FONTS = sys.argv[1] if len(sys.argv) > 1 else '/tmp/fi/node_modules/@fontsource'
 COVERS = sys.argv[2] if len(sys.argv) > 2 else '/home/claude/djrepo/assets/books/flat'
@@ -148,7 +149,7 @@ pages.append(f'''<section class="pg soft"><div class="rail"></div><div class="in
 <div class="imgs">{"".join(f'<figure><img src="{P}{f}"><figcaption>{e(c)}</figcaption></figure>' for f, c in C["photos"])}</div>
 <a class="btn" href="https://{e(ct["media"])}/">Get images and media</a>
 <div class="eye">What others say</div><h2>Endorsements</h2>
-{"".join(f'<div class="q"><div class="m">“</div><div><p>{e(q)}</p><cite><b>{e(n)}</b> · {e(r)}</cite></div></div>' for q, n, r in C["quotes"][:3])}</div>{foot(8)}</section>''')
+{"".join(f'<div class="q"><div class="m">“</div><div><p>{e(q)}</p><cite><b>{e(n)}</b> · {e(r)}</cite></div></div>' for q, n, r in sorted((x for x in C["quotes"] if x[1] in TOP3), key=lambda x: TOP3.index(x[1])))}</div>{foot(8)}</section>''')
 pages.append(f'''<section class="pg end"><div class="grid"></div><div class="glow"></div><div class="eph"></div><div class="in"><div class="eye" style="color:#e0b25a">Get in touch</div><h2>Contact <span>information</span></h2>
 <p class="lede">To book David for a podcast or interview, or to ask for a review copy of one of his books, reach out by email. David is based in Chiang Mai, Thailand (UTC+7).</p>
 <div class="ct"><div><b>Interviews and review copies</b><span>{e(ct["email"])}</span><small>Email David directly</small></div><div><b>Books</b><span>{e(ct["site"])}/books</span><small>All titles, with links to buy</small></div>

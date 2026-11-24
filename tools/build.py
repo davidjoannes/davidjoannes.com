@@ -408,7 +408,7 @@ SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>'
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
 SHARE_IMG = [('/about/', 'about'), ('/books/', 'books'), ('/missionspulse/', 'podcast'), ('/blog/', 'blog'), ('/resources/', 'resources'), ('/donate/', 'give')]
-def page(path, title, body, desc='', image='', home=False, redirect='', head=''):
+def page(path, title, body, desc='', image='', home=False, redirect='', head='', bare=False):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
     _sh = next((f'/assets/share/{n}.jpg' for u, n in SHARE_IMG if path.startswith(u)), '')
@@ -470,6 +470,9 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='')
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
 </body>
 </html>'''
+    if bare:  # no site header or footer (the Instagram link page)
+        doc = re.sub(r'<header class="hdr">.*?</header>\n', '', doc, flags=re.S); doc = re.sub(r'<footer class="ftr dark">.*?</footer>\n', '', doc, flags=re.S)
+        doc = re.sub(r'<script>\(function\(\)\{var b=document\.querySelector\(\'\.burger\'\).*?</script>\n', '', doc, flags=re.S)
     d = os.path.join(OUT, path.strip('/'))
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f: f.write(doc)
@@ -893,8 +896,7 @@ COURSE_CARDS = (
 # ---------- posts
 LIVE.update(p.path for p in POSTS)
 LIVE.update(['/about/', '/books/', '/missionspulse/', '/blog/', '/resources/', '/donate/', '/meet/', '/contact/', '/books/the-mind-of-a-missionary/', '/books/the-mind-of-a-missionary/notes/',
-             '/books/gospel-privilege/', '/books/gospel-privilege/launchteam/', '/books/the-space-between-memories/', '/books/see-the-city/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
-             '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/'] + [c[2] for c in CATS])
+             '/books/gospel-privilege/', '/books/gospel-privilege/launchteam/', '/books/the-space-between-memories/', '/books/see-the-city/', '/instagram/'] + [c[2] for c in CATS])
 HIST_POSTS = []
 for p in POSTS:
     _m = re.fullmatch(r'/missions-history-today-([a-z]+)/', p.path)
@@ -1002,15 +1004,29 @@ page('/missionspulse/', 'Missions Pulse',
      + (sec(shead('Guests', 'Missions Pulse guests') + f'<div class="prose guests">{guests}</div>') if guests else '') + CTA,
      desc=plain(mp.raw))
 
-# ---------- other carried-over pages (plain article layout)
-KEEP = ['/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
-        '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/']
-TITLES = {'/thank-you/': 'Thank you', '/instagram/': 'David Joannes on Instagram', '/thanks/': 'Thanks!'}
-for path in KEEP:
-    p = PAGES.get(path)
-    if not p: print('missing page', path); continue
-    title = TITLES.get(path) or html.unescape(p.title) or 'David Joannes'
-    page(path, title, phead('David Joannes', title) + f'<div class="wrap"><article class="article"><div class="prose plain">{convert(p)}</div></article></div>' + CTA, desc=plain(p.raw))
+# ---------- Instagram link-in-bio page (the other carried-over WordPress pages were retired)
+def _lk(label, sub, url, cls=''):
+    ext = url.startswith('http')
+    return f'<a class="lk {cls}" href="{url}"' + (' target="_blank" rel="noopener"' if ext else '') + f'><span><b>{label}</b>' + (f'<i>{sub}</i>' if sub else '') + '</span><em aria-hidden="true">→</em></a>'
+_lk_books = ''.join(f'<a href="{WRG}/{slug}" target="_blank" rel="noopener"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a>' for t, yr, img, buy, slug in BOOKS)
+_ig = (f'<div class="lkp"><div class="lk-top"><img class="lk-me" src="{B}/assets/media/david-joannes-headshot.jpg" alt="David Joannes" width="112" height="112">'
+       '<h1>David Joannes</h1><p>Missiologist, author, and Founder of Within Reach Global. Giving gospel access to unreached people groups in the 10/40 Window.</p></div>'
+       + _lk('Within Reach Global', 'Pray, give, and go to the unreached', WRG, 'red')
+       + _lk('Give', 'Support David and Lorna on the mission field', B + '/donate/', 'white')
+       + '<h2>Missions Pulse</h2>'
+       + f'<div class="lk-ep" data-pulse="ep" data-n="1">{pulse_list("ep", 1)}</div>'
+       + _lk('All episodes', 'Watch or listen to the podcast', B + '/missionspulse/')
+       + f'<h2>Books</h2><div class="lk-books">{_lk_books}</div>'
+       + _lk('All books', 'Read more and order', B + '/books/')
+       + '<h2>Free resources</h2>'
+       + _lk('Free online courses', 'Short lessons from David’s books', B + '/resources/#courses')
+       + _lk('Missions History Today', 'What happened on this day in missions', B + '/missions-history-today-what-happened-on-every-day-of-the-year/')
+       + _lk('Missionary quotes', 'The most epic monster list on the internet', B + '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/')
+       + _lk('All resources', 'Tests, maps, and courses', B + '/resources/')
+       + '<h2>More</h2>'
+       + _lk('About David', '', B + '/about/') + _lk('Blog', '', B + '/blog/') + _lk('Media kit', 'For podcasts and interviews', B + '/media/') + _lk('Contact', '', B + '/contact/')
+       + f'<p class="lk-ft"><a href="{B}/">davidjoannes.com</a></p></div>')
+page('/instagram/', 'David Joannes on Instagram', _ig, desc='Books, free resources, the Missions Pulse podcast, and ways to give from David Joannes and Within Reach Global.', bare=True)
 
 # ---------- The Mind of a Missionary: notes and references (from the second edition; see scripts/parse_notes.py)
 def notes_page():
