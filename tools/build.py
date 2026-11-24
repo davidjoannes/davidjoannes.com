@@ -1013,6 +1013,10 @@ _ig = (f'<div class="lkp"><div class="lk-top"><img class="lk-me" src="{B}/assets
        '<h1>David Joannes</h1><p>Missiologist, author, and Founder of Within Reach Global. Giving gospel access to unreached people groups in the 10/40 Window.</p></div>'
        + _lk('Within Reach Global', 'Pray, give, and go to the unreached', WRG, 'white')
        + _lk('Give', 'Support David and Lorna on the mission field', B + '/donate/', 'red')
+       + '<h2>Serve among the unreached</h2>'
+       + _lk('Mission trips', 'Short-term trips with Within Reach Global', WRG + '/trips')
+       + _lk('Apprenticeship', 'Train on the mission field', WRG + '/apprenticeship')
+       + _lk('Long-term opportunities', 'Join the team as a long-term missionary', WRG + '/long-term')
        + '<h2>Missions Pulse</h2>'
        + f'<div class="lk-ep" data-pulse="ep" data-n="1">{pulse_list("ep", 1)}</div>'
        + _lk('All episodes', 'Watch or listen to the podcast', B + '/missionspulse/')
