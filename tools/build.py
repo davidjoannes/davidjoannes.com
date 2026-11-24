@@ -936,7 +936,7 @@ bio = re.search(r'\[vc_column_text\](.*?)\[/vc_column_text\]', ab.raw, re.S).gro
 bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S).replace('For the last 25 years', 'For the last 30 years')
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
-<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{B}/media/">Media kit</a></div></div><img src="{portrait}" alt="David Joannes"></div></section>'''
+<div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{B}/media/">Media kit</a></div></div><img src="{B}/assets/media/david-joannes-portrait.jpg" style="object-position:50% 22%" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
      + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + CTA,
      desc=plain(bio), image=portrait)
@@ -961,7 +961,7 @@ books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and hos
 page('/books/', 'Books by David Joannes',
      phead('Books', 'Books by David Joannes', lede='Writing to stir a missions zeal in the Church, particularly for the remaining unreached people groups of the 10/40 Window.')
      + sec(shead('Resources', 'Browse the books', lede='Books to help you discover your God-given calling and find your role in the Great Commission.') + '<div class="bgrid">' + ''.join(bookcard(*x) for x in BOOKS) + '</div>')
-     + sec(f'<div class="authorrow"><img src="{portrait}" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
+     + sec(f'<div class="authorrow"><img src="{B}/assets/media/david-joannes-portrait-2.jpg" style="object-fit:cover;object-position:52% 30%" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + COURSE_CARDS) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
 OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (6, 'gospelprivilege'),

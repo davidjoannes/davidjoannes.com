@@ -33,7 +33,7 @@ p{margin-bottom:.13in}
 .cover .grid,.end .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:.55in .55in}
 .cover .glow,.end .glow{position:absolute;right:-3in;top:-3.4in;width:8in;height:8in;border-radius:50%;background:radial-gradient(circle,#D12B1F 0%,rgba(209,43,31,.3) 40%,rgba(209,43,31,0) 68%);opacity:.6}
 .cover .top{position:absolute;left:0;right:0;top:0;height:.62in;background:#000;display:flex;align-items:center;justify-content:center;font-family:Inter;font-weight:700;font-size:9.5pt;letter-spacing:.3em;text-transform:uppercase}
-.cover .ph{position:absolute;right:0;top:.62in;width:4.3in;bottom:1.05in;background:url(PHOTOheadshot) 46% 10%/cover}
+.cover .ph{position:absolute;right:0;top:.62in;width:4.3in;bottom:1.05in;background:url(PHOTOheadshot) 60% 18%/cover}
 .cover .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0B1622 0%,rgba(11,22,34,.5) 26%,rgba(11,22,34,0) 60%),linear-gradient(0deg,#0B1622 0%,rgba(11,22,34,0) 22%)}
 .cover .tx{position:absolute;left:.75in;top:3.2in;width:4.6in}
 .cover .eye{color:#e0b25a;font-size:9.5pt;margin-bottom:.2in}
@@ -84,9 +84,9 @@ p{margin-bottom:.13in}
 .qs li{break-inside:avoid;padding:.14in 0 .14in .3in;position:relative;font-size:11.6pt;line-height:1.45;border-bottom:1px solid #dfe3e8}
 .qs li:before{content:"";position:absolute;left:.04in;top:.245in;width:.1in;height:.1in;border-radius:50%;background:#D12B1F}
 /* images */
-.imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:.16in;margin:.08in 0 .1in}
+.imgs{display:grid;grid-template-columns:repeat(6,1fr);gap:.12in;margin:.08in 0 .1in}
 .imgs figure{margin:0}.imgs img{width:100%;aspect-ratio:1;object-fit:cover;object-position:50% 15%;border-radius:.1in;display:block}
-.imgs figcaption{font-size:8pt;font-weight:600;color:#5b6672;margin-top:.06in}
+.imgs figcaption{font-size:7pt;line-height:1.3;font-weight:600;color:#5b6672;margin-top:.06in}
 .btn{display:inline-block;background:#D12B1F;color:#fff;text-decoration:none;font-family:Inter;font-weight:700;font-size:9.5pt;letter-spacing:.14em;text-transform:uppercase;padding:.11in .26in;border-radius:999px;margin:.04in 0 .3in}
 /* quotes */
 .q{display:flex;gap:.2in;padding:.17in 0;border-bottom:1px solid #dfe3e8}
@@ -95,17 +95,18 @@ p{margin-bottom:.13in}
 .q p{font-family:Serif4;font-size:12pt;line-height:1.45;margin-bottom:.07in}
 .q cite{font-style:normal;font-size:8.8pt;color:#5b6672}.q cite b{color:#0B1622;letter-spacing:.1em;text-transform:uppercase;font-size:8.4pt}
 /* end */
+.end .eph{position:absolute;right:0;bottom:1.05in;width:3.3in;height:2.75in;background:url(PHOTOaway) 50% 34%/cover;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 45%),linear-gradient(0deg,#000 60%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;opacity:.9}
 .end{background:#0B1622;color:#fff}
 .end .in{top:1.3in}
 .end h2{color:#fff;font-size:34pt}.end h2 span{color:#ff5a4d}
 .end .lede{color:rgba(255,255,255,.88)}
-.ct{display:grid;grid-template-columns:1fr 1fr;gap:.22in;margin-top:.3in}
+.ct{display:grid;grid-template-columns:1fr 1fr;gap:.2in;margin-top:.3in}
 .ct div{border:1px solid rgba(255,255,255,.18);border-radius:.14in;padding:.2in .24in;background:rgba(255,255,255,.04)}
 .ct b{display:block;font-size:7.6pt;letter-spacing:.18em;text-transform:uppercase;color:#e0b25a;margin-bottom:.05in}
 .ct span{font-family:Sora;font-weight:700;font-size:12.5pt;word-break:break-word}
 .ct small{display:block;margin-top:.05in;font-size:8.8pt;line-height:1.4;color:rgba(255,255,255,.72)}
 a{color:inherit}
-'''.replace('PHOTOheadshot', P + 'david-joannes-headshot.jpg')
+'''.replace('PHOTOheadshot', P + 'david-joannes-portrait.jpg').replace('PHOTOaway', P + 'david-joannes-portrait-2.jpg')
 
 def foot(n): return f'<div class="ft"><span>David Joannes · Media Kit</span><span>{n}</span></div>'
 toc = ['A Letter from David', 'About David', 'Introducing David', 'Books, Ministry, and Podcast', 'Talking Points', 'Questions for Podcasters and Interviews', 'Images and Media', 'What Others Say', 'Contact Information']
@@ -148,7 +149,7 @@ pages.append(f'''<section class="pg soft"><div class="rail"></div><div class="in
 <a class="btn" href="https://{e(ct["media"])}/">Get images and media</a>
 <div class="eye">What others say</div><h2>Endorsements</h2>
 {"".join(f'<div class="q"><div class="m">“</div><div><p>{e(q)}</p><cite><b>{e(n)}</b> · {e(r)}</cite></div></div>' for q, n, r in C["quotes"][:3])}</div>{foot(8)}</section>''')
-pages.append(f'''<section class="pg end"><div class="grid"></div><div class="glow"></div><div class="in"><div class="eye" style="color:#e0b25a">Get in touch</div><h2>Contact <span>information</span></h2>
+pages.append(f'''<section class="pg end"><div class="grid"></div><div class="glow"></div><div class="eph"></div><div class="in"><div class="eye" style="color:#e0b25a">Get in touch</div><h2>Contact <span>information</span></h2>
 <p class="lede">To book David for a podcast or interview, or to ask for a review copy of one of his books, reach out by email. David is based in Chiang Mai, Thailand (UTC+7).</p>
 <div class="ct"><div><b>Interviews and review copies</b><span>{e(ct["email"])}</span><small>Email David directly</small></div><div><b>Books</b><span>{e(ct["site"])}/books</span><small>All titles, with links to buy</small></div>
 <div><b>Website and media downloads</b><span>{e(ct["media"])}</span><small>Bios to copy and photos to download</small></div><div><b>The ministry</b><span>{e(ct["wrg"])}</span><small>Within Reach Global</small></div>
