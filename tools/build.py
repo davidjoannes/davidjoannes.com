@@ -1011,8 +1011,8 @@ def _lk(label, sub, url, cls=''):
 _lk_books = ''.join(f'<a href="{WRG}/{slug}" target="_blank" rel="noopener"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a>' for t, yr, img, buy, slug in BOOKS)
 _ig = (f'<div class="lkp"><div class="lk-top"><img class="lk-me" src="{B}/assets/media/david-joannes-headshot.jpg" alt="David Joannes" width="112" height="112">'
        '<h1>David Joannes</h1><p>Missiologist, author, and Founder of Within Reach Global. Giving gospel access to unreached people groups in the 10/40 Window.</p></div>'
-       + _lk('Within Reach Global', 'Pray, give, and go to the unreached', WRG, 'red')
-       + _lk('Give', 'Support David and Lorna on the mission field', B + '/donate/', 'white')
+       + _lk('Within Reach Global', 'Pray, give, and go to the unreached', WRG, 'white')
+       + _lk('Give', 'Support David and Lorna on the mission field', B + '/donate/', 'red')
        + '<h2>Missions Pulse</h2>'
        + f'<div class="lk-ep" data-pulse="ep" data-n="1">{pulse_list("ep", 1)}</div>'
        + _lk('All episodes', 'Watch or listen to the podcast', B + '/missionspulse/')
