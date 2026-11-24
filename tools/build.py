@@ -1096,13 +1096,13 @@ os.makedirs(os.path.join(OUT, 'assets', 'media'), exist_ok=True)
 for _f in os.listdir(os.path.join(HERE, 'mediakit', 'photos')): shutil.copy(os.path.join(HERE, 'mediakit', 'photos', _f), os.path.join(OUT, 'assets', 'media', _f))
 shutil.copy(os.path.join(HERE, 'mediakit', 'david-joannes-media-kit.pdf'), os.path.join(OUT, 'assets', 'media', 'David-Joannes-Media-Kit.pdf'))
 _mk_pdf = f'{B}/assets/media/David-Joannes-Media-Kit.pdf'
-def _mk_bio(label, text): return f'<details class="mk-bio"><summary class="mk-bh"><b>{label}</b><span class="mk-bt"><button type="button" class="mk-copy">Copy</button><i class="mk-ch" aria-hidden="true"></i></span></summary><p>{esc(text)}</p></details>'
+def _mk_bio(label, text, opened=False): return f'<details class="mk-bio"{" open" if opened else ""}><summary class="mk-bh"><b>{label}</b><span class="mk-bt"><button type="button" class="mk-copy">Copy</button><i class="mk-ch" aria-hidden="true"></i></span></summary><p>{esc(text)}</p></details>'
 _mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking points, interview questions, and photos of David Joannes, ready to use.')
   + sec(f'''<div class="mk-top"><div><p class="lead">Thank you for having David on your show. Everything a host needs is on this page, and the same material is in a PDF you can save or pass to your team.</p>
 <div class="btns"><a class="btn" href="{_mk_pdf}" download>Download the media kit (PDF)</a><a class="more" href="#photos" style="align-self:center">Get photos →</a></div></div>
 <div class="mk-facts">{"".join(f"<div><b>{esc(k)}</b><span>{esc(v)}</span></div>" for k, v in MK["facts"])}</div></div>''')
   + sec(shead('Bios', 'Introducing David', lede='Tap a bio to open it. Use any of these as written on air or in your show notes.')
-        + _mk_bio('Short introduction · about 20 seconds', MK['intro']) + _mk_bio('Standard bio · about 40 seconds', MK['short']) + _mk_bio('Full bio', ' '.join(MK['long'])), 'soft', 'bios')
+        + _mk_bio('Short introduction · about 20 seconds', MK['intro'], True) + _mk_bio('Standard bio · about 40 seconds', MK['short']) + _mk_bio('Full bio', ' '.join(MK['long'])), 'soft', 'bios')
   + sec(shead('Talking points', 'What David loves to talk about') + '<div class="mk-topics">' + ''.join(f'<div><i>{i + 1}</i><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></div>' for i, (t, d) in enumerate(MK['topics'])) + '</div>', '', 'topics')
   + sec(shead('Suggested questions', 'Questions for podcasters and interviews', lede='Choose seven to ten questions from this list, and feel free to ask your own as well.')
         + '<ul class="mk-qs">' + ''.join(f'<li>{esc(q)}</li>' for q in MK['questions']) + '</ul>', 'soft', 'questions')
