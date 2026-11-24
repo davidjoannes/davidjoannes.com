@@ -981,7 +981,8 @@ OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/b
             '/books/the-space-between-memories/': (1, 'thespacebetweenmemories'), '/books/see-the-city/': (4, 'seethecity')}
 BOOK_FWD = {'/books/the-mind-of-a-missionary/': 'book-the-mind-of-a-missionary', '/books/gospel-privilege/': 'book-gospel-privilege',
             '/books/the-space-between-memories/': 'book-the-space-between-memories', '/books/see-the-city/': 'book-see-the-city',
-            '/books/the-mind-of-a-missionary/notes/': 'book-the-mind-of-a-missionary#notes'}
+            '/books/the-mind-of-a-missionary/notes/': 'book-the-mind-of-a-missionary#notes',
+            '/books/gospel-privilege/launchteam/': 'book-gospel-privilege'}
 for path, slug in BOOK_FWD.items():  # the book pages live on withinreachglobal.org; old addresses forward there
     page(path, 'Books by David Joannes', phead('Books', 'This book has moved') + f'<div class="wrap"><p class="lead" style="padding:48px 0">This page now lives at Within Reach Global. <a href="{WRG}/{slug}">Continue to the book page</a>.</p></div>',
          desc='Books by David Joannes.', redirect=f'{WRG}/{slug}')
@@ -1002,7 +1003,7 @@ page('/missionspulse/', 'Missions Pulse',
      desc=plain(mp.raw))
 
 # ---------- other carried-over pages (plain article layout)
-KEEP = ['/books/gospel-privilege/launchteam/', '/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
+KEEP = ['/missions-blab/', '/subscribe/', '/fbr/', '/instagram/',
         '/the-memories-i-made-up-chapter-1/', '/thanks/', '/thank-you/']
 TITLES = {'/thank-you/': 'Thank you', '/instagram/': 'David Joannes on Instagram', '/thanks/': 'Thanks!'}
 for path in KEEP:
