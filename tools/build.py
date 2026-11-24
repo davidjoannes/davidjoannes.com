@@ -937,16 +937,15 @@ bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S)
 # ---------- appearances on other shows (media and about pages)
 APPS = json.load(open(os.path.join(HERE, 'appearances.json')))
 def _app(a):
-    if a.get('video'):
-        return (f'<a class="ap ap-v" href="https://www.youtube.com/watch?v={a["video"]}" target="_blank" rel="noopener"><span class="ap-th"><img src="https://i.ytimg.com/vi/{a["video"]}/hqdefault.jpg" alt="" loading="lazy"><i></i></span>'
-                f'<span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Watch the video{" · " + a["date"] if a.get("date") else ""}</em></span></a>')
+    if a.get('watch'):
+        return f'<a class="ap ap-w" href="{esc(a["watch"])}" target="_blank" rel="noopener"><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em><i></i>Watch the video · {a["date"]}</em></span></a>'
     href = (B + a['local']) if a.get('local') else a['url']
     tgt = '' if a.get('local') else ' target="_blank" rel="noopener"'
-    return f'<a class="ap" href="{esc(href)}"{tgt}><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Listen{" · " + a["date"] if a.get("date") else ""}</em></span></a>'
+    return f'<a class="ap" href="{esc(href)}"{tgt}><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Listen · {a["date"]}</em></span></a>'
 def appearances(cls='', sid='appearances'):
-    vids = [a for a in APPS if a.get('video')]; rest = [a for a in APPS if not a.get('video')]
-    return sec(shead('Appeared on', 'David on other podcasts and shows', lede='Conversations David has joined as a guest.')
-               + f'<div class="ap-vids">{"".join(_app(a) for a in vids)}</div><div class="ap-list">{"".join(_app(a) for a in rest)}</div>', cls, sid)
+    apps = sorted(APPS, key=lambda a: a['when'], reverse=True)
+    return sec(shead('Appeared on', 'David on other podcasts and shows', lede='Conversations David has joined as a guest, most recent first.')
+               + f'<div class="ap-list">{"".join(_app(a) for a in apps)}</div>', cls, sid)
 
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
