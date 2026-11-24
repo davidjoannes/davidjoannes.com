@@ -1130,6 +1130,13 @@ _mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking poi
 <div><h3>David on social</h3><p>Instagram: <a href="https://instagram.com/davidjoannes" target="_blank" rel="noopener">{MK["contact"]["instagram"]}</a></p><p>{esc(MK["contact"]["collab"])}</p></div>
 <div><h3>Within Reach Global on social</h3><p>Instagram: <a href="https://instagram.com/withinreachglobal" target="_blank" rel="noopener">{MK["contact"]["wrg_instagram"]}</a></p><p>YouTube: <a href="https://www.youtube.com/@withinreachglobalinc" target="_blank" rel="noopener">{MK["contact"]["youtube"]}</a></p></div></div>''', '', 'contact')
   + """<script>document.querySelectorAll('.mk-copy').forEach(function(b){b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();var t=b.closest('.mk-bio').querySelector('p').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)})})})</script>""")
+_BT = sorted(['The Mind of a Missionary Devotional', 'The Mind of a Missionary', 'The Space Between Memories', 'Gospel Privilege', 'See the City', 'Glorious Hope', 'Faith for Firebrands', 'That Lasting Joy',
+              'The Insanity of God', 'The Rest of God', 'Contagious Faith', 'The Dignity Revolution', 'Your Future Self Will Thank You', 'Missions by the Book', 'Becoming the Woman God Wants Me to Be', 'Not All Who Wander (Spiritually) Are Lost'], key=len, reverse=True)
+_bt_re = re.compile('|'.join(re.escape(esc(t)) for t in _BT))
+def book_titles(h):  # italicize book titles in visible text only (never inside tags or scripts)
+    parts = re.split(r'(<script.*?</script>|<[^>]+>)', h, flags=re.S)
+    return ''.join(x if x.startswith('<') else _bt_re.sub(lambda m: f'<span class="bt">{m.group(0)}</span>', x) for x in parts)
+_mk = book_titles(_mk)
 page('/media/', 'Media Kit', _mk, desc='Media kit for David Joannes: bios, talking points, interview questions, and photos for podcasts and interviews.')
 
 # ---------- resources
