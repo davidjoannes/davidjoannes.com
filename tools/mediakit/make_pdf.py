@@ -150,7 +150,7 @@ pages.append(f'''<section class="pg soft"><div class="rail"></div><div class="in
 {"".join(f'<div class="q"><div class="m">“</div><div><p>{e(q)}</p><cite><b>{e(n)}</b> · {e(r)}</cite></div></div>' for q, n, r in C["quotes"][:3])}</div>{foot(8)}</section>''')
 pages.append(f'''<section class="pg end"><div class="grid"></div><div class="glow"></div><div class="in"><div class="eye" style="color:#e0b25a">Get in touch</div><h2>Contact <span>information</span></h2>
 <p class="lede">To book David for a podcast or interview, or to ask for a review copy of one of his books, reach out by email. David is based in Chiang Mai, Thailand (UTC+7).</p>
-<div class="ct"><div><b>Interviews and review copies</b><span>{e(ct["press"])}</span></div><div><b>David directly</b><span>{e(ct["email"])}</span></div>
+<div class="ct"><div><b>Interviews and review copies</b><span>{e(ct["email"])}</span><small>Email David directly</small></div><div><b>Books</b><span>{e(ct["site"])}/books</span><small>All titles, with links to buy</small></div>
 <div><b>Website and media downloads</b><span>{e(ct["media"])}</span><small>Bios to copy and photos to download</small></div><div><b>The ministry</b><span>{e(ct["wrg"])}</span><small>Within Reach Global</small></div>
 <div><b>Instagram</b><span>{e(ct["instagram"])}</span><small>Within Reach Global: {e(ct["wrg_instagram"])}. David accepts most collaboration requests.</small></div><div><b>YouTube</b><span>{e(ct["youtube"])}</span><small>Within Reach Global</small></div></div></div>
 <div class="bot"><span>David Joannes</span><span>{e(ct["site"])}</span></div></section>''')
