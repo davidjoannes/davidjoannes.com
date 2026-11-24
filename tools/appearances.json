@@ -1,12 +1,72 @@
 [
- {"when": "2026-08", "show": "Modern Day Missionaries", "title": "Should I Stay or Should I Leave (the Mission Field)?", "date": "2026", "watch": "https://www.youtube.com/@modernday.missions/search?query=Joannes"},
- {"when": "2025-02", "show": "Modern Day Missionaries", "title": "The Hardest Part of Missionary Life and How to Overcome It", "date": "2025", "watch": "https://www.youtube.com/@modernday.missions/search?query=Joannes"},
- {"when": "2023-10", "show": "The Clarity Podcast", "title": "David Joannes on See the City", "date": "2023", "url": "https://the-clarity-podcast.captivate.fm/episode/david-joannes-on-see-the-city"},
- {"when": "2022-09", "show": "Missions Talk", "title": "How Christians Unwittingly Prevent Gospel Access", "date": "2022", "watch": "https://www.youtube.com/watch?v=JxWkjZXtfWE"},
- {"when": "2022-08", "show": "The Clarity Podcast", "title": "David Joannes on Gospel Privilege", "date": "2022", "url": "https://the-clarity-podcast.captivate.fm/episode/david-joannes-on-gospel-privilege-the-unearned-advantage-that-is-meant-for-everyone"},
- {"when": "2021-11", "show": "A Third of Us", "title": "A Passion to Reach the Lost", "date": "2021", "url": "https://alliancefortheunreached.org/podcast/ep-96-a-passion-to-reach-the-lost/"},
- {"when": "2021-10", "show": "Strike the Match with J. D. Payne", "title": "David Joannes on Gospel Privilege", "date": "2021", "url": "https://www.jdpayne.org/missiologically-thinking/2021/10/david-joannes-on-gospel-privilege"},
- {"when": "2021-07", "show": "The Gospel Mobilization Podcast", "title": "Gospel Privilege with David Joannes", "date": "2021", "url": "https://missionarymobilization.libsyn.com/gospel-privilege-with-david-joannes"},
- {"when": "2021-06", "show": "Just Disciple", "title": "Gospel Privilege with David Joannes", "date": "2021", "url": "https://justdisciple.com/gospel-privilege-with-david-joannes"},
- {"when": "2016-05", "show": "Back to Jerusalem Podcast", "title": "Live with David Joannes", "date": "2016", "local": "/awesome-podcasts-with-back-to-jerusalem-and-within-reach-global/"}
+ {
+  "when": "2026-08",
+  "show": "Modern Day Missionaries",
+  "title": "Should I Stay or Should I Leave (the Mission Field)?",
+  "date": "2026",
+  "watch": "https://www.youtube.com/watch?v=iNpmuBtvpHI"
+ },
+ {
+  "when": "2025-02",
+  "show": "Modern Day Missionaries",
+  "title": "The Hardest Part of Missionary Life and How to Overcome It",
+  "date": "2025",
+  "watch": "https://www.youtube.com/watch?v=KT8CBZs7uTs"
+ },
+ {
+  "when": "2023-10",
+  "show": "The Clarity Podcast",
+  "title": "David Joannes on See the City",
+  "date": "2023",
+  "url": "https://the-clarity-podcast.captivate.fm/episode/david-joannes-on-see-the-city"
+ },
+ {
+  "when": "2022-09",
+  "show": "Missions Talk",
+  "title": "How Christians Unwittingly Prevent Gospel Access",
+  "date": "2022",
+  "watch": "https://www.youtube.com/watch?v=JxWkjZXtfWE"
+ },
+ {
+  "when": "2022-08",
+  "show": "The Clarity Podcast",
+  "title": "David Joannes on Gospel Privilege",
+  "date": "2022",
+  "url": "https://the-clarity-podcast.captivate.fm/episode/david-joannes-on-gospel-privilege-the-unearned-advantage-that-is-meant-for-everyone"
+ },
+ {
+  "when": "2021-11",
+  "show": "A Third of Us",
+  "title": "A Passion to Reach the Lost",
+  "date": "2021",
+  "url": "https://alliancefortheunreached.org/podcast/ep-96-a-passion-to-reach-the-lost/"
+ },
+ {
+  "when": "2021-10",
+  "show": "Strike the Match with J. D. Payne",
+  "title": "David Joannes on Gospel Privilege",
+  "date": "2021",
+  "url": "https://www.jdpayne.org/missiologically-thinking/2021/10/david-joannes-on-gospel-privilege"
+ },
+ {
+  "when": "2021-07",
+  "show": "The Gospel Mobilization Podcast",
+  "title": "Gospel Privilege with David Joannes",
+  "date": "2021",
+  "url": "https://missionarymobilization.libsyn.com/gospel-privilege-with-david-joannes"
+ },
+ {
+  "when": "2021-06",
+  "show": "Just Disciple",
+  "title": "Gospel Privilege with David Joannes",
+  "date": "2021",
+  "url": "https://justdisciple.com/gospel-privilege-with-david-joannes"
+ },
+ {
+  "when": "2016-05",
+  "show": "Back to Jerusalem Podcast",
+  "title": "Live with David Joannes",
+  "date": "2016",
+  "local": "/awesome-podcasts-with-back-to-jerusalem-and-within-reach-global/"
+ }
 ]
