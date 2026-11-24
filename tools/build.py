@@ -938,10 +938,10 @@ bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S)
 APPS = json.load(open(os.path.join(HERE, 'appearances.json')))
 def _app(a):
     if a.get('watch'):
-        return f'<a class="ap ap-w" href="{esc(a["watch"])}" target="_blank" rel="noopener"><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em><i></i>Watch the video · {a["date"]}</em></span></a>'
+        return f'<a class="ap ap-w" href="{esc(a["watch"])}" target="_blank" rel="noopener"><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em><i></i>Watch the video{" · " + a["date"] if a.get("date") else ""}</em></span></a>'
     href = (B + a['local']) if a.get('local') else a['url']
     tgt = '' if a.get('local') else ' target="_blank" rel="noopener"'
-    return f'<a class="ap" href="{esc(href)}"{tgt}><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Listen · {a["date"]}</em></span></a>'
+    return f'<a class="ap" href="{esc(href)}"{tgt}><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Listen{" · " + a["date"] if a.get("date") else ""}</em></span></a>'
 def appearances(cls='', sid='appearances'):
     apps = sorted(APPS, key=lambda a: a['when'], reverse=True)
     return sec(shead('Appeared on', 'David on other podcasts and shows', lede='Conversations David has joined as a guest, most recent first.')
