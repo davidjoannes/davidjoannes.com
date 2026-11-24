@@ -407,7 +407,7 @@ IC = {'Instagram': '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" 
 SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>' for n, u in SOCIAL)
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
-SHARE_IMG = [('/about/', 'about'), ('/books/', 'books'), ('/missionspulse/', 'podcast'), ('/blog/', 'blog'), ('/resources/', 'resources'), ('/donate/', 'give')]
+SHARE_IMG = [('/about/', 'about'), ('/books/', 'books'), ('/missionspulse/', 'podcast'), ('/blog/', 'blog'), ('/resources/', 'resources'), ('/donate/', 'give'), ('/instagram/', 'instagram')]
 def page(path, title, body, desc='', image='', home=False, redirect='', head='', bare=False):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
