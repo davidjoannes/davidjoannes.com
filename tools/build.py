@@ -934,11 +934,25 @@ def conv_raw(raw, path='/x/'):
 ab = PAGES['/about/']
 bio = re.search(r'\[vc_column_text\](.*?)\[/vc_column_text\]', ab.raw, re.S).group(1)
 bio = re.sub(r'<span[^>]*>You can find David on.*?</span>', '', bio, flags=re.S).replace('For the last 25 years', 'For the last 30 years')
+# ---------- appearances on other shows (media and about pages)
+APPS = json.load(open(os.path.join(HERE, 'appearances.json')))
+def _app(a):
+    if a.get('video'):
+        return (f'<a class="ap ap-v" href="https://www.youtube.com/watch?v={a["video"]}" target="_blank" rel="noopener"><span class="ap-th"><img src="https://i.ytimg.com/vi/{a["video"]}/hqdefault.jpg" alt="" loading="lazy"><i></i></span>'
+                f'<span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Watch the video{" · " + a["date"] if a.get("date") else ""}</em></span></a>')
+    href = (B + a['local']) if a.get('local') else a['url']
+    tgt = '' if a.get('local') else ' target="_blank" rel="noopener"'
+    return f'<a class="ap" href="{esc(href)}"{tgt}><span class="ap-b"><b>{esc(a["show"])}</b><span>{esc(a["title"])}</span><em>Listen{" · " + a["date"] if a.get("date") else ""}</em></span></a>'
+def appearances(cls='', sid='appearances'):
+    vids = [a for a in APPS if a.get('video')]; rest = [a for a in APPS if not a.get('video')]
+    return sec(shead('Appeared on', 'David on other podcasts and shows', lede='Conversations David has joined as a guest.')
+               + f'<div class="ap-vids">{"".join(_app(a) for a in vids)}</div><div class="ap-list">{"".join(_app(a) for a in rest)}</div>', cls, sid)
+
 page('/about/', 'About David',
      f'''<section class="phead dark"><div class="wrap aboutgrid"><div><p class="eyebrow">About</p><h1>David Joannes</h1><p class="lede">Missiologist, author, podcaster, and Founder and CEO of Within Reach Global.</p>
 <div class="btns"><a class="btn" href="{B}/meet/#personal">Book a meeting</a><a class="btn ghost" href="{B}/media/">Media kit</a></div></div><img src="{B}/assets/media/david-joannes-portrait.jpg" style="object-position:50% 22%" alt="David Joannes"></div></section>'''
      + f'<div class="wrap"><article class="article"><div class="prose">{conv_raw(bio)}</div></article>{STATS}</div><div style="height:80px"></div>'
-     + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + CTA,
+     + sec(shead('Books', 'Books by David', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF, 'soft') + appearances('', 'appearances') + CTA,
      desc=plain(bio), image=portrait)
 
 # ---------- books
@@ -1106,15 +1120,16 @@ _mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking poi
   + sec(shead('Talking points', 'What David loves to talk about') + '<div class="mk-topics">' + ''.join(f'<div><i>{i + 1}</i><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></div>' for i, (t, d) in enumerate(MK['topics'])) + '</div>', '', 'topics')
   + sec(shead('Suggested questions', 'Questions for podcasters and interviews', lede='Choose seven to ten questions from this list, and feel free to ask your own as well.')
         + '<ul class="mk-qs">' + ''.join(f'<li>{esc(q)}</li>' for q in MK['questions']) + '</ul>', 'soft', 'questions')
+  + appearances('', 'appearances')
   + sec(shead('Images and media', 'Photos to download', lede='Free to use for episode artwork, show notes, and social posts about your interview with David.')
-        + '<div class="mk-photos">' + ''.join(f'<figure><img src="{B}/assets/media/{f}" alt="David Joannes: {esc(c)}" loading="lazy"><figcaption><span>{esc(c)}</span><a href="{B}/assets/media/{f}" download>Download</a></figcaption></figure>' for f, c in MK['photos']) + '</div>', '', 'photos')
+        + '<div class="mk-photos">' + ''.join(f'<figure><img src="{B}/assets/media/{f}" alt="David Joannes: {esc(c)}" loading="lazy"><figcaption><span>{esc(c)}</span><a href="{B}/assets/media/{f}" download>Download</a></figcaption></figure>' for f, c in MK['photos']) + '</div>', 'soft', 'photos')
   + sec(shead('Books and podcast', 'The work behind the conversation', f'<a class="more" href="{B}/books/">All books →</a>') + HOME_SHELF
-        + f'<div class="mk-two"><div><h3>Within Reach Global</h3><p>{esc(MK["wrg"])}</p><a class="more" href="{WRG}" target="_blank" rel="noopener">withinreachglobal.org</a></div><div><h3>Missions Pulse</h3><p>{esc(MK["podcast"])}</p><a class="more" href="{B}/missionspulse/">About the podcast →</a></div></div>', 'soft', 'work')
-  + sec(shead('What others say', 'Endorsements') + '<div class="mk-quotes">' + ''.join(f'<blockquote><p>“{esc(q)}”</p><cite><b>{esc(n)}</b> {esc(r)}</cite></blockquote>' for q, n, r in MK['quotes']) + '</div>', '', 'endorsements')
+        + f'<div class="mk-two"><div><h3>Within Reach Global</h3><p>{esc(MK["wrg"])}</p><a class="more" href="{WRG}" target="_blank" rel="noopener">withinreachglobal.org</a></div><div><h3>Missions Pulse</h3><p>{esc(MK["podcast"])}</p><a class="more" href="{B}/missionspulse/">About the podcast →</a></div></div>', '', 'work')
+  + sec(shead('What others say', 'Endorsements') + '<div class="mk-quotes">' + ''.join(f'<blockquote><p>“{esc(q)}”</p><cite><b>{esc(n)}</b> {esc(r)}</cite></blockquote>' for q, n, r in MK['quotes']) + '</div>', 'soft', 'endorsements')
   + sec(shead('Contact', 'Book David for your show') + f'''<div class="mk-two"><div><h3>Interviews and review copies</h3><p>Email <a href="mailto:{MK["contact"]["email"]}">{MK["contact"]["email"]}</a> to book an interview or ask for a copy of one of David's books before you record.</p></div>
 <div><h3>Other ways to reach David</h3><p>Use the <a href="{B}/contact/">contact form</a> on this site. David is based in Chiang Mai, Thailand (UTC+7).</p></div>
 <div><h3>David on social</h3><p>Instagram: <a href="https://instagram.com/davidjoannes" target="_blank" rel="noopener">{MK["contact"]["instagram"]}</a></p><p>{esc(MK["contact"]["collab"])}</p></div>
-<div><h3>Within Reach Global on social</h3><p>Instagram: <a href="https://instagram.com/withinreachglobal" target="_blank" rel="noopener">{MK["contact"]["wrg_instagram"]}</a></p><p>YouTube: <a href="https://www.youtube.com/@withinreachglobalinc" target="_blank" rel="noopener">{MK["contact"]["youtube"]}</a></p></div></div>''', 'soft', 'contact')
+<div><h3>Within Reach Global on social</h3><p>Instagram: <a href="https://instagram.com/withinreachglobal" target="_blank" rel="noopener">{MK["contact"]["wrg_instagram"]}</a></p><p>YouTube: <a href="https://www.youtube.com/@withinreachglobalinc" target="_blank" rel="noopener">{MK["contact"]["youtube"]}</a></p></div></div>''', '', 'contact')
   + """<script>document.querySelectorAll('.mk-copy').forEach(function(b){b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();var t=b.closest('.mk-bio').querySelector('p').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)})})})</script>""")
 page('/media/', 'Media Kit', _mk, desc='Media kit for David Joannes: bios, talking points, interview questions, and photos for podcasts and interviews.')
 
