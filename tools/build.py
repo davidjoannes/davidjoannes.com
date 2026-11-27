@@ -408,6 +408,11 @@ SOCIAL_ICONS = ''.join(f'<a href="{u}" aria-label="{n}" title="{n}">{IC[n]}</a>'
 WRITTEN = []
 VER = datetime.datetime.now().strftime('%m%d%H%M')
 SHARE_IMG = [('/about/', 'about'), ('/books/', 'books'), ('/missionspulse/', 'podcast'), ('/blog/', 'blog'), ('/resources/', 'resources'), ('/donate/', 'give'), ('/instagram/', 'instagram')]
+def emdash(doc):  # double hyphens in visible text become em dashes (scripts, styles, comments, and tags are left alone)
+    parts = re.split(r'(<script.*?</script>|<style.*?</style>|<!--.*?-->|<[^>]+>)', doc, flags=re.S)
+    for i in range(0, len(parts), 2):
+        parts[i] = re.sub(r'\s*(?<![-!<])--(?![->])\s*', '\u2014', parts[i])
+    return ''.join(parts)
 def page(path, title, body, desc='', image='', home=False, redirect='', head='', bare=False):
     full = 'David Joannes | Missiologist, Author, and Founder of Within Reach Global' if home else f'{title} | David Joannes'
     nav = ''.join(f'<a href="{u if u.startswith("http") else B + u}"' + (' target="_blank" rel="noopener"' if u.startswith('http') else '') + (' aria-current="page"' if path.startswith(u) else '') + f'>{n}</a>' for n, u in NAV)
@@ -470,6 +475,7 @@ def page(path, title, body, desc='', image='', home=False, redirect='', head='',
 <script>document.addEventListener('error',function(e){{var t=e.target;if(t.tagName==='IMG'){{var p=t.closest('.im');if(p)p.classList.add('noimg');t.remove()}}}},true);</script>
 </body>
 </html>'''
+    doc = emdash(doc)
     if bare:  # no site header or footer (the Instagram link page)
         doc = re.sub(r'<header class="hdr">.*?</header>\n', '', doc, flags=re.S); doc = re.sub(r'<footer class="ftr dark">.*?</footer>\n', '', doc, flags=re.S)
         doc = re.sub(r'<script>\(function\(\)\{var b=document\.querySelector\(\'\.burger\'\).*?</script>\n', '', doc, flags=re.S)
