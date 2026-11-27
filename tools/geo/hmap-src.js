@@ -14,8 +14,8 @@ const NAMES = {'United States of America': 'United States', 'Dem. Rep. Congo': '
 const nm = f => NAMES[f.properties.name] || f.properties.name;
 function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
 function spanFor(g, home, w, h) {
-  if (g.r >= 3) return 13;
-  if (g.r === 2) return 20;
+  if (g.r >= 3) return 20;
+  if (g.r === 2) return 26;
   if (g.r === 1 && home) {
     const b = geoBounds(home); let dx = b[1][0] - b[0][0]; if (dx < 0) dx += 360;
     const dy = (b[1][1] - b[0][1]) * Math.min(1.6, w / h);
