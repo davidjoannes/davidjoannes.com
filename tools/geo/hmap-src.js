@@ -70,6 +70,8 @@ export async function render(box, g, src) {
     for (const o of cands) {
       if (n >= 9) break;
       if (taken.some(t => Math.abs(t[0] - o.q[0]) < 70 && Math.abs(t[1] - o.q[1]) < 18)) continue;
+      const hw = nm(o.f).length * (o.f === home ? 4.6 : 3.4);  // half the label width, roughly
+      if (o.q[0] - hw < 6 || o.q[0] + hw > w - 6 || (o.q[0] + hw > w - 56 && o.q[1] < 132)) continue;  // stay clear of the edges and the zoom buttons
       const t = el('text', {x: o.q[0], y: o.q[1], class: 'hm-cn' + (o.f === home ? ' hm-cn-home' : ''), 'text-anchor': 'middle'}, labels);
       t.textContent = nm(o.f); taken.push(o.q); n++;
     }
