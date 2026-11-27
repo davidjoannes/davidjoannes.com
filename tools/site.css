@@ -597,3 +597,30 @@ body:has(.lkp){background:var(--ink)}
 .lk-books img{height:170px;width:auto;border-radius:4px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .lk-ft{text-align:center;margin:28px 0 0;font-size:13px}
 .lk-ft a{color:rgba(255,255,255,.7)}
+/* Missions History Today maps */
+.h-body{flex:1;min-width:0}
+.h-row[data-geo]{cursor:pointer}
+.h-map{height:0;overflow:hidden;opacity:0;transition:height .45s ease,opacity .45s ease;margin-top:14px}
+.h-map.on{opacity:1}
+.hm-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#e9eef5;touch-action:pan-y}
+.hm-wrap.hm-live{touch-action:none}
+.hm-wrap svg{display:block;cursor:grab;user-select:none;-webkit-user-select:none}
+.hm-wrap.hm-drag svg{cursor:grabbing}
+.hm-sea{fill:#e6edf5}
+.hm-grat{fill:none;stroke:#d6e0eb;stroke-width:.6}
+.hm-land{fill:#fbfaf7;stroke:#c3ccd8;stroke-width:.7;stroke-linejoin:round}
+.hm-home{fill:#f6dcd6;stroke:#0B1622;stroke-width:1.2}
+.hm-cn{font:500 10.5px/1 var(--sans);fill:#7a8597;letter-spacing:.02em;paint-order:stroke;stroke:#fbfaf7;stroke-width:3px;pointer-events:none}
+.hm-cn-home{font-weight:700;fill:#0B1622;font-size:11.5px;stroke:#f6dcd6;text-transform:uppercase;letter-spacing:.08em}
+.hm-place{font:700 13px/1 var(--head);fill:#0B1622;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.hm-dot{fill:#D12B1F;stroke:#fff;stroke-width:2}
+.hm-pulse{fill:#D12B1F;opacity:.35;transform-box:fill-box;transform-origin:center;animation:hmPulse 1.8s ease-out infinite}
+@keyframes hmPulse{0%{transform:scale(.3);opacity:.5}100%{transform:scale(1.6);opacity:0}}
+.hm-ctr{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+.hm-ctr button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;color:#0B1622;font:600 18px/1 var(--sans);cursor:pointer;display:grid;place-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.hm-ctr button:hover{border-color:#0B1622}
+.hm-hint{position:absolute;left:10px;bottom:10px;font:600 11px/1 var(--sans);color:#0B1622;background:rgba(255,255,255,.9);border-radius:999px;padding:6px 10px;pointer-events:none;transition:opacity .3s}
+.hm-live .hm-hint{opacity:0}
+.hm-cap{display:flex;align-items:center;gap:6px;margin:8px 2px 0!important;font:600 12.5px/1.4 var(--sans)!important;color:#5b6576!important}
+.hm-cap svg{color:#D12B1F;flex:none}
+@media(prefers-reduced-motion:reduce){.h-map{transition:none}.hm-pulse{animation:none}}

@@ -660,6 +660,7 @@ def hist_entries(b, month):
         if m: out.append((int(m.group(1)), (m.group(2) or '').strip(), m.group(3).strip()))
     return out
 HIST = {}
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'geo')); from geocode import geocode  # place lookup for the history maps
 HIST_ADD = [  # dated events drawn from The Mind of a Missionary (2nd ed.), written fresh for this page
     ('January', 3, '1956', 'The five missionaries of Operation Auca set up camp on a sandbar of the Curaray River in Ecuador, hoping to make peaceful contact with the Waorani.'),
     ('January', 13, '1817', 'Robert Moffat, twenty-two years old, arrives in Cape Town, South Africa, to begin his life’s work.'),
@@ -750,7 +751,9 @@ def hist_home():
         rows = ''; _seen = set()
         for k, (d, y, t) in enumerate(ents):
             _id = f' id="{ml}-{d}"' if d not in _seen else ''; _seen.add(d)
-            rows += f'<li class="h-row"{_id} data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
+            _g = geocode(re.sub(r'<[^>]+>', '', html.unescape(t)), f'{i + 1}/{d}/{y}')
+            _ga = f' data-geo="{_g["lat"]}|{_g["lon"]}|{_g["r"]}|{esc(_g["n"])}"' if _g else ''
+            rows += f'<li class="h-row"{_id}{_ga} data-d="{d}"><div class="h-date"><b>{d}</b><span>{month[:3]}</span></div><div class="h-body">' + (f'<i>{esc(y)}</i>' if y else '') + f'<p>{t}</p></div></li>'
             if k == len(ents) // 2: rows += f'<li class="h-mod">{modbar(ROT[i % len(ROT)])}</li>'
         prev, nxt = MONTHS[i - 1], MONTHS[(i + 1) % 12]
         secs += (f'<section class="h-month" id="{ml}" data-i="{i}" hidden><h2>{month}</h2>'
@@ -768,7 +771,7 @@ route(true)})();</script>""" % json.dumps(MONTHS)
     return ('<div class="h-page">' + SHARE.split('<script>')[0].replace('class="share"', 'class="share top"') + '<div class="h-intro"><p>God has called simple men and women throughout history to leave a mark of his glory on his storyline, and you are part of it. Here is a look back at what happened in missions history on every day of the year. (<a href="' + B + '/the-most-epic-monster-list-of-missionary-quotes-on-the-internet/" target="_blank" rel="noopener">See the most epic monster list of missionary quotes on the internet.</a>)</p><p><strong>As you read, I pray you find your own role in God’s global mission.</strong></p>'
             '<p class="soft-t"><em>“All the days ordained for me were written in your book before one of them came to be.”</em> Psalm 139:16</p></div>'
             '<div id="h-otd" class="h-otd" hidden><p class="eyebrow">On this day in missions history</p><h2 class="h-otd-date"></h2><p class="h-otd-text"></p><a class="btn" href="#">See it in the month →</a></div>'
-            f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-months" id="h-bar">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}')
+            f'<h2 class="h-pick" id="h-pick">Pick a month</h2><div class="h-months" id="h-bar">{tabs}</div>{secs}{HIST_CREDIT}{SHARE}</div>{js}<script src="{B}/assets/hmapctl.js?v={VER}" data-base="{B}" data-v="{VER}" defer></script>')
 SHARE = ('<div class="share"><span>Share this</span><a data-s="fb" href="#">Facebook</a><a data-s="x" href="#">X</a><a data-s="wa" href="#">WhatsApp</a><a data-s="in" href="#">LinkedIn</a><a data-s="em" href="#">Email</a><button type="button" data-s="cp">Copy link</button></div>'
          """<script>(function(){var u=encodeURIComponent(location.href.split('#')[0].split('?')[0]),t=encodeURIComponent(document.title.replace(/ \\| David Joannes$/,'')),L={fb:'https://www.facebook.com/sharer/sharer.php?u='+u,x:'https://twitter.com/intent/tweet?url='+u+'&text='+t,wa:'https://wa.me/?text='+t+'%20'+u,'in':'https://www.linkedin.com/sharing/share-offsite/?url='+u,em:'mailto:?subject='+t+'&body='+u};
 [].forEach.call(document.querySelectorAll('.share [data-s]'),function(a){var k=a.getAttribute('data-s');if(L[k]){a.href=L[k];if(k!='em'){a.target='_blank';a.rel='noopener'}}else a.addEventListener('click',function(){var v=decodeURIComponent(u);(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){a.textContent='Link copied';setTimeout(function(){a.textContent='Copy link'},1800)},function(){prompt('Copy this link',v)})})})})();</script>""")
@@ -1227,6 +1230,7 @@ page('/', 'David Joannes', home, desc='David Joannes is a missiologist, author, 
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 shutil.copy(os.path.join(HERE, 'site.css'), os.path.join(OUT, 'assets', 'site.css'))
 shutil.copy(os.path.join(HERE, 'pulse.js'), os.path.join(OUT, 'assets', 'pulse.js'))
+for _f in ('hmap.js', 'hmapctl.js', 'world.json'): shutil.copy(os.path.join(HERE, 'geo', _f), os.path.join(OUT, 'assets', _f))
 shutil.copy(os.path.join(HERE, 'share.jpg'), os.path.join(OUT, 'assets', 'share.jpg'))
 os.makedirs(os.path.join(OUT, 'assets', 'icons'), exist_ok=True)
 os.makedirs(os.path.join(OUT, 'assets', 'share'), exist_ok=True)
