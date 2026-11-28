@@ -499,6 +499,8 @@ H = 'https://withinreachglobal.org/hubfs/'
 U = SITE + '/wp-content/uploads/'
 BOOKS = [  # same list and order as withinreachglobal.org/books
     ('The Mind of a Missionary', '2024', U + '2024/05/tmoam-001b-1024x1024.png', 'https://a.co/d/3s8SEsu', 'book-the-mind-of-a-missionary'),
+    ('The Mind of a Missionary: Youth Edition', '2026', '', 'https://www.amazon.com/dp/1970645032', 'book-the-mind-of-a-missionary#youth'),
+    ('The Mind of a Missionary Study Guide', '2026', '', 'https://www.amazon.com/dp/1970645067', 'book-the-mind-of-a-missionary#study-guide'),
     ('The Space Between Memories', '2016/2026', H + 'TSBM-transparent-1.png', 'https://www.amazon.com/dp/1970645016', 'book-the-space-between-memories'),
     ('Faith for Firebrands', '2025', U + '2025/11/fff-front-and-back-1024x1024.png', 'https://bit.ly/faithforfirebrands', 'book-faith-for-firebrands'),
     ('That Lasting Joy', '2025', U + '2025/11/tlj-front-and-back-1024x1024.png', 'https://bit.ly/thatlastingjoy', 'book-that-lasting-joy'),
@@ -514,14 +516,17 @@ FLAT = {  # flat front covers from the Amazon author page (image ids)
     'The Mind of a Missionary': '71hoj0tlZ6L', 'The Space Between Memories': '81gQKb1iiVL', 'Faith for Firebrands': '61mlevNAmvL',
     'That Lasting Joy': '71jfo+ujCDL', 'See the City': '914zoen8UoL', 'Glorious Hope': '71n0mXLBNlL', 'Gospel Privilege': '71LDOmkWdDS',
     'The Mind of a Missionary Devotional': '716+ns7Zo0L', 'A mente de um missionário': '71jpH9zxEML', 'La mente de un misionero': '71QCtRRKS5L'}
-BOOKS = [(t, yr, f'https://m.media-amazon.com/images/I/{FLAT[t]}._SL900_.jpg', buy, slug) for t, yr, img, buy, slug in BOOKS]
+LOCAL_FLAT = {'The Mind of a Missionary: Youth Edition': 'tmoam-youth-edition.jpg', 'The Mind of a Missionary Study Guide': 'tmoam-study-guide.jpg'}  # covers kept in assets/books/flat
+BOOKS = [(t, yr, 'flat:' + LOCAL_FLAT[t] if t in LOCAL_FLAT else f'https://m.media-amazon.com/images/I/{FLAT[t]}._SL900_.jpg', buy, slug) for t, yr, img, buy, slug in BOOKS]
 def cover(u):
+    if u.startswith('flat:'): return f'{B}/assets/books/flat/{u[5:]}'
     if 'media-amazon.com' in u: return extra(u, 'books/flat/' + u.rsplit('/', 1)[1].split('.')[0].replace('+', '-') + '.jpg')
     return local(u) if u.startswith(SITE) else extra(u, 'books/' + u.rsplit('/', 1)[1])
 def bk(t, yr, img, buy, slug):
     return f'<a class="cover" href="{WRG}/{slug}" title="{esc(t)}"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a>'
 SHELF = '<div class="shelf">' + ''.join(bk(*x) for x in BOOKS) + '</div>'
-_six = [next(b for b in BOOKS if b[0] == ('Gospel Privilege' if x[0] == 'Glorious Hope' else x[0])) for x in BOOKS[:6]]
+_six = [next(b for b in BOOKS if b[0] == t) for t in ('The Mind of a Missionary', 'The Mind of a Missionary: Youth Edition', 'The Mind of a Missionary Study Guide',
+                                                    'The Space Between Memories', 'See the City', 'Gospel Privilege')]
 HOME_SHELF = '<div class="shelf six">' + ''.join(bk(*x) for x in _six) + '</div>'
 COURSES = [('The Mind of a Missionary', '13 lessons', 'the-mind-of-a-missionary-course'), ('Gospel Privilege', '9 lessons', 'gospel-privilege-course'), ('See the City', '12 lessons', 'see-the-city-course')]
 portrait = extra(H + 'david-joannes-founder-2.jpg', 'david-joannes.jpg')
@@ -538,7 +543,7 @@ def pulse_ep(e):
 def pulse_list(kind, n):
     f = pulse_ep if kind == 'ep' else pulse_card
     return ''.join(f(e) for e in PULSE['episodes'][:n])
-STATS = ('''<div class="stats"><div><b>30</b><span>years serving in China and Thailand</span></div><div><b>85</b><span>churches planted through Within Reach Global</span></div><div><b>10</b><span>titles in English, Portuguese, and Spanish</span></div><div><b data-pulse-count>PULSECOUNT</b><span>Missions Pulse podcast episodes</span></div></div>'''.replace('PULSECOUNT', str(PULSE['count'])))
+STATS = ('''<div class="stats"><div><b>30</b><span>years serving in China and Thailand</span></div><div><b>85</b><span>churches planted through Within Reach Global</span></div><div><b>12</b><span>titles in English, Portuguese, and Spanish</span></div><div><b data-pulse-count>PULSECOUNT</b><span>Missions Pulse podcast episodes</span></div></div>'''.replace('PULSECOUNT', str(PULSE['count'])))
 def tiles(items): return '<div class="tiles">' + ''.join(f'<a class="tile" href="{u}"><h3>{t}</h3><p>{d}</p><span class="go">{g}</span></a>' for t, d, g, u in items) + '</div>'
 RES = [('Spiritual Gifts Test', 'Discover how God has wired you to serve.', 'Take the test ↗', WRG + '/spiritual-gifts-test'),
        ('Gospel Access Score', 'See how much access to the gospel you have had, and who has none.', 'Get your score ↗', WRG + '/gospel-access-score'),
@@ -552,7 +557,7 @@ def _ri(u, n): return f'<img src="{extra(H + u, "res/" + n)}" alt="" loading="la
 RIMG['pin'] = _ri('general%2030.jpg', 'field-stories.jpg')
 RIMG['mic'] = _ri('missions-pulse-008.jpg', 'missions-pulse.jpg')
 RIMG['map'] = _ri('pray-for-thailand/hero2.jpg', 'pray-for-thailand.jpg')
-RIMG['book'] = '<span class="rcovers">' + ''.join(f'<img src="{cover(b[2])}" alt="" loading="lazy">' for b in BOOKS[:4]) + '</span>'
+RIMG['book'] = '<span class="rcovers">' + ''.join(f'<img src="{cover(b[2])}" alt="" loading="lazy">' for b in BOOKS if b[0] in ('The Mind of a Missionary', 'The Space Between Memories', 'Faith for Firebrands', 'That Lasting Joy')) + '</span>'
 RCARDS = [  # same modules as the Resources menu on withinreachglobal.org
     ('Spiritual Gifts Test', 'Free test', 'Discover how God has gifted you and where you fit in His mission.', 'Take the test ↗', WRG + '/spiritual-gifts-test', 'gift', 'c-teal'),
     ('Gospel Access Score', '18 questions', 'Eighteen quick questions. See how your access to the gospel compares worldwide.', 'Get your score ↗', WRG + '/gospel-access-score', 'gauge', 'c-dusk'),
@@ -970,6 +975,8 @@ page('/about/', 'About David',
 
 # ---------- books
 DESC = {'book-the-mind-of-a-missionary': 'A practical and inspiring guide to developing the mindset, endurance, and passion needed to thrive in God’s mission.',
+ 'book-the-mind-of-a-missionary#youth': 'The true stories of twelve missionaries, written for ages 11 to 18, with growth activities, mission challenges, and room to find your own place in God’s mission.',
+ 'book-the-mind-of-a-missionary#study-guide': 'A companion for small groups, with Scripture, discussion questions, a write-in exercise, and one step for the week in every session.',
  'book-the-space-between-memories': 'A gripping missionary memoir filled with adventure, sacrifice, and the unfolding story of God’s work among the unreached.',
  'book-faith-for-firebrands': 'A bold 31-day devotional inspired by C. T. Studd that calls readers to radical faith, wholehearted surrender, and passionate mission.',
  'book-that-lasting-joy': 'A 31-day devotional inspired by Amy Carmichael that invites readers into deeper joy, devotion to Christ, and a heart for the nations.',
@@ -982,7 +989,7 @@ DESC = {'book-the-mind-of-a-missionary': 'A practical and inspiring guide to dev
 def bookcard(t, yr, img, buy, slug):
     more = 'Color it online' if 'coloring' in slug else ('Saiba mais' if 'mente-de-um' in slug else ('Más información' if 'misionero' in slug else 'Learn more'))
     return (f'<div class="bcard"><a class="bcard-cover" href="{WRG}/{slug}"><img src="{cover(img)}" alt="{esc(t)}" loading="lazy"></a><div class="bcard-body"><h3>{esc(t)}</h3>'
-            f'<div class="bcard-year">{yr.split(" · ")[-1]} <span aria-label="Five stars">★★★★★</span></div><p>{DESC[slug]}</p>'
+            f'<div class="bcard-year">{yr.split(" · ")[-1]}' + ('' if t in LOCAL_FLAT else ' <span aria-label="Five stars">★★★★★</span>') + f'</div><p>{DESC[slug]}</p>'
             f'<div class="bcard-btns"><a class="btn ink" href="{buy}">Get the book</a><a class="btn outline" href="{WRG}/{slug}">{more} →</a></div></div></div>')
 books_bio = 'David Joannes is the Founder and CEO of Within Reach Global and host of the Missions Pulse podcast. He has a love for language, culture, and creative writing, and for the last 30 years he has witnessed God’s kingdom established in forgotten parts of the globe.'
 page('/books/', 'Books by David Joannes',
@@ -991,8 +998,8 @@ page('/books/', 'Books by David Joannes',
      + sec(f'<div class="authorrow"><img src="{B}/assets/media/david-joannes-portrait-2.jpg" style="object-fit:cover;object-position:52% 30%" alt="David Joannes" loading="lazy"><div><p class="eyebrow">About</p><h2>David Joannes</h2><p class="soft-t" style="margin-top:14px">{books_bio}</p><a class="btn ink" href="{B}/about/">Learn more →</a></div></div>', 'soft')
      + sec(shead('Free online courses', "Go deeper with David's books", lede='Short lessons with quizzes and a certificate of completion, hosted by Within Reach Global.') + COURSE_CARDS) + CTA,
      desc='Books by David Joannes on missions, the unreached, and the Great Commission.')
-OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (6, 'gospelprivilege'),
-            '/books/the-space-between-memories/': (1, 'thespacebetweenmemories'), '/books/see-the-city/': (4, 'seethecity')}
+OLDBOOKS = {'/books/the-mind-of-a-missionary/': (0, 'themindofamissionary'), '/books/gospel-privilege/': (8, 'gospelprivilege'),
+            '/books/the-space-between-memories/': (3, 'thespacebetweenmemories'), '/books/see-the-city/': (6, 'seethecity')}
 BOOK_FWD = {'/books/the-mind-of-a-missionary/': 'book-the-mind-of-a-missionary', '/books/gospel-privilege/': 'book-gospel-privilege',
             '/books/the-space-between-memories/': 'book-the-space-between-memories', '/books/see-the-city/': 'book-see-the-city',
             '/books/the-mind-of-a-missionary/notes/': 'book-the-mind-of-a-missionary#notes',
@@ -1163,7 +1170,7 @@ _mk = (phead('Media kit', 'For podcasts and interviews', lede='Bios, talking poi
 <div><h3>David on social</h3><p>Instagram: <a href="https://instagram.com/davidjoannes" target="_blank" rel="noopener">{MK["contact"]["instagram"]}</a></p><p>{esc(MK["contact"]["collab"])}</p></div>
 <div><h3>Within Reach Global on social</h3><p>Instagram: <a href="https://instagram.com/withinreachglobal" target="_blank" rel="noopener">{MK["contact"]["wrg_instagram"]}</a></p><p>YouTube: <a href="https://www.youtube.com/@withinreachglobalinc" target="_blank" rel="noopener">{MK["contact"]["youtube"]}</a></p></div></div>''', '', 'contact')
   + """<script>document.querySelectorAll('.mk-copy').forEach(function(b){b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();var t=b.closest('.mk-bio').querySelector('p').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1600)})})})</script>""")
-_BT = sorted(['The Mind of a Missionary Devotional', 'The Mind of a Missionary', 'The Space Between Memories', 'Gospel Privilege', 'See the City', 'Glorious Hope', 'Faith for Firebrands', 'That Lasting Joy',
+_BT = sorted(['The Mind of a Missionary: Youth Edition', 'The Mind of a Missionary Study Guide', 'The Mind of a Missionary Devotional', 'The Mind of a Missionary', 'The Space Between Memories', 'Gospel Privilege', 'See the City', 'Glorious Hope', 'Faith for Firebrands', 'That Lasting Joy',
               'The Insanity of God', 'The Rest of God', 'Contagious Faith', 'The Dignity Revolution', 'Your Future Self Will Thank You', 'Missions by the Book', 'Becoming the Woman God Wants Me to Be', 'Not All Who Wander (Spiritually) Are Lost'], key=len, reverse=True)
 _bt_re = re.compile('|'.join(re.escape(esc(t)) for t in _BT))
 def book_titles(h):  # italicize book titles in visible text only (never inside tags or scripts)
